@@ -6,7 +6,7 @@
     <img alt="wnc" src="https://raw.githubusercontent.com/umatare5/cisco-wnc-cli/main/docs/assets/logo.png" width="115px" />
   </picture>
 
-  <h1>wnc</h1>
+  <h1>cisco-wnc-cli</h1>
 
   <p>A command-line interface for Cisco Catalyst 9800 Wireless Network Controllers.</p>
 
