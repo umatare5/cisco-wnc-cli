@@ -21,7 +21,7 @@ type OverviewRow struct {
 	Oper       *string `json:"oper,omitzero"`
 	Channel    *int    `json:"channel,omitzero"`
 	Width      *int    `json:"channel_width,omitzero"`
-	TxPower    *int8   `json:"tx_power_dbm,omitzero"`
+	TxPower    *int8   `json:"txpower,omitzero"`
 	Clients    *int    `json:"clients,omitzero"`
 	ChUtil     *int    `json:"channel_utilization,omitzero"`
 	RFProfile  *string `json:"rf_profile,omitzero"`
@@ -69,7 +69,7 @@ func OverviewColumns() []render.Column[OverviewRow] {
 			Sort: func(r OverviewRow) any { return render.SortValue(r.Width) },
 		},
 		{
-			Key: "tx_power_dbm", Header: "TxPower",
+			Key: "txpower", Header: "TxPower",
 			Cell: func(r OverviewRow) string { return render.UnitPtr(r.TxPower, "dBm") },
 			Sort: func(r OverviewRow) any { return render.SortValue(r.TxPower) },
 		},

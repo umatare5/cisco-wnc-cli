@@ -256,7 +256,7 @@ func TestOverviewRows(t *testing.T) {
 
 	// Each measured cell carries its unit. The JSON keeps the bare number.
 	for key, want := range map[string]string{
-		"channel": "11ch", "channel_width": "20MHz", "tx_power_dbm": "19dBm",
+		"channel": "11ch", "channel_width": "20MHz", "txpower": "19dBm",
 		"channel_utilization": "28%",
 	} {
 		if first[key] != want {
@@ -272,7 +272,7 @@ func TestOverviewRows(t *testing.T) {
 	second := cellsOf(OverviewColumns(), rows[1])
 	// An absent oper state must not be folded into Down: that would report an outage
 	// the controller never described.
-	for _, key := range []string{"mode", "band", "admin", "oper", "channel", "channel_width", "tx_power_dbm", "clients", "channel_utilization", "rf_profile"} {
+	for _, key := range []string{"mode", "band", "admin", "oper", "channel", "channel_width", "txpower", "clients", "channel_utilization", "rf_profile"} {
 		if second[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, second[key], render.Absent)
 		}
@@ -671,9 +671,9 @@ func TestOverviewRowsMonitorAndSnifferRadios(t *testing.T) {
 
 		// These two carry no guard in the schema, so suppressing them would discard a
 		// value the controller sent.
-		if cells["channel_width"] == render.Absent || cells["tx_power_dbm"] == render.Absent {
+		if cells["channel_width"] == render.Absent || cells["txpower"] == render.Absent {
 			t.Errorf("row %d dropped a reported value: width=%q power=%q",
-				i, cells["channel_width"], cells["tx_power_dbm"])
+				i, cells["channel_width"], cells["txpower"])
 		}
 
 		// A serving radio with no clients and an idle channel reads the same as one of
