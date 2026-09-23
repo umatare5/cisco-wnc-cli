@@ -20,10 +20,10 @@ type OverviewRow struct {
 	Admin      *string `json:"admin,omitzero"`
 	Oper       *string `json:"oper,omitzero"`
 	Channel    *int    `json:"channel,omitzero"`
-	Width      *int    `json:"channel_width_mhz,omitzero"`
+	Width      *int    `json:"channel_width,omitzero"`
 	TxPower    *int8   `json:"tx_power_dbm,omitzero"`
 	Clients    *int    `json:"clients,omitzero"`
-	ChUtil     *int    `json:"ch_util_percent,omitzero"`
+	ChUtil     *int    `json:"channel_utilization,omitzero"`
 	RFProfile  *string `json:"rf_profile,omitzero"`
 	Controller string  `json:"controller"`
 }
@@ -64,7 +64,7 @@ func OverviewColumns() []render.Column[OverviewRow] {
 			Sort: func(r OverviewRow) any { return render.SortValue(r.Channel) },
 		},
 		{
-			Key: "channel_width_mhz", Header: "Width",
+			Key: "channel_width", Header: "Width",
 			Cell: func(r OverviewRow) string { return render.UnitPtr(r.Width, "MHz") },
 			Sort: func(r OverviewRow) any { return render.SortValue(r.Width) },
 		},
@@ -79,7 +79,7 @@ func OverviewColumns() []render.Column[OverviewRow] {
 			Sort: func(r OverviewRow) any { return render.SortValue(r.Clients) },
 		},
 		{
-			Key: "ch_util_percent", Header: "ChUtil",
+			Key: "channel_utilization", Header: "ChUtil",
 			Cell: func(r OverviewRow) string { return render.UnitPtr(r.ChUtil, "%") },
 			Sort: func(r OverviewRow) any { return render.SortValue(r.ChUtil) },
 		},

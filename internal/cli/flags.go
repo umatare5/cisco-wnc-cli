@@ -86,7 +86,7 @@ func showFlags() []cli.Flag {
 		},
 		&cli.StringSliceFlag{
 			Name:  config.FlagColumns,
-			Usage: "comma-separated `keys` to print, or " + config.ColumnsAll + " (see --" + config.FlagSortKeys + ")",
+			Usage: "comma-separated `keys` to print, or " + config.ColumnsAll + " (see --" + config.FlagListKeys + ")",
 		},
 	}
 }
@@ -206,11 +206,11 @@ func sortFlags(defaultKey string) []cli.Flag {
 		&cli.StringFlag{
 			Name:    config.FlagSortBy,
 			Aliases: []string{"b"},
-			Usage:   "sort `key` (see --" + config.FlagSortKeys + ")",
+			Usage:   "sort `key` (see --" + config.FlagListKeys + ")",
 			Value:   defaultKey,
 		},
 		&cli.BoolFlag{
-			Name:  config.FlagSortKeys,
+			Name:  config.FlagListKeys,
 			Usage: "print the keys --" + config.FlagSortBy + " and --" + config.FlagColumns + " accept, then exit",
 		},
 	}

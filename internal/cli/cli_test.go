@@ -695,7 +695,7 @@ func writeFile(t *testing.T, body string) string {
 
 // A listing of a command's own vocabulary needs no controller and no token, so it must
 // not fail on their absence and must not reach the network.
-func TestSortKeysNeedsNoController(t *testing.T) {
+func TestListKeysNeedsNoController(t *testing.T) {
 	for _, tt := range []struct {
 		noun string
 		keys []string
@@ -711,7 +711,7 @@ func TestSortKeysNeedsNoController(t *testing.T) {
 		{"rf-tag", show.RFTagKeys()},
 	} {
 		t.Run(tt.noun, func(t *testing.T) {
-			got := runCLI(t, "", false, "show", tt.noun, "--sort-keys")
+			got := runCLI(t, "", false, "show", tt.noun, "--list-keys")
 
 			if got.code != ExitOK {
 				t.Fatalf("exit = %d, want %d (stderr %q)", got.code, ExitOK, got.stderr)
@@ -730,12 +730,12 @@ func TestSortKeysNeedsNoController(t *testing.T) {
 
 // The listing answers before the settings are resolved, so a value Resolve would have
 // rejected does not turn a listing into a fault.
-func TestSortKeysOutranksARejectedValue(t *testing.T) {
+func TestListKeysOutranksARejectedValue(t *testing.T) {
 	for _, args := range [][]string{
-		{"show", "ap", "--sort-keys", "-b", "bogus"},
-		{"show", "ap", "--sort-keys", "-t", "0"},
-		{"show", "ap", "--sort-keys", "-c", "192.0.2.1"},
-		{"show", "ap", "--sort-keys", "--columns", "bogus"},
+		{"show", "ap", "--list-keys", "-b", "bogus"},
+		{"show", "ap", "--list-keys", "-t", "0"},
+		{"show", "ap", "--list-keys", "-c", "192.0.2.1"},
+		{"show", "ap", "--list-keys", "--columns", "bogus"},
 	} {
 		t.Run(strings.Join(args[2:], " "), func(t *testing.T) {
 			got := runCLI(t, "", false, args...)
@@ -775,7 +775,7 @@ func TestEveryShowSubcommandCarriesTheSortFlags(t *testing.T) {
 			}
 		}
 
-		for _, want := range []string{"sort-by", "sort-keys"} {
+		for _, want := range []string{"sort-by", "list-keys"} {
 			if !names[want] {
 				t.Errorf("show %s does not declare --%s", leaf.Name, want)
 			}

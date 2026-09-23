@@ -11,8 +11,8 @@ The flags a command takes follow from what that command does:
 | :---------------------- | :---------------------------------------------------------- |
 | Every command           | `--config`, `--log-level`, `--dry-run`                      |
 | Contacting a controller | `--controller`, `--access-token`, `--insecure`, `--timeout` |
-| Reading, so `show` only | `--format`, `--pretty`, `--columns`                         |
-| Sorting, so `show` only | `--sort-by`, `--sort-keys`, `--sort-order`                  |
+| Reading, so `show` only | `--format`, `--pretty`, `--columns`, `--list-keys`          |
+| Sorting, so `show` only | `--sort-by`, `--sort-order`                                 |
 | Acting, so asking first | `--yes`                                                     |
 
 Without a command, `--dry-run` validates the configuration and contacts nothing.
@@ -22,7 +22,7 @@ With one, a `show` command names the controllers it would read and contacts none
 That set leaves out client and access point addresses, serial numbers, coordinates, usernames and LLDP neighbors, because each identifies a device, a person or a site.
 It also leaves out a fixed set of other columns on `show ap`, `show ap-join`, `show client` and `show wlan`, so the default table stays narrow.
 
-The `Expected result` of each view in [Show commands](command.show.md) shows the set that remains, and `--sort-keys` lists every key whether the default set prints it or not.
+The `Expected result` of each view in [Show commands](command.show.md) shows the set that remains, and `--list-keys` lists every key whether the default set prints it or not.
 `--sort-by` still takes a key the selection leaves out, because sorting runs before it.
 
 `--insecure` drops certificate verification, so it accepts an interception as readily as a private CA.

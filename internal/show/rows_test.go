@@ -53,15 +53,15 @@ func TestClientRowsAbsenceRules(t *testing.T) {
 
 	cells := cellsOf(ClientColumns(), rows[0])
 
-	for _, key := range []string{"username", "ipv4", "channel", "speed_mbps", "spatial_streams", "rssi_dbm"} {
+	for _, key := range []string{"username", "ipv4", "channel", "speed", "spatial_streams", "rssi"} {
 		if cells[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, cells[key], render.Absent)
 		}
 	}
 
 	// Slot 0 is a real radio and 0 dB of SNR is a real margin, so neither is suppressed.
-	if cells["slot"] != "0" || cells["snr_db"] != "0dB" {
-		t.Errorf("slot = %q, snr = %q; both should read as reported zeros", cells["slot"], cells["snr_db"])
+	if cells["slot"] != "0" || cells["snr"] != "0dB" {
+		t.Errorf("slot = %q, snr = %q; both should read as reported zeros", cells["slot"], cells["snr"])
 	}
 
 	// The band and the protocol come from different leaves and must not be the same
@@ -85,8 +85,8 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 
 	cells := cellsOf(cols, reported[0])
 	for key, want := range map[string]string{
-		"channel": "6ch", "rssi_dbm": "-21dBm", "snr_db": "78dB",
-		"speed_mbps": "143Mbps", "spatial_streams": "1ss",
+		"channel": "6ch", "rssi": "-21dBm", "snr": "78dB",
+		"speed": "143Mbps", "spatial_streams": "1ss",
 	} {
 		if cells[key] != want {
 			t.Errorf("%s = %q, want %q", key, cells[key], want)
@@ -94,10 +94,10 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 	}
 
 	// A unit on an unreported value would read as a measurement rather than the lack of one.
-	// snr_db is in this list because 0 dB is a real margin: it is the one cell here whose
+	// snr is in this list because 0 dB is a real margin: it is the one cell here whose
 	// value cannot be told from its absence without the pointer the fetch layer sets.
 	absent := clientRows([]wnc.WirelessClient{{MAC: "00:00:5e:00:53:a2"}}, ClientFilter{}, target, &Reporter{})
-	for _, key := range []string{"channel", "rssi_dbm", "snr_db", "speed_mbps", "spatial_streams"} {
+	for _, key := range []string{"channel", "rssi", "snr", "speed", "spatial_streams"} {
 		if got := cellsOf(cols, absent[0])[key]; got != render.Absent {
 			t.Errorf("%s = %q, want %q", key, got, render.Absent)
 		}
@@ -115,7 +115,7 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 		}
 	}
 
-	for _, bare := range []string{`"channel":6`, `"rssi_dbm":-21`, `"snr_db":78`, `"speed_mbps":143`} {
+	for _, bare := range []string{`"channel":6`, `"rssi":-21`, `"snr":78`, `"speed":143`} {
 		if !strings.Contains(buf.String(), bare) {
 			t.Errorf("the JSON lost %s:\n%s", bare, buf.String())
 		}
@@ -256,8 +256,8 @@ func TestOverviewRows(t *testing.T) {
 
 	// Each measured cell carries its unit. The JSON keeps the bare number.
 	for key, want := range map[string]string{
-		"channel": "11ch", "channel_width_mhz": "20MHz", "tx_power_dbm": "19dBm",
-		"ch_util_percent": "28%",
+		"channel": "11ch", "channel_width": "20MHz", "tx_power_dbm": "19dBm",
+		"channel_utilization": "28%",
 	} {
 		if first[key] != want {
 			t.Errorf("%s = %q, want %q", key, first[key], want)
@@ -272,7 +272,7 @@ func TestOverviewRows(t *testing.T) {
 	second := cellsOf(OverviewColumns(), rows[1])
 	// An absent oper state must not be folded into Down: that would report an outage
 	// the controller never described.
-	for _, key := range []string{"mode", "band", "admin", "oper", "channel", "channel_width_mhz", "tx_power_dbm", "clients", "ch_util_percent", "rf_profile"} {
+	for _, key := range []string{"mode", "band", "admin", "oper", "channel", "channel_width", "tx_power_dbm", "clients", "channel_utilization", "rf_profile"} {
 		if second[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, second[key], render.Absent)
 		}
@@ -671,16 +671,16 @@ func TestOverviewRowsMonitorAndSnifferRadios(t *testing.T) {
 
 		// These two carry no guard in the schema, so suppressing them would discard a
 		// value the controller sent.
-		if cells["channel_width_mhz"] == render.Absent || cells["tx_power_dbm"] == render.Absent {
+		if cells["channel_width"] == render.Absent || cells["tx_power_dbm"] == render.Absent {
 			t.Errorf("row %d dropped a reported value: width=%q power=%q",
-				i, cells["channel_width_mhz"], cells["tx_power_dbm"])
+				i, cells["channel_width"], cells["tx_power_dbm"])
 		}
 
 		// A serving radio with no clients and an idle channel reads the same as one of
 		// these, which is exactly why the mode column exists.
-		if cells["clients"] != "0clients" || cells["ch_util_percent"] != "0%" {
+		if cells["clients"] != "0clients" || cells["channel_utilization"] != "0%" {
 			t.Errorf("row %d lost a reported zero: clients=%q util=%q",
-				i, cells["clients"], cells["ch_util_percent"])
+				i, cells["clients"], cells["channel_utilization"])
 		}
 	}
 }

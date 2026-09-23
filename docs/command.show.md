@@ -30,7 +30,7 @@ TEST-AP03  2     FlexConnect  6     Enabled  Up    5ch      40MHz  18dBm    1cli
 <details><summary>Case 1: List the radios above 50% utilization, worst first</summary><p>
 
 ```bash
-wnc show overview -f json | jq -r '.[] | select(.ch_util_percent > 50) | "\(.ap_name)/\(.slot) \(.ch_util_percent)%"'
+wnc show overview -f json | jq -r '.[] | select(.channel_utilization > 50) | "\(.ap_name)/\(.slot) \(.channel_utilization)%"'
 ```
 
 </p></details>
@@ -227,8 +227,8 @@ Example Sensor  test-essid03  TEST-AP03  6     11be      5ch      Authenticating
 <details><summary>Case 1: List the clients with a weak signal</summary><p>
 
 ```bash
-wnc show client -f json --columns mac,ap_name,rssi_dbm \
-  | jq -r '.[] | select(.rssi_dbm != null and .rssi_dbm < -70) | "\(.mac) \(.ap_name) \(.rssi_dbm)"'
+wnc show client -f json --columns mac,ap_name,rssi \
+  | jq -r '.[] | select(.rssi != null and .rssi < -70) | "\(.mac) \(.ap_name) \(.rssi)"'
 ```
 
 </p></details>

@@ -22,7 +22,7 @@ const (
 	FlagPretty      = "pretty"
 	FlagTimeout     = "timeout"
 	FlagSortBy      = "sort-by"
-	FlagSortKeys    = "sort-keys"
+	FlagListKeys    = "list-keys"
 	FlagSortOrder   = "sort-order"
 	FlagColumns     = "columns"
 	FlagRadio       = "radio"
