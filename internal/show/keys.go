@@ -57,7 +57,7 @@ const (
 func OverviewKeys() []string {
 	return []string{
 		keyAPName, keyAPMAC, keySlot, keyMode, keyBand, keyAdmin, "oper",
-		keyChannel, "channel_width", "tx_power_dbm", "clients",
+		keyChannel, "channel_width", "txpower", "clients",
 		"channel_utilization", "rf_profile", keyController,
 	}
 }
