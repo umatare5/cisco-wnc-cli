@@ -161,6 +161,25 @@ func TestJSONCarriesTheKeysInTheirOrder(t *testing.T) {
 	}
 }
 
+// A row is encoded whole before its keys are picked, so its json tags still decide an absence.
+func TestJSONKeepsTheRowTags(t *testing.T) {
+	t.Parallel()
+
+	type tagged struct {
+		Zero string `json:"zero,omitzero"`
+		Set  string `json:"set"`
+	}
+
+	var buf bytes.Buffer
+	if err := JSON(&buf, []tagged{{Set: "x"}}, []string{"zero", "set"}); err != nil {
+		t.Fatalf("JSON: %v", err)
+	}
+
+	if got, want := buf.String(), `[{"set":"x"}]`+"\n"; got != want {
+		t.Errorf("JSON = %q, want %q", got, want)
+	}
+}
+
 func TestIEC(t *testing.T) {
 	t.Parallel()
 

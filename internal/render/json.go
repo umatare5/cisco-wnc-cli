@@ -5,26 +5,31 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"reflect"
-	"strings"
 )
 
-// JSON writes the rows as a flat array of objects holding the given keys in that order, and leaves
-// out a nil pointer, the absence the row tags spell as omitzero. json/v2 marshals a nil slice to []
-// and escapes no HTML, and MarshalWrite adds no trailing newline, so one is appended here.
+// JSON writes the rows as a flat array of objects holding the given keys in that order. Each row is
+// marshaled whole before its keys are picked, so the row's json tags still decide every value and
+// every absence. json/v2 marshals a nil slice to [] and escapes no HTML, and MarshalWrite adds no
+// trailing newline, so one is appended here.
 func JSON[T any](w io.Writer, rows []T, keys []string) error {
-	fields := fieldsByTag[T]()
-
 	object := json.MarshalToFunc(func(enc *jsontext.Encoder, row T) error {
+		raw, err := json.Marshal(row)
+		if err != nil {
+			return err
+		}
+
+		var members map[string]jsontext.Value
+		if err := json.Unmarshal(raw, &members); err != nil {
+			return err
+		}
+
 		if err := enc.WriteToken(jsontext.BeginObject); err != nil {
 			return err
 		}
 
-		v := reflect.ValueOf(row)
-
 		for _, k := range keys {
-			f := v.Field(fields[k])
-			if f.Kind() == reflect.Pointer && f.IsNil() {
+			v, ok := members[k]
+			if !ok {
 				continue
 			}
 
@@ -32,7 +37,7 @@ func JSON[T any](w io.Writer, rows []T, keys []string) error {
 				return err
 			}
 
-			if err := json.MarshalEncode(enc, f.Interface()); err != nil {
+			if err := enc.WriteValue(v); err != nil {
 				return err
 			}
 		}
@@ -49,18 +54,4 @@ func JSON[T any](w io.Writer, rows []T, keys []string) error {
 	}
 
 	return nil
-}
-
-// fieldsByTag indexes T's fields by json name, which an invariant test in internal/show pins to
-// the column keys.
-func fieldsByTag[T any]() map[string]int {
-	typ := reflect.TypeFor[T]()
-	out := make(map[string]int, typ.NumField())
-
-	for i := range typ.NumField() {
-		name, _, _ := strings.Cut(typ.Field(i).Tag.Get("json"), ",")
-		out[name] = i
-	}
-
-	return out
 }
