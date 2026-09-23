@@ -11,7 +11,7 @@ import (
 
 // tagLeaves is every kind the set and delete trees carry, with the RESTCONF elements each
 // one reaches. The three lists are keyed independently on the controller, so a leaf reaching
-// another kind's list would be invisible to a per-kind test — every case below asserts that
+// another kind's list would be invisible to a per-kind test – every case below asserts that
 // nothing else was touched.
 var tagLeaves = []struct {
 	leaf  string
@@ -49,7 +49,7 @@ type tagStub struct {
 }
 
 // newTagStub serves a controller on which the tag either exists or does not. An absent tag
-// answers 404 on the keyed URL, which is what the controller does — measured on 17.12.8 —
+// answers 404 on the keyed URL, as the controller does – measured on 17.12.8 –
 // rather than an empty record.
 func newTagStub(t *testing.T, exists bool) *tagStub {
 	t.Helper()
@@ -373,7 +373,7 @@ func TestTagDeleteRefusesAnAbsentName(t *testing.T) {
 }
 
 // A dry run reads, reports and writes nothing. Reading is not changing, so it does contact
-// the controller; the assertion is that no write does.
+// the controller. The assertion is that no write does.
 func TestTagDryRunWritesNothing(t *testing.T) {
 	for _, verb := range []string{"set", "delete"} {
 		for _, leaf := range tagLeaves {
@@ -452,8 +452,8 @@ func TestTagConfirmation(t *testing.T) {
 	}
 }
 
-// urfave trims a positional argument and does not trim a flag value — measured against
-// v3.11.0 — so a padded --name reaches the tag-name validator and is refused with nothing
+// urfave trims a positional argument and does not trim a flag value – measured against
+// v3.11.0 – so a padded --name reaches the tag-name validator and is refused with nothing
 // sent. An inner space is the key leaf's own business and passes.
 func TestTagNameKeepsTheSpacesAFlagValueCarries(t *testing.T) {
 	for _, tt := range []struct {
@@ -491,7 +491,7 @@ func TestTagNameKeepsTheSpacesAFlagValueCarries(t *testing.T) {
 
 // The combination guard runs ahead of the name, so a contradiction is named before a
 // missing name is. Both faults are exit 2 and neither reaches a controller, so the message
-// is the only thing that shows which one was decided first — and the order is the design.
+// is the only thing that shows which one was decided first – and the order is the design.
 func TestTagSetNamesTheContradictionBeforeTheMissingName(t *testing.T) {
 	got := runCLI(t, "", false, "set", "policy-tag", "--wlan", "test-corp")
 

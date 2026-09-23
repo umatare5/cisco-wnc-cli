@@ -9,8 +9,8 @@ import (
 )
 
 // A column is declared in three places: the key list --sort-by validates against, the Column list
-// both renderers walk, and the row struct's json tags. This asserts the three agree, in order,
-// which is what catches a copied struct line json/v2 would reject at run time.
+// both renderers walk, and the row struct's json tags. This asserts they agree, in order,
+// which catches a copied struct line json/v2 would reject at run time.
 func assertColumns[R any](t *testing.T, keys []string, cols []render.Column[R]) {
 	t.Helper()
 
@@ -39,8 +39,10 @@ func assertColumns[R any](t *testing.T, keys []string, cols []render.Column[R]) 
 
 // assertTagOptions enforces the row-struct rules. omitempty is banned outright: it
 // drops a reported zero, a reported empty string and a reported false, each of which
-// is a reading. omitzero is allowed only on a pointer, where the zero value is nil
-// and therefore genuinely means "not reported". The json format option is banned
+// is a reading.
+//
+// omitzero is allowed only on a pointer, where the zero value is nil and therefore
+// genuinely means "not reported". The json format option is banned
 // because every one of its values is rejected at run time, after passing both the
 // compiler and the linter.
 func assertTagOptions(t *testing.T, typ reflect.Type, opts map[string][]string) {

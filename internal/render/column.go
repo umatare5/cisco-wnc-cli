@@ -3,7 +3,7 @@
 // one and be missing from the others.
 package render
 
-// Absent is what a table cell shows where the controller reported nothing. The
+// Absent is the table cell shown where the controller reported nothing. The
 // JSON form omits the key instead of writing this, so a consumer parsing the JSON
 // never has to recognize a placeholder.
 const Absent = "-"
@@ -18,8 +18,8 @@ type Column[T any] struct {
 	// Header is the table heading.
 	Header string
 
-	// Cell renders the table cell. It is also what Sort falls back to, so this and
-	// not Pretty is the text an unsorted column is ordered by.
+	// Cell renders the table cell. Sort falls back to it, so a column with no Sort function is
+	// ordered by this text and not by Pretty.
 	Cell func(T) string
 
 	// Pretty renders the cell for the bordered table only, and is nil on every column

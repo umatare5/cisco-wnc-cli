@@ -33,7 +33,7 @@ func RunWith(args []string, st Streams) int {
 	code := exitCode(ctx, err)
 
 	if err != nil && code != ExitSignal && !reported(err) {
-		// This is the last thing written; a failure here has nowhere left to go.
+		// This is the last thing written. A failure here has nowhere left to go.
 		_, _ = fmt.Fprintf(st.Err, "wnc: %s\n", failureLine(err))
 	}
 
@@ -42,7 +42,7 @@ func RunWith(args []string, st Streams) int {
 
 // failureLine is the one line a failure prints. Nothing in this package builds a cli.ExitCoder, so
 // one can only be urfave's own, and its "No help topic" text repeats the word verbatim past every
-// redaction in usage.go — "-h <token>" is one keystroke from "-h", so a fixed line replaces it.
+// redaction in usage.go. "-h <token>" is one keystroke from "-h", so a fixed line replaces it.
 func failureLine(err error) string {
 	var coder cli.ExitCoder
 	if errors.As(err, &coder) {
@@ -52,8 +52,8 @@ func failureLine(err error) string {
 	return err.Error()
 }
 
-// stdinIsPiped reports whether stdin is anything other than a terminal, which is
-// what decides whether generate-token may read a password from it.
+// stdinIsPiped reports whether stdin is anything other than a terminal, which decides
+// whether generate-token may read a password from it.
 func stdinIsPiped() (bool, error) {
 	info, err := os.Stdin.Stat()
 	if err != nil {

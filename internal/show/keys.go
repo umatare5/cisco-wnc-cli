@@ -54,7 +54,7 @@ const (
 	DefaultSortRFTag     = keyRFTag
 )
 
-// OverviewKeys are the columns of show overview, one row per AP radio.
+// OverviewKeys are the columns of show overview, one row per access point radio.
 func OverviewKeys() []string {
 	return []string{
 		keyAPName, keyAPMAC, keySlot, keyMode, keyBand, keyAdmin, "oper",
@@ -103,7 +103,7 @@ func PolicyTagKeys() []string {
 	}
 }
 
-// SiteTagKeys are the columns of show site-tag, one row per site tag. ap_join_profile is spelt as
+// SiteTagKeys are the columns of show site-tag, one row per site tag. ap_join_profile is spelled as
 // the leaf and the --ap-join-profile flag spell it, where show ap-tag calls it ap_profile.
 func SiteTagKeys() []string {
 	return []string{

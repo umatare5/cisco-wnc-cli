@@ -9,7 +9,7 @@ import (
 )
 
 // radioTypeRemoteLAN is the pseudo-radio the controller lists for a remote-LAN port. A "when
-// radio-type != 'radio-remote-lan'" guard withholds every leaf but the list key and this one on
+// radio-type != 'radio-remote-lan'" guard withholds every leaf except the list key and this one on
 // all three releases in scope, so no radio quantity is readable and Radios drops the record.
 const radioTypeRemoteLAN = "radio-remote-lan"
 
@@ -57,7 +57,7 @@ type radioKey struct {
 	slot int
 }
 
-// Radios reads the per-radio view. The radio collection drives the rows; the access
+// Radios reads the per-radio view. The radio collection drives the rows. The access
 // point names, the client tally, the channel utilization and the RF profile names are
 // each secondary and cost only their own cells.
 func (c *Client) Radios(ctx context.Context) ([]Radio, OverviewReads, error) {
@@ -116,8 +116,8 @@ func (c *Client) Radios(ctx context.Context) ([]Radio, OverviewReads, error) {
 	return radios, reads, nil
 }
 
-// radioAPInfo maps each access point's address to its name and to the RF tag in force. It takes
-// apTagFields, the same three nodes the tag view reads, and names the whole tag-info container for
+// radioAPInfo maps each access point's address to its name and to the RF tag in effect. It takes
+// apTagFields, the same nodes the tag view reads, and names the whole tag-info container for
 // the reason stated there.
 func (c *Client) radioAPInfo(ctx context.Context) (names, tags map[string]string, err error) {
 	resp, err := c.sdk.AP().ListCAPWAPData(ctx, sdk.WithFields(apTagFields))
@@ -140,11 +140,15 @@ func (c *Client) radioAPInfo(ctx context.Context) (names, tags map[string]string
 	return names, tags, nil
 }
 
-// radioClientCounts tallies the clients the controller has in the run state, per radio; a nil
+// radioClientCounts tallies the clients the controller has in the run state, per radio. A nil
 // result means the count could not be established at all. The tally comes from the client list
-// rather than from the measurement row's stations leaf, because that list is shorter than the radio
-// list and a radio without a row would report zero through a non-pointer int; the client records
-// carry the access point's name and no address, so without the name map there is no count.
+// rather than from the measurement row's stations leaf.
+//
+// That list is shorter than the radio list, so a radio without a row would report zero through
+// a non-pointer int.
+//
+// The client records carry the access point's name and no address, so without the name map there
+// is no count at all.
 func (c *Client) radioClientCounts(ctx context.Context, names map[string]string) (map[radioKey]int, error) {
 	resp, err := c.sdk.Client().ListCommonInfo(ctx)
 	if err != nil {
@@ -179,7 +183,7 @@ func (c *Client) radioClientCounts(ctx context.Context, names map[string]string)
 const clientStateRun = "client-status-run"
 
 // radioUtilization indexes the channel utilization by radio. The load container is a pointer and
-// its presence is what marks the reading as real, but the percentage inside it is not, so a present
+// its presence marks the reading as real, but the percentage inside it does not. A present
 // container with the leaf omitted would read as an idle channel and nothing can tell those apart.
 func (c *Client) radioUtilization(ctx context.Context) (map[radioKey]int, error) {
 	resp, err := c.sdk.RRM().ListRRMMeasurement(ctx)
@@ -204,7 +208,7 @@ func (c *Client) radioUtilization(ctx context.Context) (map[radioKey]int, error)
 	return out, nil
 }
 
-// bandProfileKey selects one RF profile name: the tag in force and the band the radio
+// bandProfileKey selects one RF profile name: the tag in effect and the band the radio
 // is on.
 type bandProfileKey struct {
 	tag  string
@@ -221,10 +225,12 @@ const (
 )
 
 // rfTagProfiles reads the RF tags and indexes each per-band profile name. It is the one read in
-// this view that takes with-defaults=report-all, needed because the built-in default tag omits all
-// three per-band names on a plain read, and the operational reads must never take it because
-// absence there is structural. The profile is selected by the radio's band and not its slot,
-// because an XOR radio on slot 2 can be operating in 5 or 6 GHz.
+// this view that takes with-defaults=report-all, because the built-in default tag omits its
+// per-band names on a plain read.
+//
+// The operational reads must never take it, because absence there is structural. The profile is
+// selected by the radio's band and not its slot, because an XOR radio on slot 2 can be
+// operating in 5 or 6 GHz.
 func (c *Client) rfTagProfiles(ctx context.Context) (map[bandProfileKey]string, error) {
 	resp, err := c.sdk.RF().ListRFTags(ctx, sdk.WithDefaults(sdk.ReportAll))
 	if err != nil {
@@ -248,9 +254,10 @@ func (c *Client) rfTagProfiles(ctx context.Context) (map[bandProfileKey]string, 
 
 // txPower picks the transmit power of the band the radio is actually on, matching band-id against
 // current-band-id. Those are bare integers on a domain of 0 for 2.4, 1 for 5 and 2 for 6 GHz, a
-// different numbering from the band enum, so the two must never be converted into one another;
-// neither taking the first record nor indexing by the band id is correct, and a nil
-// current-band-id is refused rather than read as band 0.
+// different numbering from the band enum, so the two must never be converted into one another.
+//
+// Taking the first record is wrong, and so is indexing by the band id. A nil current-band-id is
+// refused rather than read as band 0.
 func txPower(bands []ap.RadioBandInfo, currentBandID *int) *int8 {
 	if currentBandID == nil {
 		return nil
@@ -266,7 +273,7 @@ func txPower(bands []ap.RadioBandInfo, currentBandID *int) *int8 {
 }
 
 // deref reads through a pointer the SDK declares for a leaf whose absence and whose empty
-// value render alike downstream, so the two need not be kept apart here.
+// value render the same downstream, so the two do not have to be kept apart here.
 func deref[T any](p *T) T {
 	if p == nil {
 		var zero T

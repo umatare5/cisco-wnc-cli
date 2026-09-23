@@ -14,7 +14,7 @@ import (
 	"github.com/umatare5/cisco-wnc-cli/internal/wnc"
 )
 
-// leafAP is spelt by more than one tree, declared once so show, reset, enable and disable
+// leafAP is spelled by more than one tree, declared once so show, reset, enable and disable
 // cannot disagree about what an operator types.
 const leafAP = "ap"
 
@@ -27,10 +27,10 @@ func yesFlag() cli.Flag {
 	}
 }
 
-// apNameFlag names the access point the six leaves of reset, enable and disable act on. It
+// apNameFlag names the access point every leaf of reset, enable and disable acts on. It
 // declares no Sources deliberately: urfave counts an empty environment variable as set and
-// applies it through Set, so an exported variable would make Count report a target nobody
-// named in the invocation.
+// applies it through Set, so an exported variable would make Count report a target the
+// invocation never named.
 func apNameFlag() cli.Flag {
 	return &cli.StringFlag{
 		Name:  config.FlagAPName,
@@ -38,7 +38,7 @@ func apNameFlag() cli.Flag {
 	}
 }
 
-// writeWording is every operator-facing string one action produces. The four templates take the
+// writeWording is every operator-facing string one action produces. The templates take the
 // same arguments on purpose: a leaf that worded its prompt about one target and its report about
 // another would be undetectable from the exit code.
 type writeWording struct {
@@ -76,8 +76,8 @@ func actionPrologue(ctx context.Context, cmd *cli.Command) (config.Target, *wnc.
 }
 
 // confirmAndAct is the whole of every write past its last read: the dry-run report, the prompt, the
-// cancellation, the one call that changes something and the line that reports it. Fourteen leaves
-// reach it, and a refused run changing nothing is the property all fourteen must have.
+// cancellation, the one call that changes something and the line that reports it. Every leaf that
+// writes reaches it, and a refused run changing nothing is the property each must have.
 func confirmAndAct(
 	ctx context.Context, cmd *cli.Command, w writeWording,
 	act func(context.Context) error, args ...any,
@@ -108,17 +108,17 @@ func confirmAndAct(
 	}
 
 	// Whether "sent" may claim a completion is each wording's own business. save-config's RPC
-	// declares an output container and the six tag leaves name the one node the controller answered
-	// 201 or 204 for, so those seven say what happened; the other seven post an RPC declaring no
-	// output, where a 204 establishes only that the instruction was accepted.
+	// declares an output container and the tag leaves name the one node the controller answered
+	// 201 or 204 for, so those say what happened. The rest post an RPC declaring no output,
+	// where a 204 establishes only that the instruction was accepted.
 	_, err = fmt.Fprintf(cmd.Root().Writer, w.sent, args...)
 
 	return err
 }
 
-// runAPAction is the whole of the four leaves that name one access point through --ap-name.
-// Everything decidable without the controller is decided first so exit 2 keeps meaning nothing was
-// sent, and the resolved address is discarded because all four RPCs take their ap-name arm.
+// runAPAction is the whole of the leaves that name one access point through --ap-name.
+// Everything decidable without the controller is decided first so exit 2 keeps meaning nothing
+// was sent, and the resolved address is discarded because each RPC takes its ap-name arm.
 func runAPAction(
 	ctx context.Context, cmd *cli.Command, w writeWording,
 	act func(ctx context.Context, c *wnc.Client, name string) error,
@@ -144,7 +144,7 @@ func runAPAction(
 
 // resolveAP settles that the controller holds the access point the operator named, and
 // returns the base radio address the keyed radio read is keyed on. It is the one read every
-// action makes: measured on 17.12, 17.15 and 17.18, ap-name-mac-map answers 404 for a name no
+// action makes. Measured on every release in scope, ap-name-mac-map answers 404 for a name no
 // access point holds, so a wrong name and a wrong --controller are told apart before a write.
 func resolveAP(
 	ctx context.Context, client *wnc.Client, target config.Target, name string,
@@ -185,12 +185,14 @@ func requireOne(cmd *cli.Command, flag, noun string) (string, error) {
 	return cmd.String(flag), nil
 }
 
-// requireAPName reads --ap-name. Only presence and emptiness are checked: measured on 17.18,
-// ap-name-mac-map answers 404 for a 256-character key and for one holding a space, a slash or
-// a multi-byte character alike, so the controller distinguishes no grammar this could enforce
-// and one invented here would refuse a name it holds. The emptiness check stays because the
-// SDK answers an empty key with its own not-found, which would reach the operator as a read
-// failure at exit 1.
+// requireAPName reads --ap-name. Only presence and emptiness are checked.
+//
+// Measured on 17.18.4a, ap-name-mac-map answers 404 for a 256-character key and for one holding
+// a space, a slash or a multi-byte character. The controller distinguishes no grammar this could
+// enforce, and one invented here would refuse a name it holds.
+//
+// The emptiness check stays because the SDK answers an empty key with its own not-found, which
+// would reach the operator as a read failure at exit 1.
 func requireAPName(cmd *cli.Command) (string, error) {
 	name, err := requireOne(cmd, config.FlagAPName, "access point")
 	if err != nil {
@@ -229,12 +231,12 @@ func requireAnswerable(st *runtimeState, yes, dryRun bool) error {
 		return nil
 	}
 
-	return fmt.Errorf("%w: stdin is not a terminal: pass --%s to act without a prompt",
+	return fmt.Errorf("%w: stdin is not a terminal, so pass --%s to act without a prompt",
 		ErrUsage, config.FlagYes)
 }
 
-// confirmAction asks before acting, and is shared by every command that writes. The target is
-// what the operator typed, so what the prompt still catches is the controller beside it — and
+// confirmAction asks before acting, and is shared by every command that writes. The target
+// repeats what the operator typed, so the prompt still catches the controller beside it – and
 // on the radio leaf the band, which is the controller's reading rather than the operator's.
 func confirmAction(st *runtimeState, yes bool, question string, args ...any) (bool, error) {
 	if yes {

@@ -121,7 +121,7 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 		}
 	}
 
-	// Text order would be 11, 1, 6; numeric order is 1, 6, 11.
+	// Text order would be 11, 1, 6. Numeric order is 1, 6, 11.
 	rows := clientRows([]wnc.WirelessClient{
 		{MAC: "b", Channel: 6}, {MAC: "c", Channel: 11}, {MAC: "a", Channel: 1},
 	}, ClientFilter{}, target, &Reporter{})
@@ -254,7 +254,7 @@ func TestOverviewRows(t *testing.T) {
 		t.Errorf("first row = %#v", first)
 	}
 
-	// Each measured cell carries its unit; the JSON keeps the bare number.
+	// Each measured cell carries its unit. The JSON keeps the bare number.
 	for key, want := range map[string]string{
 		"channel": "11ch", "channel_width_mhz": "20MHz", "tx_power_dbm": "19dBm",
 		"ch_util_percent": "28%",
@@ -357,7 +357,7 @@ func TestAPRowsAbsenceRules(t *testing.T) {
 		t.Errorf("country = %q, want the padding trimmed", first["country"])
 	}
 
-	// The sub-mode is what says a Monitor access point with no clients is healthy.
+	// The sub-mode says a Monitor access point with no clients is healthy.
 	if first["mode"] != "Monitor (WIPS)" {
 		t.Errorf("mode = %q", first["mode"])
 	}
@@ -421,7 +421,7 @@ func TestAPTagRowsAbsenceRules(t *testing.T) {
 }
 
 // The reason column has two ways of saying nothing and they are not the same. The enum
-// carries its own "no misconfiguration" member, which is a reading and must render; a
+// carries its own "no misconfiguration" member, which is a reading and must render. A
 // release that does not declare the leaf sends nothing, which must render as a dash.
 func TestAPTagMisconfigReasonKeepsItsNoneApartFromAbsence(t *testing.T) {
 	t.Parallel()
@@ -522,7 +522,7 @@ func TestAPModeWithSub(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct{ mode, sub, want string }{
-		// Member zero of the mode domain is spelt local-mode while the rest are mode-*,
+		// Member zero of the mode domain is spelled local-mode while the rest are mode-*,
 		// so no prefix rule produces this.
 		{"local-mode", "ap-sub-mode-none", "Local"},
 		{"mode-monitor", "wips-mode", "Monitor (WIPS)"},
@@ -596,7 +596,7 @@ func TestReporter(t *testing.T) {
 
 // A Monitor or Sniffer radio must read as a radio doing its job and not as a broken serving one.
 // The channel is absent because the controller guards that leaf on the mode, and the width and
-// power are values because it does not; the device's own summary renders all three as N/A, and
+// power are values because it does not. The device's own summary renders all three as N/A, and
 // discarding a reported value is the mirror image of inventing one.
 func TestOverviewRowsMonitorAndSnifferRadios(t *testing.T) {
 	t.Parallel()
@@ -761,7 +761,7 @@ func TestPrettyCellsNeverInventAState(t *testing.T) {
 			t.Errorf("prettyState(nil) = %q, want %q", got, render.Absent)
 		}
 
-		// A non-nil pointer to "" is what the plain cell renders as absent, so the
+		// The plain cell renders a non-nil pointer to "" as absent, so the
 		// glyph path has to agree with it rather than print a blank cell.
 		if got := prettyState(ptr(""), dispUp, dispDown, glyphBad); got != render.Absent {
 			t.Errorf("prettyState(ptr(%q)) = %q, want %q", "", got, render.Absent)
@@ -786,8 +786,8 @@ func TestPrettyCellsNeverInventAState(t *testing.T) {
 		}
 	})
 
-	// The overview's Oper column is the one with an inverted-free mapping, and ap-tag's
-	// Misconfigured is the one where true is the fault.
+	// show wlan's DHCP Required takes the healthy glyph on true, and ap-tag's
+	// Misconfigured takes the cross on it.
 	t.Run("the polarity is per column", func(t *testing.T) {
 		t.Parallel()
 
@@ -845,7 +845,7 @@ func TestAPAdminAndStateGlyphs(t *testing.T) {
 		{"unregistered", "adminstate-enabled", "unregistered", glyphOK, glyphWarn},
 		// A member neither table knows keeps the raw spelling under Admin, because that
 		// column names both of its members and cannot tell which side a third belongs
-		// to. State has no such doubt: anything but Registered is not serving.
+		// to. State has no such doubt: any value except Registered is not serving.
 		{"a future release", "adminstate-suspended", "ap-quiescing", "adminstate-suspended", glyphWarn},
 		{"nothing reported", "", "", render.Absent, render.Absent},
 	}
@@ -870,10 +870,11 @@ func TestAPAdminAndStateGlyphs(t *testing.T) {
 
 // A glyph has to measure for tablewriter what the terminal draws, or every bordered
 // row drifts past the cell holding it. Two properties give that, and this asserts both
-// with the same function that sizes the column: one code point, because a U+FE0F
-// selector asks for a two-column emoji rendering the measurement does not see, and a
-// width that does not move with the reader's locale, because tablewriter widens the
-// East Asian ambiguous range when it detects one.
+// with the same function that sizes the column. The first is one code point, because
+// a U+FE0F selector asks for a two-column emoji rendering the measurement does not see.
+//
+// The second is a width that does not move with the reader's locale, because
+// tablewriter widens the East Asian ambiguous range when it detects one.
 func TestGlyphsMeasureTheSameWidthEverywhere(t *testing.T) {
 	t.Parallel()
 

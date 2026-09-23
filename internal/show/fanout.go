@@ -14,7 +14,7 @@ import (
 	"github.com/umatare5/cisco-wnc-cli/internal/wnc"
 )
 
-// Env is what a show command needs from the CLI layer.
+// Env carries what a show command needs from the CLI layer.
 type Env struct {
 	Settings  config.Settings
 	Logger    *logrus.Logger
@@ -23,7 +23,7 @@ type Env struct {
 }
 
 // Fetcher reads one controller and builds its rows. The error it returns is fatal for that
-// controller, so its rows are dropped; a read costing only some cells goes to the Reporter and
+// controller, so its rows are dropped. A read costing only some cells goes to the Reporter and
 // the fetch continues.
 type Fetcher[R any] func(ctx context.Context, c *wnc.Client, t config.Target, rep *Reporter) ([]R, error)
 
@@ -34,7 +34,7 @@ type result[R any] struct {
 }
 
 // Run executes one show command end to end. Every controller is read concurrently while the reads
-// inside one are sequential, and reporting waits for all of them and then walks them in the order
+// inside one are sequential. Reporting waits for all of them and then walks them in the order
 // they were given, so two runs of the same command produce the same lines.
 func Run[R any](ctx context.Context, env Env, cols []render.Column[R], fetch Fetcher[R]) error {
 	results := make([]result[R], len(env.Settings.Controllers))
@@ -60,7 +60,7 @@ func Run[R any](ctx context.Context, env Env, cols []render.Column[R], fetch Fet
 	out := outcome(len(results), failed, degraded)
 
 	// With no controller answering there is nothing to print. A heading on its own
-	// says the fleet is empty, which is the opposite of what happened.
+	// would say no controller holds anything, which is the opposite of what happened.
 	if errors.Is(out, ErrAllFailed) {
 		return out
 	}

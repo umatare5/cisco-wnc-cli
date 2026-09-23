@@ -1,10 +1,10 @@
 # Help
 
-The help text of every command but `completion`, transcribed from the binary.
+This page transcribes the help text of every command except `completion`, as the binary prints it.
 
 ## wnc
 
-```plaintext
+```text
 NAME:
    wnc - Operate Cisco Catalyst 9800 Wireless Network Controllers
 
@@ -35,7 +35,7 @@ GLOBAL OPTIONS:
 
 ## wnc deauth
 
-```plaintext
+```text
 NAME:
    wnc deauth - Deauthenticate a client on a controller
 
@@ -44,12 +44,13 @@ USAGE:
 
 DESCRIPTION:
    --mac and --username are the mac and username columns of wnc show client,
-   and one invocation gives one of them. The controller resolves it first, so a
-   value it holds no client at is refused before the RPC, which answers the same
-   whether or not a client was there. A username may hold more than one session,
-   and the prompt says how many. The client is dropped and reconnects on its own
-   within about four minutes. The operation is absent before 17.15. Pass --dry-run
-   to name the target and change nothing.
+   and they select different clients, so give only one. The controller resolves
+   the target first, so a value it holds no client at is refused before the RPC,
+   which answers the same whether or not a client was there. A username may hold
+   more than one session, and the prompt says how many. The client is dropped and
+   re-associates on its own, on a timer its supplicant sets rather than the
+   controller, so allow about four minutes. The operation is absent before 17.15.6.
+   Pass --dry-run to name the target and change nothing.
 
 OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -68,7 +69,7 @@ GLOBAL OPTIONS:
 
 ## wnc delete
 
-```plaintext
+```text
 NAME:
    wnc delete - Delete a tag from a controller
 
@@ -94,7 +95,7 @@ GLOBAL OPTIONS:
 
 ## wnc delete policy-tag
 
-```plaintext
+```text
 NAME:
    wnc delete policy-tag - Delete one policy tag
 
@@ -124,7 +125,7 @@ INHERITED OPTIONS:
 
 ## wnc delete site-tag
 
-```plaintext
+```text
 NAME:
    wnc delete site-tag - Delete one site tag
 
@@ -154,7 +155,7 @@ INHERITED OPTIONS:
 
 ## wnc delete rf-tag
 
-```plaintext
+```text
 NAME:
    wnc delete rf-tag - Delete one RF tag
 
@@ -184,7 +185,7 @@ INHERITED OPTIONS:
 
 ## wnc disable
 
-```plaintext
+```text
 NAME:
    wnc disable - Disable an access point or one of its radios
 
@@ -209,7 +210,7 @@ GLOBAL OPTIONS:
 
 ## wnc disable ap
 
-```plaintext
+```text
 NAME:
    wnc disable ap - Disable one access point
 
@@ -240,7 +241,7 @@ INHERITED OPTIONS:
 
 ## wnc disable radio
 
-```plaintext
+```text
 NAME:
    wnc disable radio - Disable one radio of one access point
 
@@ -272,7 +273,7 @@ INHERITED OPTIONS:
 
 ## wnc enable
 
-```plaintext
+```text
 NAME:
    wnc enable - Enable an access point or one of its radios
 
@@ -297,7 +298,7 @@ GLOBAL OPTIONS:
 
 ## wnc enable ap
 
-```plaintext
+```text
 NAME:
    wnc enable ap - Enable one access point
 
@@ -328,7 +329,7 @@ INHERITED OPTIONS:
 
 ## wnc enable radio
 
-```plaintext
+```text
 NAME:
    wnc enable radio - Enable one radio of one access point
 
@@ -360,7 +361,7 @@ INHERITED OPTIONS:
 
 ## wnc generate-token
 
-```plaintext
+```text
 NAME:
    wnc generate-token - Print the Basic auth token for a controller account
 
@@ -379,7 +380,7 @@ GLOBAL OPTIONS:
 
 ## wnc reset
 
-```plaintext
+```text
 NAME:
    wnc reset - Restart an access point or its controller session
 
@@ -404,7 +405,7 @@ GLOBAL OPTIONS:
 
 ## wnc reset ap
 
-```plaintext
+```text
 NAME:
    wnc reset ap - Restart one access point
 
@@ -434,7 +435,7 @@ INHERITED OPTIONS:
 
 ## wnc reset capwap
 
-```plaintext
+```text
 NAME:
    wnc reset capwap - Reset one access point's controller session
 
@@ -465,7 +466,7 @@ INHERITED OPTIONS:
 
 ## wnc save-config
 
-```plaintext
+```text
 NAME:
    wnc save-config - Save the running configuration to the startup configuration
 
@@ -476,7 +477,7 @@ DESCRIPTION:
    The startup configuration is the only destination: no file may be named, and
    every change on the controller is persisted rather than only what this CLI
    wrote. An access point's admin state is unaffected, being no part of the
-   configuration. The save took two to four seconds on every release measured, so
+   configuration. The save took at most 3.7 seconds on every release measured, so
    a --timeout a read survives can still refuse it. Pass --dry-run to name the
    controller and change nothing.
 
@@ -495,7 +496,7 @@ GLOBAL OPTIONS:
 
 ## wnc set
 
-```plaintext
+```text
 NAME:
    wnc set - Create or update a tag on a controller
 
@@ -521,7 +522,7 @@ GLOBAL OPTIONS:
 
 ## wnc set policy-tag
 
-```plaintext
+```text
 NAME:
    wnc set policy-tag - Create or update one policy tag
 
@@ -555,7 +556,7 @@ INHERITED OPTIONS:
 
 ## wnc set site-tag
 
-```plaintext
+```text
 NAME:
    wnc set site-tag - Create or update one site tag
 
@@ -590,7 +591,7 @@ INHERITED OPTIONS:
 
 ## wnc set rf-tag
 
-```plaintext
+```text
 NAME:
    wnc set rf-tag - Create or update one RF tag
 
@@ -625,7 +626,7 @@ INHERITED OPTIONS:
 
 ## wnc show
 
-```plaintext
+```text
 NAME:
    wnc show - Display controller state
 
@@ -660,7 +661,7 @@ GLOBAL OPTIONS:
 
 ## wnc show overview
 
-```plaintext
+```text
 NAME:
    wnc show overview - Per-radio RF summary across 2.4, 5 and 6 GHz
 
@@ -671,7 +672,7 @@ DESCRIPTION:
    One row per access point radio, sorted by ap_name.
    A cell reading "-" is a value the controller did not send.
    Admin is the radio's own state: an access-point-level disable leaves it
-   Enabled with Oper reading Down, and wnc show ap is the authority instead.
+   Enabled with Oper reading Down, so read wnc show ap for that state.
 
 OPTIONS:
    --sort-by key, -b key      sort key (see --sort-keys) (default: "ap_name")
@@ -695,7 +696,7 @@ INHERITED OPTIONS:
 
 ## wnc show ap
 
-```plaintext
+```text
 NAME:
    wnc show ap - Associated access points
 
@@ -729,7 +730,7 @@ INHERITED OPTIONS:
 
 ## wnc show ap-join
 
-```plaintext
+```text
 NAME:
    wnc show ap-join - Join, discovery and DTLS outcome per access point, joined or not
 
@@ -763,7 +764,7 @@ INHERITED OPTIONS:
 
 ## wnc show ap-tag
 
-```plaintext
+```text
 NAME:
    wnc show ap-tag - Tag assignment and its resolved values, per access point
 
@@ -773,8 +774,8 @@ USAGE:
 DESCRIPTION:
    One row per access point, sorted by ap_name.
    A cell reading "-" is a value the controller did not send.
-   The tag columns are the resolved tags in force; the two profile columns
-   come from the configured site tag and agree only while Tag Source is Static.
+   The tag columns are the tags resolved onto the access point. The profile
+   columns come from the site tag and agree only while Tag Source is Static.
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --sort-keys) (default: "ap_name")
@@ -797,7 +798,7 @@ INHERITED OPTIONS:
 
 ## wnc show client
 
-```plaintext
+```text
 NAME:
    wnc show client - Associated wireless clients
 
@@ -815,7 +816,7 @@ OPTIONS:
    --sort-keys                print the keys --sort-by accepts, then exit
    --radio string, -r string  band filter (2.4|5|6)
    --ssid string, -s string   keep only clients on this SSID
-   --ap-name string           keep only clients on this AP
+   --ap-name string           keep only clients on this access point
    --help, -h                 show help
 
 GLOBAL OPTIONS:
@@ -834,7 +835,7 @@ INHERITED OPTIONS:
 
 ## wnc show wlan
 
-```plaintext
+```text
 NAME:
    wnc show wlan - Configured WLANs and their bound policy profiles
 
@@ -868,7 +869,7 @@ INHERITED OPTIONS:
 
 ## wnc show policy-tag
 
-```plaintext
+```text
 NAME:
    wnc show policy-tag - Configured policy tags and the WLANs they bind
 
@@ -902,7 +903,7 @@ INHERITED OPTIONS:
 
 ## wnc show site-tag
 
-```plaintext
+```text
 NAME:
    wnc show site-tag - Configured site tags and the profiles they name
 
@@ -912,7 +913,7 @@ USAGE:
 DESCRIPTION:
    One row per site tag, sorted by site_tag.
    A cell reading "-" is a value the controller did not send.
-   The read asks for the values in force, so a leaf a tag left at its default
+   The read asks for the values in effect, so a leaf a tag left at its default
    is reported rather than arriving as an absence.
 
 OPTIONS:
@@ -936,7 +937,7 @@ INHERITED OPTIONS:
 
 ## wnc show rf-tag
 
-```plaintext
+```text
 NAME:
    wnc show rf-tag - Configured RF tags and their per-band RF profiles
 
@@ -946,8 +947,8 @@ USAGE:
 DESCRIPTION:
    One row per RF tag, sorted by rf_tag.
    A cell reading "-" is a value the controller did not send.
-   The read asks for the values in force, because a plain read omits the
-   built-in tag's three per-band profile names.
+   The read asks for the values in effect, because a plain read omits the
+   built-in tag's per-band profile names.
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --sort-keys) (default: "rf_tag")

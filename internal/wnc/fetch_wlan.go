@@ -18,8 +18,8 @@ type wlanEntries struct {
 	} `json:"Cisco-IOS-XE-wireless-wlan-cfg:wlan-cfg-entries"`
 }
 
-// WLANEntry stands in for the SDK's WlanCfgEntry as an allow-list rather than for the types: this
-// read asks for the defaults in force, which materializes the psk and the WEP key material, and a
+// WLANEntry stands in for the SDK's WlanCfgEntry as an allow-list rather than for the types. This
+// read asks for the defaults in effect, which materializes the psk and the WEP key material, and a
 // leaf this struct does not declare is dropped at decode.
 type WLANEntry struct {
 	WLANID      int    `json:"wlan-id"`
@@ -61,7 +61,7 @@ type WLANEntry struct {
 	DOT11AuthType *string `json:"dot11-auth-type"`
 
 	// The bands are read from here alone. The legacy scalar radio-policy leaf is marked obsolete on
-	// every release in scope and stopped arriving at 17.18 even under with-defaults; where it does
+	// every release in scope and stopped arriving at 17.18 even under with-defaults. Where it does
 	// arrive it reports "all bands" on a WLAN this list confines to one.
 	WLANRadioPolicies *struct {
 		Policy []struct {
@@ -113,10 +113,11 @@ type WLANReads struct {
 	Bindings error
 }
 
-// WLANs reads the WLAN view; the configuration entries drive the rows. GetDataInto carries the
-// allow-list struct in place of the SDK's typed accessor, and asks for the defaults in force
-// because security-wpa, wpa2-enabled and auth-key-mgmt-dot1x default to true, so a plain read
-// would report them off.
+// WLANs reads the WLAN view. The configuration entries drive the rows.
+//
+// GetDataInto carries the allow-list struct in place of the SDK's typed accessor, and asks for
+// the defaults in effect because security-wpa, wpa2-enabled and auth-key-mgmt-dot1x default to
+// true. A plain read would report them off.
 func (c *Client) WLANs(ctx context.Context) (WLANView, WLANReads, error) {
 	entries, err := sdk.GetDataInto[wlanEntries](ctx, c.sdk, wlanEntriesPath, sdk.WithDefaults(sdk.ReportAll))
 	if err != nil {
@@ -132,9 +133,11 @@ func (c *Client) WLANs(ctx context.Context) (WLANView, WLANReads, error) {
 }
 
 // policyProfiles reads the policy profiles through the typed accessor, every leaf the view needs
-// being declared. It still asks for the defaults in force, because a plain read omits the interface
-// name, the session timeout and the DHCP flag on any profile that never set them, and the interface
-// name's default is the string "1" rather than the empty string a non-pointer field would yield.
+// being declared. It still asks for the defaults in effect, because a plain read omits the
+// interface name, the session timeout and the DHCP flag on any profile that never set them.
+//
+// The interface name's default is the string "1" rather than the empty string a non-pointer
+// field would yield.
 func (c *Client) policyProfiles(ctx context.Context) (map[string]PolicyProfile, error) {
 	resp, err := c.sdk.WLAN().ListWlanPolicies(ctx, sdk.WithDefaults(sdk.ReportAll))
 	if err != nil {

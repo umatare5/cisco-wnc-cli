@@ -49,7 +49,7 @@ func tokenAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	if strings.Contains(username, ":") {
-		return fmt.Errorf("%w: username must not contain ':' (RFC 7617 reserves it as the separator)", ErrUsage)
+		return fmt.Errorf("%w: username must not contain ':', which RFC 7617 reserves as the separator", ErrUsage)
 	}
 
 	password, err := readPassword(ctx, cmd)

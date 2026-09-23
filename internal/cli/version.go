@@ -10,7 +10,7 @@ func Version() string {
 	return version
 }
 
-// UserAgent is what every RESTCONF request identifies itself as.
+// UserAgent is the name every RESTCONF request sends.
 func UserAgent() string {
 	return "wnc/" + version
 }

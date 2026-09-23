@@ -9,7 +9,7 @@ import (
 	"github.com/umatare5/cisco-wnc-cli/internal/wnc"
 )
 
-// Log field names. They are the vocabulary TROUBLESHOOTING.md indexes, so they are
+// Log field names. They are the vocabulary docs/troubleshooting.md indexes, so they are
 // named here rather than repeated as literals at each call site.
 const (
 	fieldController = "controller"
@@ -19,7 +19,7 @@ const (
 )
 
 // Reporter collects what went wrong while reading one controller, so the reads finish before
-// anything is written: a line per failure interleaved across concurrent controllers would come out
+// anything is written. A line per failure interleaved across concurrent controllers would come out
 // in a different order every run.
 type Reporter struct {
 	target config.Target
@@ -66,7 +66,7 @@ func (r *Reporter) Degradations() int {
 }
 
 // logFatal writes the failure that cost this controller its rows. The fields stay separate from
-// the message because logrus quotes a message holding spaces, which would bury the cause token.
+// the message because logrus quotes a message holding spaces, which would bury the cause.
 func (r *Reporter) logFatal(logger *logrus.Logger, err error) {
 	cause, status := wnc.Classify(err)
 

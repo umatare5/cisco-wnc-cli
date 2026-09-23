@@ -3,7 +3,7 @@ package show
 import "github.com/umatare5/cisco-wnc-cli/internal/render"
 
 // Glyphs for the bordered table. Each must be one code point whose width does not move with the
-// reader's locale: a U+FE0F selector or an East Asian ambiguous character asks for a two-column
+// reader's locale. A U+FE0F selector or an East Asian ambiguous character asks for a two-column
 // rendering tablewriter's measurement does not see, and every bordered row past that cell drifts.
 const (
 	glyphOK   = "✅"
@@ -47,7 +47,7 @@ func prettyState(p *string, on, off, offGlyph string) string {
 
 // prettyOtherwise maps one display string onto the healthy glyph and folds every other reported
 // value onto a single glyph. show ap's State column takes this because only Registered is the
-// serving member of its six; an unreported value stays render.Absent.
+// serving member of its six. An unreported value stays render.Absent.
 func prettyOtherwise(p *string, healthy, otherGlyph string) string {
 	if p == nil || *p == "" {
 		return render.Absent

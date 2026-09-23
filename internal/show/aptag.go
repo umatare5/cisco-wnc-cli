@@ -24,7 +24,7 @@ type APTagRow struct {
 	Controller      string  `json:"controller"`
 }
 
-// APTagColumns describes the tag view. Policy, Site and RF Tag are the resolved values in force;
+// APTagColumns describes the tag view. Policy, Site and RF Tag are the resolved values in effect.
 // AP Profile and Flex Profile have no resolved counterpart in the schema, so they are the
 // configured site tag's own and agree with Site Tag only while the two site tags do.
 func APTagColumns() []render.Column[APTagRow] {

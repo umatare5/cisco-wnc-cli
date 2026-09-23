@@ -90,7 +90,7 @@ func adminRadioLeaf(v adminVerb) *cli.Command {
 
 // slotFlag names the radio. HideDefault stops the help printing "(default: 0)" for a flag slotArg
 // requires, since zero is a slot the controller reports and that text read as an omittable
-// default; Required would suppress it too, but would replace slotArg's message with urfave's own.
+// default. Required would suppress it too, but would replace slotArg's message with urfave's own.
 func slotFlag() cli.Flag {
 	return &cli.IntFlag{
 		Name:        config.FlagSlot,
@@ -100,7 +100,7 @@ func slotFlag() cli.Flag {
 }
 
 // slotArg reads the slot. IsSet and not a zero test: zero is a slot the controller reports, so a
-// missing flag and a named zero must not read alike. The bound is the wnc layer's, derived
+// missing flag and a named zero must not read the same. The bound is the wnc layer's, derived
 // from the same must table a pair is checked against once the band is known.
 func slotArg(cmd *cli.Command) (int, error) {
 	if !cmd.IsSet(config.FlagSlot) {
@@ -117,10 +117,11 @@ func slotArg(cmd *cli.Command) (int, error) {
 	return slot, nil
 }
 
-// runRadioAdmin sets one radio's admin state. It cannot reuse runAPAction: this is the one
-// write whose RPC has no ap-name arm, so it needs the address the resolve returns, and the
-// radio read must land before the dry-run line so it can name the band and before the prompt
-// so the band is checked rather than consented to.
+// runRadioAdmin sets one radio's admin state. It cannot reuse runAPAction, because this is the
+// one write whose RPC has no ap-name arm and it needs the address the resolve returns.
+//
+// The radio read must land before the dry-run line so it can name the band, and before the
+// prompt so the band is checked rather than consented to.
 func runRadioAdmin(ctx context.Context, cmd *cli.Command, v adminVerb) error {
 	name, err := requireAPName(cmd)
 	if err != nil {
@@ -160,9 +161,9 @@ func runRadioAdmin(ctx context.Context, cmd *cli.Command, v adminVerb) error {
 }
 
 // radioForAdmin reads the one radio the write will name and refuses every state the RPC cannot
-// express. The band number is the radio type's and the band the prompt names is the served band's,
-// so four things are refused here: a slot that is not a radio, a type the RPC takes no number for,
-// a served band with no label to prompt with, and a pair the must clause forbids.
+// express. The band number is the radio type's and the band the prompt names is the served
+// band's. Each of these is refused here: a slot that is not a radio, a type the RPC takes
+// no number for, a served band with no label to prompt with, and a pair the must clause forbids.
 func radioForAdmin(
 	ctx context.Context, client *wnc.Client, target config.Target, name, mac string, slot int,
 ) (*wnc.RadioAdmin, error) {
@@ -207,7 +208,7 @@ func radioForAdmin(
 			return nil, fmt.Errorf("%s reports no band for slot %d of %s", target.Name, slot, name)
 		}
 
-		return nil, fmt.Errorf("%s reports slot %d of %s on an unknown band (%s)",
+		return nil, fmt.Errorf("%s reports slot %d of %s on an unknown band: %s",
 			target.Name, slot, name, radio.Band)
 	}
 

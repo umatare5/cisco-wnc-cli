@@ -33,7 +33,7 @@ const (
 	FlagSlot        = "slot"
 
 	// FlagMAC names a client by address. It is its own flag rather than FlagAPName reused: a
-	// client carries no name on the wire, so the address is what a row and the wire share.
+	// client carries no name on the wire, so a row and the wire share the address.
 	FlagMAC = "mac"
 
 	// FlagName is the tag a set or delete leaf writes. The access-point target reuses
@@ -52,7 +52,7 @@ const (
 	FlagPolicyProfile = "policy-profile"
 )
 
-// The three tag kinds, spelt as the noun every message about them uses rather than as the set
+// The tag kinds, spelled as the noun every message about them uses rather than as the set
 // and delete leaf names, which are hyphenated. A controller keys each kind in its own list, so
 // a name is only unique within one kind.
 const (
@@ -91,7 +91,7 @@ const (
 // times the number of sequential reads a command makes per controller.
 const DefaultTimeout = 60 * time.Second
 
-// DefaultLogLevel shows a run's warnings and its failures; nothing emits at Info.
+// DefaultLogLevel shows a run's warnings and its failures. Nothing emits at Info.
 const DefaultLogLevel = "warning"
 
 // Settings is the resolved configuration one command acts on.
@@ -111,7 +111,7 @@ func (s Settings) Descending() bool {
 
 // stringIsSet reports whether a string flag carries a usable value. urfave counts an
 // environment variable that exists but is empty as set, and "export WNC_X=" is the
-// normal way to clear one, so an empty value is treated as absent rather than as an
+// normal way to clear one. An empty value is treated as absent rather than as an
 // empty host list or an empty password.
 func stringIsSet(cmd *cli.Command, name string) bool {
 	return cmd.IsSet(name) && cmd.String(name) != ""
@@ -162,7 +162,7 @@ func Resolve(cmd *cli.Command, file File, sortKeys []string, defaultSortBy strin
 }
 
 // ResolveExec merges the settings an action needs. It is separate from Resolve rather
-// than a call into it: an action declares none of the output or sort flags, so reading
+// than a call into it. An action declares none of the output or sort flags, so reading
 // them through a command that never defined them would tie the exec tree to defaults
 // only a show command validates.
 func ResolveExec(cmd *cli.Command, file File) (Settings, error) {
@@ -183,7 +183,7 @@ func ResolveExec(cmd *cli.Command, file File) (Settings, error) {
 	}, nil
 }
 
-// resolveTargets picks the controller list, naming all three sources in the fault.
+// resolveTargets picks the controller list, naming every source in the fault.
 func resolveTargets(cmd *cli.Command, file File) ([]Target, error) {
 	if hosts := resolveHosts(cmd); len(hosts) > 0 {
 		token := resolveToken(cmd, file)
@@ -204,9 +204,9 @@ func resolveTargets(cmd *cli.Command, file File) ([]Target, error) {
 }
 
 // resolveHosts picks the controller hosts. The flag wins outright when it carries
-// anything, and only its absence falls through to the environment: the two are never
-// merged, which is exactly the concatenation urfave would have performed had the flag
-// declared the variable as a source.
+// anything, and only its absence falls through to the environment. The two are never
+// merged: urfave would have concatenated them if the flag had declared the variable as
+// a source.
 func resolveHosts(cmd *cli.Command) []string {
 	if hosts := cmd.StringSlice(FlagController); len(hosts) > 0 {
 		return hosts
@@ -216,8 +216,8 @@ func resolveHosts(cmd *cli.Command) []string {
 }
 
 // resolveToken picks the one token every controller is read with. The flag carries the
-// environment variable as its own source, so what is left here is the file, which is the
-// safest of the three: a token on the command line is visible to every process on the host.
+// environment variable as its own source, so only the file is left here, and it is the
+// safest source: a token on the command line is visible in the process list.
 func resolveToken(cmd *cli.Command, file File) string {
 	if token := cmd.String(FlagAccessToken); token != "" {
 		return token
@@ -257,7 +257,7 @@ func resolveChoice(
 		v = *fromFile
 	}
 
-	// The rejected value is deliberately absent from the fault: -b, -o, -f and -r sit
+	// The rejected value is deliberately absent from the fault. -b, -o, -f and -r sit
 	// beside -c and -t on the same commands, so an enum slot is a mis-paste target for
 	// a credential and its message may name only the flag and the accepted set.
 	if !slices.Contains(allowed, v) {
@@ -296,7 +296,7 @@ func ResolveLogLevel(cmd *cli.Command, file File, allowed []string) (string, err
 }
 
 // ValidateFile checks the parts of a configuration file that only a show command would otherwise
-// reach, and returns the controllers it declares. This is what --dry-run reports on.
+// reach, and returns the controllers it declares. --dry-run reports on this.
 func ValidateFile(file File, logLevels []string) ([]Target, error) {
 	targets, err := TargetsFromFile(file.Controllers, deref(file.Token))
 	if err != nil {

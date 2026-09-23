@@ -10,7 +10,7 @@ import (
 )
 
 // Exit codes. A run that reached every controller and rendered its rows exits 0
-// even when there were no rows: an empty fleet is a normal answer.
+// even when there were no rows, because an empty result is a normal answer.
 const (
 	ExitOK      = 0
 	ExitFailure = 1
@@ -20,7 +20,7 @@ const (
 )
 
 // exitCode maps the run's outcome, and the order is load-bearing. A cli.ExitCoder comes first
-// because urfave builds one itself and it matches none of this package's sentinels, and the signal
+// because urfave builds one itself and it matches none of this package's sentinels. The signal
 // check comes next so an interrupted fan-out is not reported as a partial success.
 func exitCode(ctx context.Context, err error) int {
 	var coder cli.ExitCoder

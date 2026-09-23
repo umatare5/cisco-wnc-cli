@@ -9,9 +9,9 @@ import (
 	"testing"
 )
 
-// Documentation addresses from the range IANA reserves. docMAC is what the resolve answers with
+// Documentation addresses from the range IANA reserves. The resolve answers with docMAC
 // and nothing an operator sees carries it, while testClientMAC is separate because deauth does
-// print a client's address; testClientRowMAC differs from it so a leaf echoing the operator's
+// print a client's address. testClientRowMAC differs from it so a leaf echoing the operator's
 // argument instead of the controller's spelling cannot pass.
 const (
 	docMAC           = "00:00:5e:00:53:01"
@@ -21,7 +21,7 @@ const (
 )
 
 // The usernames the collection read answers with. One is carried by a single session and one by
-// two, because the count is what the username arm's prompt reports and a fixture holding one
+// two, because the username arm's prompt reports the count and a fixture holding one
 // session could not tell the singular wording from the plural one. A username no session carries
 // is not a constant: any other value is one.
 const (
@@ -100,11 +100,11 @@ func newControllerStub(t *testing.T, nameStatus int) *controllerStub {
 			w.Header().Set("Content-Type", "application/yang-data+json")
 			_, _ = w.Write([]byte(clientCollection))
 		case strings.HasPrefix(base, "common-oper-data="):
-			// Any other address is one the controller holds no client at, which is what
+			// Any other address is one the controller holds no client at, which
 			// TestDeauthRefusesAnAddressTheControllerDoesNotHold reads.
 			w.WriteHeader(http.StatusNotFound)
 		case strings.HasPrefix(base, "ap-name-mac-map="):
-			// Any other name is one the controller does not hold, which is what
+			// Any other name is one the controller does not hold, which
 			// TestAPNameSwallowsTheFlagBehindIt reads.
 			w.WriteHeader(http.StatusNotFound)
 		default:
@@ -195,7 +195,7 @@ func TestResetRefusesBeforeContactingAnything(t *testing.T) {
 					t.Errorf("a refused action wrote to stdout: %q", got.stdout)
 				}
 
-				// A read would have failed against these hosts and logged a cause; none is
+				// A read would have failed against these hosts and logged a cause. None is
 				// expected, because nothing was sent.
 				if strings.Contains(got.stderr, "cause=") {
 					t.Errorf("a refused action contacted a controller: %q", got.stderr)
@@ -266,7 +266,7 @@ func TestResetHelpNamesTheFlagsThatDecideWhetherItActs(t *testing.T) {
 
 // resetLeaves is every leaf of the reset tree with the RPC each one must reach and the
 // word it reports. Both leaves are driven through the same cases on purpose: the guards
-// are shared code, and a test per leaf is what would let one of them quietly lose a guard.
+// are shared code, and without a test per leaf one of them could quietly lose a guard.
 var resetLeaves = []struct {
 	leaf    string
 	rpc     string
@@ -274,7 +274,7 @@ var resetLeaves = []struct {
 	wouldDo string
 }{
 	{leaf: "ap", rpc: apResetRPC, sent: "reset sent", wouldDo: "would reset"},
-	{leaf: "capwap", rpc: capwapResetRPC, sent: "capwap reset sent", wouldDo: "would reset the CAPWAP session"},
+	{leaf: "capwap", rpc: capwapResetRPC, sent: "CAPWAP reset sent", wouldDo: "would reset the CAPWAP session"},
 }
 
 // The prompt, the cancellation and the two ways of getting past it, against a stub
@@ -340,7 +340,7 @@ func TestResetConfirmation(t *testing.T) {
 				}
 
 				// An access point is identified by name and never by address. The resolve
-				// answered with one, so nothing but a format string keeps it off the stream.
+				// answered with one, so only a format string keeps it off the stream.
 				if strings.Contains(got.stdout, docMAC) {
 					t.Errorf("stdout %q carries an address", got.stdout)
 				}
@@ -360,7 +360,7 @@ func TestResetConfirmation(t *testing.T) {
 }
 
 // A dry run resolves the target and stops. Reading is not changing, so it contacts the
-// controller; the assertion is that the RPC does not.
+// controller. The assertion is that the RPC does not.
 func TestResetDryRunSendsNothing(t *testing.T) {
 	for _, leaf := range resetLeaves {
 		t.Run(leaf.leaf, func(t *testing.T) {
@@ -428,9 +428,9 @@ func TestResetRefusesANameTheControllerDoesNotHold(t *testing.T) {
 }
 
 // urfave consumes the next argv element as a flag's value with no hyphen test, so a name
-// left out makes --yes the target. The cost is bounded and observable: one keyed read, the
+// left out makes --yes the target. The cost is bounded and observable. One keyed read, the
 // name reported as one the controller does not hold, and the consent token spent on the
-// value rather than on the prompt — so a run that was going to be confirmed is not.
+// value rather than on the prompt – so a run that was going to be confirmed is not.
 func TestAPNameSwallowsTheFlagBehindIt(t *testing.T) {
 	stub := newControllerStub(t, http.StatusOK)
 

@@ -7,8 +7,8 @@ import (
 )
 
 // saveConfigCommand persists the controller's running configuration. It is a flat tree rather than
-// a leaf of reset, which admits an RPC only if the RPC persists nothing: this one exists to
-// persist, and its schema declares the output container that test refuses.
+// a leaf of reset, which admits an RPC only if the RPC persists nothing and declares no output
+// container. This one persists, and its schema declares that container.
 func saveConfigCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "save-config",
@@ -16,7 +16,7 @@ func saveConfigCommand() *cli.Command {
 		Description: "The startup configuration is the only destination: no file may be named, and\n" +
 			"every change on the controller is persisted rather than only what this CLI\n" +
 			"wrote. An access point's admin state is unaffected, being no part of the\n" +
-			"configuration. The save took two to four seconds on every release measured, so\n" +
+			"configuration. The save took at most 3.7 seconds on every release measured, so\n" +
 			"a --timeout a read survives can still refuse it. Pass --dry-run to name the\n" +
 			"controller and change nothing.",
 		Flags:  append(execFlags(), yesFlag()),
@@ -24,9 +24,9 @@ func saveConfigCommand() *cli.Command {
 	}
 }
 
-// runSaveConfig saves one controller's configuration. Nothing is resolved first: the RPC names
-// no target, so the guard sequence is the shared prologue and then the prompt, and there is no
-// read whose absence could tell the operator they named the wrong controller.
+// runSaveConfig saves one controller's configuration. Nothing is resolved first, because the RPC
+// names no target. The guard sequence is the shared prologue and then the prompt, and no read
+// could tell the operator they named the wrong controller.
 func runSaveConfig(ctx context.Context, cmd *cli.Command) error {
 	target, client, err := actionPrologue(ctx, cmd)
 	if err != nil {

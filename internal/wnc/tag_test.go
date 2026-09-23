@@ -100,8 +100,8 @@ func (r *recorder) all() []exchange {
 }
 
 // A create carries the key leaf plus the fields that were named, and nothing else. The
-// controller accepts a body of the key alone — nothing in the three tag groupings is
-// mandatory — so an unnamed field must be absent rather than sent as an empty value.
+// controller accepts a body of the key alone – nothing in the tag groupings is
+// mandatory – so an unnamed field must be absent rather than sent as an empty value.
 func TestTagCreatePayloads(t *testing.T) {
 	t.Parallel()
 
@@ -149,8 +149,8 @@ func TestTagCreatePayloads(t *testing.T) {
 		},
 		{
 			// The flex-profile leaf declares when "../is-local-site = 'false'" and
-			// is-local-site defaults to TRUE, so a create naming a flex profile must send
-			// the flag false or the controller answers 400 on the when — measured on 17.12.8.
+			// is-local-site defaults to TRUE. A create naming a flex profile must send
+			// the flag false or the controller answers 400 on the when – measured on 17.12.8.
 			name: "site tag with a flex profile carries is-local-site false",
 			call: func(c *Client) error {
 				return c.CreateSiteTag(t.Context(), "t2", TagFields{FlexProfile: &profile})
@@ -241,9 +241,8 @@ func TestRFTagWriteOmitsTheRadioProfileContainer(t *testing.T) {
 	}
 }
 
-// An RF tag update is a read of the record followed by a merge PATCH of it. The merge is
-// what carries a field the command did not name, and the read is the SDK's own — it is why
-// this kind still takes two requests where the site and policy kinds take one.
+// An RF tag update is a read of the record followed by a merge PATCH of it.
+// The merge carries a field the command did not name, and the read is the SDK's own, so one named field costs two requests.
 func TestRFTagUpdateReadsThenMergesOnTheKeyedURL(t *testing.T) {
 	t.Parallel()
 

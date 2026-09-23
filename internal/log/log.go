@@ -36,7 +36,7 @@ func NewWithOutput(w io.Writer, level string) (*logrus.Logger, error) {
 }
 
 // formatterFor picks the rendering from the verbosity asked for. logfmt is the debug form because
-// a bug report wants every field separately; below that the fields become a sentence.
+// a bug report wants every field separately. Below that the fields become a sentence.
 func formatterFor(lv logrus.Level) logrus.Formatter {
 	if lv >= logrus.DebugLevel {
 		return &logrus.TextFormatter{DisableTimestamp: true, DisableColors: true}
@@ -45,7 +45,7 @@ func formatterFor(lv logrus.Level) logrus.Formatter {
 	return plainFormatter{}
 }
 
-// The three fields this package handles by name; every other field internal/show/reporter.go
+// The three fields this package handles by name. Every other field internal/show/reporter.go
 // attaches is rendered by the generic path in tailFields.
 const (
 	fieldController = "controller"
@@ -53,9 +53,9 @@ const (
 	fieldStatus     = "status"
 )
 
-// plainFormatter renders one diagnostic as a sentence led by the controller it
-// happened on, with the cause token kept in its field spelling so what an operator
-// reads is what an operator searches docs/TROUBLESHOOTING.md for.
+// plainFormatter renders one diagnostic as a sentence led by the controller it happened on.
+// The cause keeps its field spelling, so an operator searches docs/troubleshooting.md
+// for the same text they read.
 type plainFormatter struct{}
 
 func (plainFormatter) Format(e *logrus.Entry) ([]byte, error) {
@@ -79,10 +79,11 @@ func (plainFormatter) Format(e *logrus.Entry) ([]byte, error) {
 	return []byte(b.String()), nil
 }
 
-// tailFields renders the fields that follow the sentence. cause leads because that spelling is the
-// heading docs/TROUBLESHOOTING.md is indexed by, an unknown field is appended rather than dropped,
-// and the two that never appear are controller, which led the line, and status, which wnc.Message
-// has already rebuilt the text from.
+// tailFields renders the fields that follow the sentence. cause leads because docs/troubleshooting.md
+// indexes those values, and an unknown field is appended rather than dropped.
+//
+// The controller and status fields do not appear: the controller led the line, and wnc.Message
+// has already rebuilt the text from the status.
 func tailFields(data logrus.Fields) string {
 	pairs := make([]string, 0, len(data))
 
@@ -111,7 +112,7 @@ func SDKLogger(l *logrus.Logger) *slog.Logger {
 }
 
 // Levels lists the accepted --log-level values, for the flag's usage string and for the error a
-// rejected value produces. Three of logrus's seven: nothing emits at Info, Trace, Fatal or Panic,
+// rejected value produces. Nothing emits at Info, Trace, Fatal or Panic, so those are left out,
 // and the spellings come from logrus, where WarnLevel is "warning".
 func Levels() []string {
 	return []string{

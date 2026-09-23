@@ -8,16 +8,17 @@ import (
 	"github.com/umatare5/cisco-ios-xe-wireless-go/service/ap"
 )
 
-// The fields expression names the whole tag-info container rather than the leaves inside it: an
+// The fields expression names the whole tag-info container rather than the leaves inside it. An
 // expression naming a node the release does not declare answers 200 with a chunked body that stops
 // mid-object and carries no Content-Length to detect it by. Pruning also keeps the serial number
-// and the four certificate leaves on the controller.
+// and the certificate leaves on the controller.
 const apTagFields = "wtp-mac;name;tag-info"
 
-// APTag is one access point's tag assignment. The three tag names are the RESOLVED ones, what is in
-// force; the two profile names have no resolved counterpart in the schema, so they come from the
-// configured site-tag container and agree with SiteTag only while the configured and resolved site
-// tags match.
+// APTag is one access point's tag assignment. The tag names are the resolved ones, the values
+// in effect on the access point.
+//
+// The profile names have no resolved counterpart in the schema, so they come from the configured
+// site-tag container and agree with SiteTag only while the configured and resolved site tags match.
 type APTag struct {
 	Name            string
 	WtpMAC          string
@@ -32,7 +33,7 @@ type APTag struct {
 	FlexProfile     string
 }
 
-// APTags reads every column of the tag view from one pruned collection; the controller's own
+// APTags reads every column of the tag view from one pruned collection. The controller's own
 // identity on the row is the CLI's, not a leaf. An access point holding no tag information yields
 // empty strings rather than an absence, because every container on this path is a non-pointer
 // struct.

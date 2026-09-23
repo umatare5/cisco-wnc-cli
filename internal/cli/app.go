@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v3"
@@ -23,7 +24,7 @@ type Streams struct {
 	InPipe bool
 }
 
-// runtimeKey keys the per-run state urfave's Before installs on the context, which is what lets
+// runtimeKey keys the per-run state urfave's Before installs on the context, which lets
 // the root resolve the file and the logger once for every action.
 type runtimeKey struct{}
 
@@ -47,12 +48,12 @@ func runtimeFrom(ctx context.Context) *runtimeState {
 }
 
 // newRootCommand builds the whole tree. ExitErrHandler displaces urfave's HandleExitCoder call,
-// which reaches os.Exit, and HideHelpCommand removes the help subcommand and is inherited by every
-// child; the three walks that follow are not inherited and so are applied per node.
+// which reaches os.Exit, and HideHelpCommand removes the help subcommand and is inherited by
+// every child. The walks that follow are not inherited, so they are applied per node.
 //
 // The completion subtree is urfave's own and is appended during the library's setup pass, after
 // every walk below has run. ConfigureShellCompletionCommand is the seam that reaches it, set on the
-// root alone because urfave's condition tests that field without also testing for the root, and it
+// root alone because urfave's condition tests that field without also testing for the root. It
 // carries the usage hook and not attachLeafRules.
 func newRootCommand(st Streams) *cli.Command {
 	root := &cli.Command{
@@ -90,7 +91,7 @@ func newRootCommand(st Streams) *cli.Command {
 }
 
 // rootBefore reads the configuration file once and builds the logger. Doing it at
-// the root rather than per command is what lets the file's log_level govern the
+// the root rather than per command lets the file's log_level govern the
 // reporting of the run that follows.
 func rootBefore(streams Streams) cli.BeforeFunc {
 	return func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
@@ -158,7 +159,15 @@ func dryRun(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("%w: %s: %w", ErrUsage, st.Path, err)
 	}
 
-	_, err = fmt.Fprintf(cmd.Root().Writer, "%s: valid, %d controller(s)\n", st.Path, len(targets))
+	_, err = fmt.Fprintf(cmd.Root().Writer, "%s: valid, %s\n", st.Path, pluralControllers(len(targets)))
 
 	return err
+}
+
+func pluralControllers(n int) string {
+	if n == 1 {
+		return "1 controller"
+	}
+
+	return strconv.Itoa(n) + " controllers"
 }

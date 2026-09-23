@@ -19,6 +19,16 @@ Sleep 4s
 
 Enter
 
+Type "ping -c 3 wnc2.example.internal"
+
+Sleep 1s
+
+Enter
+
+Sleep 4s
+
+Enter
+
 Type "WNC_ACCESS_TOKEN=$(wnc generate-token --username wnc --password password)"
 
 Sleep 1s
@@ -29,17 +39,7 @@ Sleep 2s
 
 Enter
 
-Type "export WNC_CONTROLLER=wnc1.example.internal"
-
-Sleep 1s
-
-Enter
-
-Sleep 2s
-
-Enter
-
-Type "wnc show overview --insecure"
+Type "wnc show overview --controller wnc1.example.internal --controller wnc2.example.internal --pretty --insecure"
 
 Enter
 

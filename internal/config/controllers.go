@@ -24,12 +24,12 @@ const (
 	EnvPassword = "WNC_PASSWORD"
 )
 
-// maxColonsInHostPort is the number of colons a host:port authority may hold. More
-// than that and the value is a bare IPv6 address, which RFC 3986 requires bracketed.
+// maxColonsInHostPort is the number of colons a host:port authority may hold. A value with
+// more colons is a bare IPv6 address, which RFC 3986 requires bracketed.
 const maxColonsInHostPort = 1
 
 // Target is one controller a run queries. Host is the authority alone: the SDK forces https and
-// checks the same forms later, so validating here is what makes a fault a usage fault.
+// checks the same forms later, so validating here turns a fault into a usage fault.
 type Target struct {
 	Name  string
 	Host  string
@@ -140,7 +140,7 @@ func validatePort(p string) error {
 }
 
 // TargetsFromFile converts the file's controllers array and pairs every entry with the
-// file's one token. A file entry may carry a display name; without one the authority
+// file's one token. A file entry may carry a display name. Without one the authority
 // labels the rows, matching what the flag produces.
 func TargetsFromFile(entries []Controller, token string) ([]Target, error) {
 	if len(entries) > 0 && token == "" {

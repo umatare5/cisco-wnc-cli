@@ -68,8 +68,8 @@ func TestTableIsBorderless(t *testing.T) {
 	}
 }
 
-// An empty fleet is a normal answer, so the heading still prints: that is what
-// separates it from a read that failed.
+// No rows is a normal answer, so the heading still prints, which separates it
+// from a read that failed.
 func TestTableEmptyKeepsTheHeading(t *testing.T) {
 	t.Parallel()
 

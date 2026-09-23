@@ -11,7 +11,7 @@ const tagNameLimit = 32
 
 // NormalizeTagName checks a tag name against the pattern the key leaf declares,
 // `[!-~]([ -~]*[!-~])?`: printable ASCII throughout, with no leading or trailing space. The SDK
-// repeats the same four checks, but only once a client exists, which is one layer too late.
+// repeats the same checks, but only once a client exists, which is one layer too late.
 func NormalizeTagName(kind, s string) (string, error) {
 	if s == "" {
 		return "", fmt.Errorf("%s name: must not be empty", kind)

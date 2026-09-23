@@ -70,7 +70,7 @@ func TestAPTags(t *testing.T) {
 }
 
 // The fields expression names the whole tag-info container rather than the leaves inside
-// it, and that is not a style choice: measured on 17.12.8, naming a node the release does
+// it, and that is not a style choice. Measured on 17.12.8, naming a node the release does
 // not declare answers 200 with a chunked body that stops mid-object. The stub cannot
 // reproduce that, so the request itself is asserted.
 func TestAPTagsPrunesTheRequestToTheTagContainer(t *testing.T) {
@@ -85,9 +85,9 @@ func TestAPTagsPrunesTheRequestToTheTagContainer(t *testing.T) {
 		t.Fatalf("APTags: %v", err)
 	}
 
-	// Spelt out rather than built from apTagFields: comparing the constant against itself
+	// Spelled out rather than built from apTagFields: comparing the constant against itself
 	// would pass whatever the constant became. The semicolons must also reach the
-	// controller unescaped, which is why this is the raw query — percent-encoded, the
+	// controller unescaped, which is why this is the raw query – percent-encoded, the
 	// controller reads the whole expression as one node name and answers with nothing.
 	if want := "fields=wtp-mac;name;tag-info"; got != want {
 		t.Errorf("query = %q, want %q", got, want)
@@ -325,7 +325,7 @@ func TestClients(t *testing.T) {
 
 	// The lowest-comparing global address wins, and the two link-local entries are
 	// dropped. "2001:db8::3" sorts below "2001:db8::20" numerically and above it as text,
-	// which is what makes the comparison method visible here.
+	// which makes the comparison method visible here.
 	if first.IPv6 != "2001:db8::3" {
 		t.Errorf("IPv6 = %q, want the numerically lowest global address", first.IPv6)
 	}
@@ -334,7 +334,7 @@ func TestClients(t *testing.T) {
 		t.Errorf("a link-local-only client reported %q", second.IPv6)
 	}
 
-	// A 64-bit counter arrives as a JSON string; an unparseable one stays absent rather
+	// A 64-bit counter arrives as a JSON string. An unparseable one stays absent rather
 	// than becoming zero.
 	if first.RxBytes == nil || *first.RxBytes != 18446744073709551615 {
 		t.Errorf("RxBytes = %v, want the full 64-bit value", first.RxBytes)
@@ -397,7 +397,7 @@ func TestClientsReportsTheFailedCollection(t *testing.T) {
 	}
 
 	// The traffic collection answered with an empty list, so it supplied no row for this
-	// client and the SNR is an absence. It is the one leaf of the four this join carries
+	// client and the SNR is an absence. It is the one leaf this join carries
 	// whose zero would read as a real 0 dB margin rather than as an omission.
 	if clients[0].SNR != nil {
 		t.Errorf("SNR = %d, want absent", *clients[0].SNR)
@@ -707,9 +707,9 @@ func TestEmptyBodyIsAnEmptyResult(t *testing.T) {
 }
 
 // The WLAN read carries with-defaults as a call-site option rather than through a wrapper of
-// its own, so this is the only thing holding it in place. Five of the security leaves default
-// to true, which makes a plain read report 802.1X off on a WLAN where it is on.
-func TestWLANReadAsksForTheDefaultsInForce(t *testing.T) {
+// its own, so this is the only thing holding it in place. auth-key-mgmt-dot1x defaults to true,
+// which makes a plain read report 802.1X off on a WLAN where it is on.
+func TestWLANReadAsksForTheDefaultsInEffect(t *testing.T) {
 	t.Parallel()
 
 	var got string
@@ -727,7 +727,7 @@ func TestWLANReadAsksForTheDefaultsInForce(t *testing.T) {
 		t.Fatalf("WLANs: %v", err)
 	}
 
-	// Spelt out rather than built from the option: comparing the call against itself
+	// Spelled out rather than built from the option: comparing the call against itself
 	// would pass whatever the call became.
 	if want := "with-defaults=report-all"; got != want {
 		t.Errorf("query = %q, want %q", got, want)
@@ -773,7 +773,7 @@ func TestPickIPv6(t *testing.T) {
 		{name: "none", in: nil, want: ""},
 		{name: "link-local only", in: []string{"fe80::1", "fe80::2"}, want: ""},
 		{
-			// Compared as text "2001:db8::20" sorts below "2001:db8::3"; compared as
+			// Compared as text "2001:db8::20" sorts below "2001:db8::3". Compared as
 			// addresses it does not. The controller compresses some entries and not
 			// others, so only the address comparison is stable.
 			name: "numeric order, not text order",
@@ -903,11 +903,12 @@ func TestMessageDropsTheResponseBody(t *testing.T) {
 	}
 }
 
-// Every failure this CLI reports has to read alike, so no class may quote the error it came
-// from. What each of these would otherwise carry is named in its own row: a timeout and a
-// connection fault each bring a *url.Error naming the whole request URL, and an SDK call wraps
-// its own sentence around both, which would make a typed write and an untyped one distinguishable
-// by their prose alone.
+// Every failure this CLI reports has to read the same way, so no class may quote the error it came
+// from. Each row names what it would otherwise carry. A timeout and a connection fault each
+// bring a *url.Error naming the whole request URL, and an SDK call wraps its own sentence
+// around both.
+//
+// That would make a typed write and an untyped one distinguishable by their prose alone.
 func TestMessageQuotesNoErrorItDidNotWrite(t *testing.T) {
 	t.Parallel()
 
@@ -1040,8 +1041,8 @@ func TestNewClientRejectsANonPositiveTimeout(t *testing.T) {
 	}
 }
 
-// A Monitor or Sniffer radio is the case where the container pointer does not save the channel:
-// the controller sends phy-ht-cfg and omits curr-freq inside it, because that leaf carries a "when"
+// On a Monitor or Sniffer radio the container pointer does not save the channel.
+// The controller sends phy-ht-cfg and omits curr-freq inside it, because that leaf carries a "when"
 // excluding those two modes and the invalid one. The width and the transmit power carry no such
 // guard and are still reported, which is why only the channel may be suppressed.
 func TestRadiosMonitorAndSnifferOmitOnlyTheChannel(t *testing.T) {
@@ -1114,9 +1115,9 @@ func TestRadiosMonitorAndSnifferOmitOnlyTheChannel(t *testing.T) {
 	}
 }
 
-// The join view's whole reason to exist is the access point capwap-data has dropped,
-// so the fixture holds one joined and one not, and every never-happened instant is the
-// epoch the controller actually sends.
+// The join view's whole reason to exist is the access point capwap-data has dropped, so the
+// fixture holds one joined and one not. Every never-happened instant is the epoch the
+// controller actually sends.
 func TestAPJoins(t *testing.T) {
 	t.Parallel()
 
@@ -1173,9 +1174,9 @@ func TestAPJoins(t *testing.T) {
 	}
 }
 
-// The overview's access-point read is pruned to the three nodes it consumes, asserted on the
+// The overview's access-point read is pruned to the nodes it consumes, asserted on the
 // request for the reason the tag view's own test gives, and the two reads share one constant.
-// radioAPInfo is called directly because Radios makes five reads and the helper records the last.
+// radioAPInfo is called directly because Radios makes several reads and the helper records the last.
 func TestRadioAPInfoPrunesTheRequestToTheTagContainer(t *testing.T) {
 	t.Parallel()
 
@@ -1250,7 +1251,7 @@ func TestPolicyTags(t *testing.T) {
 		t.Errorf("an omitted description decoded as %q", *tags[1].Description)
 	}
 
-	// A reported empty string is a pointer to "", which is what separates it from the
+	// A reported empty string is a pointer to "", which separates it from the
 	// omission above and is why the row layer collapses it rather than the read.
 	if tags[2].Description == nil || *tags[2].Description != "" {
 		t.Errorf("a reported empty description decoded as %v", tags[2].Description)
@@ -1287,7 +1288,7 @@ func TestSiteTags(t *testing.T) {
 	}
 
 	// The leaf carries a schema default, so an omission is not "not local" and must stay
-	// apart from the two readings above. This is what the read asks report-all for.
+	// apart from the two readings above. The read asks report-all for exactly this.
 	if tags[2].LocalSite != nil {
 		t.Errorf("an omitted flag decoded as %v, want nil", *tags[2].LocalSite)
 	}
@@ -1334,11 +1335,11 @@ func TestRFTags(t *testing.T) {
 	}
 }
 
-// Every tag read asks for the values in force. These are configuration reads, and the
-// parameter is what tells a leaf left at its default apart from one the controller
-// withheld — measured as necessary on rf-tags, whose built-in tag omits all three per-band
+// Every tag read asks for the values in effect. These are configuration reads, and the
+// parameter tells a leaf left at its default apart from one the controller
+// withheld. Measured as necessary on rf-tags, whose built-in tag omits all three per-band
 // profile names on a plain read.
-func TestTagReadsAskForTheDefaultsInForce(t *testing.T) {
+func TestTagReadsAskForTheDefaultsInEffect(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -1375,7 +1376,7 @@ func TestTagReadsAskForTheDefaultsInForce(t *testing.T) {
 				t.Fatalf("read: %v", err)
 			}
 
-			// Spelt out rather than built from the option: comparing the call against
+			// Spelled out rather than built from the option: comparing the call against
 			// itself would pass whatever the call became.
 			if want := "with-defaults=report-all"; got != want {
 				t.Errorf("query = %q, want %q", got, want)

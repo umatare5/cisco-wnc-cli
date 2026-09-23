@@ -6,7 +6,6 @@
     "MD004": { "style": "dash" },
     "MD013": false,
     "MD024": { "siblings_only": true },
-    // Two adjacent GitHub alerts cannot be written without a blank line between them
     "MD028": false,
     "MD029": { "style": "ordered" },
     "MD046": { "style": "fenced" },
@@ -30,8 +29,7 @@
             "## Setup and Commands", "*",
             "## Code Style", "*",
             "## Testing", "*",
-            "## Commits and PRs", "*",
-            "## Domain Knowledge", "*"
+            "## Commits and PRs"
           ]
         }
       }
@@ -41,11 +39,12 @@
       "combine": "merge",
       "config": {
         // Release headings accrue and this repository opens each one directly as
-        // `## [vX.Y.Z]`, so only the title is pinned
+        // `## [vX.Y.Z]`, so the title and `## [Unreleased]` are the only pinned headings
         "MD043": {
           "match_case": true,
           "headings": [
             "# Changelog",
+            "## [Unreleased]",
             "*"
           ]
         }
@@ -59,10 +58,14 @@
           "match_case": true,
           "headings": [
             "# Contributing",
+            "## Development", "*",
             "## Commands", "*",
             "## Build", "*",
+            "## Testing", "*",
+            "## Code Style", "*",
+            "## Documentation", "*",
             "## Release", "*",
-            "## Pull requests"
+            "## Pull Requests"
           ]
         }
       }
@@ -81,33 +84,58 @@
           "headings": [
             "## Overview", "*",
             "## Supported Environment", "*",
+            "## Installation", "*",
             "## Quick Start", "*",
-            "## Syntax", "*",
-            "## Configuration", "*",
+            "## CLI Reference", "*",
+            "## Customization", "*",
             "## Troubleshooting", "*",
+            "## Documentation", "*",
             "## Contributing", "*",
-            "## Acknowledgement", "*",
             "## License"
           ]
         }
       }
     },
     {
-      // An index, then the contracts no single page owns. A section beyond those
-      // two would be a fact the page it points at already carries.
+      // An index and nothing else, split by who reads a page. A fact stated here
+      // would be one the page it links to already carries, and the contracts no
+      // single page owns live in docs/architecture.md.
       "filter": ["docs/README.md"],
       "combine": "merge",
       "config": {
         "MD043": {
           "match_case": true,
-          "headings": ["# Documentation", "## Technical Information", "*"]
+          "headings": [
+            "# Documentation",
+            "## For Users Docs",
+            "## For Developers Docs"
+          ]
         }
       }
     },
     {
-      // The policy sections the OSS corpus settles on, pinned exactly: this file states
-      // what is reported and how, and never how to operate the CLI. Hardening guidance
-      // belongs to docs/configuration.md and docs/troubleshooting.md.
+      // The contracts every command keeps and the rule for adding one, so the
+      // sections are closed: another would hold for one command rather than all.
+      "filter": ["docs/architecture.md"],
+      "combine": "merge",
+      "config": {
+        "MD043": {
+          "match_case": true,
+          "headings": [
+            "# Architecture",
+            "## Output",
+            "## Absence",
+            "## Exit Codes",
+            "## Acting on a Controller",
+            "## Adding a Command"
+          ]
+        }
+      }
+    },
+    {
+      // The policy sections the OSS corpus settles on, plus the one operational rule
+      // that is about the credential rather than about the CLI. Everything else on how
+      // to operate belongs to docs/customization.md and docs/troubleshooting.md.
       "filter": ["SECURITY.md"],
       "combine": "merge",
       "config": {
@@ -118,7 +146,9 @@
             "## Supported Versions",
             "## Reporting a Vulnerability",
             "## What to Include",
-            "## Scope"
+            "## Exposure",
+            "## In Scope",
+            "## Out of Scope"
           ]
         }
       }
@@ -131,13 +161,13 @@
           "match_case": true,
           "headings": [
             "# Testing",
-            "## How the suite is arranged", "*",
+            "## Conventions", "*",
             "## Fixture Identities", "*",
-            "## The RESTCONF layer", "*",
-            "## The fan-out", "*",
-            "## The command tree", "*",
+            "## RESTCONF Layer", "*",
+            "## Fan-out", "*",
+            "## Command Tree", "*",
             "## Invariants", "*",
-            "## Against a real controller"
+            "## Live Verification", "*"
           ]
         }
       }
@@ -152,13 +182,13 @@
           "match_case": true,
           "headings": [
             "# Measurements",
-            "## Device heading map",
-            "## Access point",
+            "## Device Heading Map",
+            "## Access Point",
             "## Radio",
             "## Client",
             "## Tag",
             "## Configuration",
-            "## Not measured"
+            "## Not Measured"
           ]
         }
       }
@@ -173,97 +203,51 @@
       }
     },
     {
-      "filter": ["docs/configuration.md"],
+      "filter": ["docs/customization.md"],
       "combine": "merge",
       "config": {
         "MD043": {
           "match_case": true,
           "headings": [
-            "# Configuration",
+            "# Customization",
             "## Flags", "*",
             "## Environment Variables", "*",
-            "## Configuration File", "*",
-            "## Where to Keep the Token"
+            "## Configuration File"
           ]
         }
       }
     },
     {
-      // One section per cause token and per symptom, so the same applies.
+      // The cause tokens and the questions are `###` children that grow with the CLI,
+      // so this pins the three sections above them and leaves the children open.
       "filter": ["docs/troubleshooting.md"],
       "combine": "merge",
       "config": {
-        "MD043": { "match_case": true, "headings": ["# Troubleshooting", "*"] }
-      }
-    },
-    {
-      // The nine read commands, pinned exactly: the leading wildcard is the per-page
-      // title alone. A per-command section would break the uniform skeleton, so a
-      // fact that has nowhere else to go belongs in Notes.
-      "filter": ["docs/commands/show-*.md"],
-      "combine": "merge",
-      "config": {
-        "MD043": {
-          "match_case": true,
-          "headings": ["*", "## Flags", "## Columns", "## Notes", "## Examples"]
-        }
-      }
-    },
-    {
-      // The six commands that name a target and write it. Pinned exactly for the same
-      // reason as the read pages. Columns is present and says the command prints no
-      // table, so a reader finds the same seven sections on every one.
-      "filter": [
-        "docs/commands/deauth.md",
-        "docs/commands/delete-tag.md",
-        "docs/commands/enable-disable.md",
-        "docs/commands/reset-ap.md",
-        "docs/commands/reset-capwap.md",
-        "docs/commands/set-tag.md"
-      ],
-      "combine": "merge",
-      "config": {
         "MD043": {
           "match_case": true,
           "headings": [
-            "*", "## Flags", "## Columns", "## The target",
-            "## Guards", "## Exit codes", "## Notes", "## Examples"
+            "# Troubleshooting",
+            "## Reading a Failure", "*",
+            "## Error Causes", "*",
+            "## FAQ", "*"
           ]
         }
       }
     },
     {
-      // save-config names no target, so it takes neither the uniform skeleton nor a
-      // Columns section. Its two opening sections carry why the command exists at all.
-      "filter": ["docs/commands/save-config.md"],
+      // Every command page takes one shape: what it does, how it is called, what it
+      // answers with, and what an operator does with it. A fact the output carries
+      // is not repeated, and a rule the CLI enforces reports itself.
+      "filter": ["docs/command.*.md"],
       "combine": "merge",
       "config": {
-        "MD043": {
-          "match_case": true,
-          "headings": [
-            "*", "## Flags", "## Why this exists", "## What a save covers",
-            "## Guards", "## Exit codes", "## Notes", "## Examples"
-          ]
-        }
-      }
-    },
-    {
-      // The one command that contacts no controller, so it has no guard, no exit
-      // code of its own and nothing to demonstrate against a device.
-      "filter": ["docs/commands/generate-token.md"],
-      "combine": "merge",
-      "config": {
-        "MD043": {
-          "match_case": true,
-          "headings": ["*", "## Flags", "## Notes", "## Storing the result"]
-        }
+        // A use case collapses so the page stays scannable, the one place this
+        // repository opens a details block.
+        "MD033": { "allowed_elements": ["details", "summary", "p"] }
       }
     }
   ],
   "globs": ["**/*.md"],
-  // "gitignore": true is deliberately not set: it would drop the wnc-developer
-  // skill under .claude/, which .gitignore keeps untracked but which is still
-  // written to this repository's standard.
   "ignores": [
     "tmp/**",
     "vendor/**",

@@ -11,16 +11,16 @@ import (
 )
 
 // Table writes the rows as a borderless, space-aligned table for piping: a full border spends
-// three columns per field on views that run to twenty fields. An empty row set still prints the
-// heading line, which distinguishes an empty fleet from a read that produced nothing.
+// three columns per field, and the widest views carry many fields. An empty row set still prints
+// the heading line, which separates a controller holding nothing from a read that failed.
 func Table[T any](w io.Writer, cols []Column[T], rows []T) error {
 	return write(w, cols, rows, plainCell[T], borderless(),
 		tw.Padding{Left: "", Right: "  ", Overwrite: true}, tw.AlignLeft)
 }
 
 // PrettyTable writes the rows as a light-ruled, bordered table with a glyph in the columns that
-// declare one. It is what --pretty selects, for reading on a terminal rather than for piping: the
-// rules cost three columns per field, and three of the five glyphs are two columns wide.
+// declare one. --pretty selects it, for reading on a terminal rather than for piping: the rules
+// cost three columns per field, and some glyphs are two columns wide.
 func PrettyTable[T any](w io.Writer, cols []Column[T], rows []T) error {
 	return write(w, cols, rows, prettyCell[T], bordered(), tw.PaddingDefault, tw.AlignCenter)
 }

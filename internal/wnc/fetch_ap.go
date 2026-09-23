@@ -8,17 +8,18 @@ import (
 	sdk "github.com/umatare5/cisco-ios-xe-wireless-go"
 )
 
-// The fields expression names the nine nodes this view renders and no others. What it leaves on
-// the controller is the point: the four certificate leaves, the two external-module serial numbers
-// and proxy-info, whose username and password leaves the controller does send. The serial number
-// survives under device-detail because the Serial column is it.
+// The fields expression names the nodes this view renders and no others. It keeps the
+// certificate leaves, the external-module serial numbers and proxy-info on the controller, and
+// an unpruned read returns proxy-info's username and password. The serial number survives
+// under device-detail because the Serial column renders it.
 const apViewFields = "name;wtp-mac;ip-addr;num-radio-slots;country-code;" +
 	"device-detail;ap-mode-data;ap-state;ap-time-info"
 
-// AP is one access point's identity, state, power and uplink neighbor. BootTime is how long the
-// access point itself has been up and JoinTime how long the current CAPWAP association has lasted,
-// so a view carrying only one of them reads a controller switchover as a fleet reboot; a zero value
-// means the controller reported no instant.
+// AP is one access point's identity, state, power and uplink neighbor. BootTime is the instant the
+// access point itself came up, and JoinTime the instant the current CAPWAP association began. A
+// view carrying only one of them reads a controller switchover as a reboot of every access point.
+//
+// A zero value means the controller reported no instant.
 type AP struct {
 	Name        string
 	WtpMAC      string
@@ -47,7 +48,7 @@ type APReads struct {
 }
 
 // APs reads the access point view. The CAPWAP collection drives the rows, so its
-// failure is returned as the error and costs the controller its rows; the power pair
+// failure is returned as the error and costs the controller its rows. The power pair
 // and the LLDP neighbors are secondary and their failures cost only those cells.
 func (c *Client) APs(ctx context.Context) ([]AP, APReads, error) {
 	resp, err := c.sdk.AP().ListCAPWAPData(ctx, sdk.WithFields(apViewFields))
@@ -127,8 +128,9 @@ func (c *Client) apPower(ctx context.Context) (map[string]powerPair, error) {
 }
 
 // apNeighbors indexes the LLDP neighbors by access point. The list is keyed on the access point
-// and the neighbor together, so reading the whole list and grouping it is what keeps an access
-// point's row from being duplicated or dropped; keying the read by access point alone answers 404,
+// and the neighbor together, so reading the whole list and grouping it keeps an access
+// point's row from being duplicated or dropped.
+// Keying the read by access point alone answers 404,
 // because that is a partial list key.
 func (c *Client) apNeighbors(ctx context.Context) (map[string][]string, error) {
 	resp, err := c.sdk.AP().ListLldpNeigh(ctx)

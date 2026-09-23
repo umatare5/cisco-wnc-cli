@@ -104,7 +104,7 @@ func IEC(p *uint64) string {
 	return strconv.FormatFloat(n, 'f', 1, 64) + unit + "B"
 }
 
-// Duration renders a second count as the two largest non-zero units, which is what
+// Duration renders a second count as the two largest non-zero units, which
 // makes an uptime of weeks and an association of minutes both readable in one
 // column. The JSON output carries the raw seconds.
 func Duration(p *int64) string {
@@ -155,7 +155,7 @@ func Join(items []string, sep string) string {
 }
 
 // SecondsSince converts a controller timestamp into an age in seconds. A zero time
-// and the Unix epoch both mean the controller reported no instant: this estate
+// and the Unix epoch both mean the controller reported no instant. A controller
 // returns the epoch on several sibling timestamp leaves, and an age computed from
 // it would read as fifty-six years.
 func SecondsSince(now, t time.Time) *int64 {

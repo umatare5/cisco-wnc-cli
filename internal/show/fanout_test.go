@@ -129,7 +129,7 @@ func TestRunPartialFailure(t *testing.T) {
 		t.Fatalf("Run = %v, want ErrPartial", err)
 	}
 
-	// The half of the fleet that answered is still printed: withholding it would hide
+	// The controllers that answered are still printed: withholding them would hide
 	// the healthy controllers.
 	if !strings.Contains(out.String(), "wlc-good") {
 		t.Errorf("the surviving rows were dropped: %q", out.String())
@@ -170,7 +170,7 @@ func TestRunDegradedReadIsPartial(t *testing.T) {
 }
 
 // With no controller answering there is nothing to print: a heading on its own says
-// the fleet is empty, which is the opposite of what happened.
+// no controller holds anything, which is the opposite of what happened.
 func TestRunTotalFailurePrintsNothing(t *testing.T) {
 	t.Parallel()
 
@@ -190,7 +190,7 @@ func TestRunTotalFailurePrintsNothing(t *testing.T) {
 	}
 }
 
-// An empty fleet is a normal answer: the heading prints and the run succeeds.
+// No rows is a normal answer: the heading prints and the run succeeds.
 func TestRunEmptyFleet(t *testing.T) {
 	t.Parallel()
 

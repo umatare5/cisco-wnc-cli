@@ -23,9 +23,9 @@ func optionalStr(p *string) *string {
 }
 
 // zeroAbsent turns a numeric leaf whose zero cannot be a real reading into an absence-preserving
-// field. Use it only where zero is impossible: a joined access point has at least one radio slot,
-// a serving radio has a channel, and no controller reports an RSSI of exactly 0 dBm. Never where
-// zero is a reading, such as a client count or an SNR.
+// field. It applies only where zero is impossible: a joined access point has at least one radio
+// slot, a serving radio has a channel, and no controller reports an RSSI of exactly 0 dBm. It does
+// not apply where zero is a reading, such as a client count or an SNR.
 func zeroAbsent[T ~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64](
 	v T,
 ) *T {

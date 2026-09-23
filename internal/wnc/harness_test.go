@@ -84,7 +84,7 @@ func newClient(t *testing.T, r routes) *Client {
 	return c
 }
 
-// newClientWithQuery serves one body for every path and records the RAW query, not url.Values: a
+// newClientWithQuery serves one body for every path and records the RAW query, not url.Values. A
 // fields expression is built from semicolons, which net/url has refused to parse since Go 1.17, so
 // Query() would silently drop the parameter this asserts on.
 func newClientWithQuery(t *testing.T, query *string, body string) *Client {

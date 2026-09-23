@@ -22,12 +22,13 @@ func deauthCommand() *cli.Command {
 		Usage:     "Deauthenticate a client on a controller",
 		UsageText: synopsisChoice(config.FlagMAC, config.FlagUsername),
 		Description: "--mac and --username are the mac and username columns of wnc show client,\n" +
-			"and one invocation gives one of them. The controller resolves it first, so a\n" +
-			"value it holds no client at is refused before the RPC, which answers the same\n" +
-			"whether or not a client was there. A username may hold more than one session,\n" +
-			"and the prompt says how many. The client is dropped and reconnects on its own\n" +
-			"within about four minutes. The operation is absent before 17.15. Pass --dry-run\n" +
-			"to name the target and change nothing.",
+			"and they select different clients, so give only one. The controller resolves\n" +
+			"the target first, so a value it holds no client at is refused before the RPC,\n" +
+			"which answers the same whether or not a client was there. A username may hold\n" +
+			"more than one session, and the prompt says how many. The client is dropped and\n" +
+			"re-associates on its own, on a timer its supplicant sets rather than the\n" +
+			"controller, so allow about four minutes. The operation is absent before 17.15.6.\n" +
+			"Pass --dry-run to name the target and change nothing.",
 		Flags:  append(execFlags(), macFlag(), clientUsernameFlag(), yesFlag()),
 		Action: runDeauth,
 	}
@@ -43,8 +44,8 @@ func macFlag() cli.Flag {
 }
 
 // clientUsernameFlag names the client's own username, which is not the controller account
-// generate-token asks for under the same flag name. Declaring no Sources is what keeps the two
-// apart: WNC_USERNAME supplies that one, and reading it here would let an exported controller
+// generate-token asks for under the same flag name. Declaring no Sources keeps the two apart:
+// WNC_USERNAME supplies that one, and reading it here would let an exported controller
 // login select whichever clients happen to carry it.
 func clientUsernameFlag() cli.Flag {
 	return &cli.StringFlag{
@@ -53,9 +54,9 @@ func clientUsernameFlag() cli.Flag {
 	}
 }
 
-// runDeauth drops one arm's worth of sessions. The read before the post is the guard and not a
-// courtesy: the RPC answers 204 for an identifier associated to nothing exactly as it does for a
-// session it dropped, so without it a reported deauthentication and a wrong target are the same
+// runDeauth drops one arm's worth of sessions. The read before the post is the guard, not a
+// convenience. The RPC answers 204 for a target with no session exactly as it does for one it
+// dropped, so without that read a reported deauthentication and a wrong target are the same
 // output.
 func runDeauth(ctx context.Context, cmd *cli.Command) error {
 	flag, value, err := requireDeauthTarget(cmd)
@@ -75,8 +76,8 @@ func runDeauth(ctx context.Context, cmd *cli.Command) error {
 	return deauthByMAC(ctx, cmd, client, target, value)
 }
 
-// deauthByMAC drops the one session at an address. The address the row carries is what the prompt,
-// the report and the wire all name, because the controller already serves it in the form the SDK
+// deauthByMAC drops the one session at an address. The prompt, the report and the wire all use the
+// address the row carries, because the controller already serves it in the form the SDK
 // normalizes to.
 func deauthByMAC(
 	ctx context.Context, cmd *cli.Command, client *wnc.Client, target config.Target, mac string,
@@ -105,7 +106,7 @@ func deauthByMAC(
 }
 
 // deauthByUsername drops every session under a username. The RPC's leaf states no cardinality, so
-// the prompt names the number the controller holds; the collection read answers no 404 the way the
+// the prompt names the number the controller holds. The collection read answers no 404 the way the
 // keyed one does, so a failure here is a failure to read and not an absent client.
 func deauthByUsername(
 	ctx context.Context, cmd *cli.Command, client *wnc.Client, target config.Target, username string,
@@ -141,21 +142,21 @@ func underUsername(sessions int, username string) string {
 }
 
 // readFailure words a resolve that did not answer. Both arms read the same collection, so both
-// name it, and Message is what keeps the response body an APIError carries out of the line.
+// name it, and Message keeps the response body an APIError carries out of the line.
 func readFailure(target config.Target, err error) error {
 	return fmt.Errorf("reading common-oper-data from %s: %s", target.Name, wnc.Message(err))
 }
 
 // absentClient words an address the controller holds no client at. The 404 the keyed read
 // answers and a 200 carrying no row reach here differently and mean the same thing, so they are
-// reported the same way — the shape absentAP takes for a name.
+// reported the same way – the shape absentAP takes for a name.
 func absentClient(target config.Target, mac string) error {
 	return fmt.Errorf("%s holds no client at %s", target.Name, mac)
 }
 
 // requireDeauthTarget reads the arm of the RPC's mandatory choice this invocation fills, and not
 // through requireOne, whose message calls the target a name. Only presence and emptiness are
-// checked: the SDK normalizes the address spellings, the username leaf is a bare string the schema
+// checked. The SDK normalizes the address spellings, the username leaf is a bare string the schema
 // restricts in no way, and an empty username is the value most clients carry.
 func requireDeauthTarget(cmd *cli.Command) (flag, value string, err error) {
 	macs, usernames := cmd.Count(config.FlagMAC), cmd.Count(config.FlagUsername)
@@ -165,7 +166,7 @@ func requireDeauthTarget(cmd *cli.Command) (flag, value string, err error) {
 		return "", "", fmt.Errorf("%w: %s requires --%s or --%s: the client's address or its username",
 			ErrUsage, cmd.Name, config.FlagMAC, config.FlagUsername)
 	case macs > 0 && usernames > 0:
-		return "", "", fmt.Errorf("%w: --%s and --%s select differently, so one invocation gives one of them",
+		return "", "", fmt.Errorf("%w: --%s and --%s select different clients, so give only one of them",
 			ErrUsage, config.FlagMAC, config.FlagUsername)
 	}
 
@@ -192,7 +193,7 @@ func requireDeauthTarget(cmd *cli.Command) (flag, value string, err error) {
 // Message would otherwise report the status alone.
 func absentOperation(err error) error {
 	if cause, status := wnc.Classify(err); cause == wnc.CauseHTTP && status == http.StatusBadRequest {
-		return errors.New("the controller rejected the operation, which is how a release before 17.15 answers it")
+		return errors.New("the controller rejected the operation: a release before 17.15.6 serves no client delete")
 	}
 
 	return err

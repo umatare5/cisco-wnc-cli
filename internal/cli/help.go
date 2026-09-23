@@ -31,8 +31,8 @@ func helpFor(ctx context.Context, cmd *cli.Command, path []string) error {
 }
 
 // showHelp prints one command's own help. A leaf is printed through its parent because
-// that is urfave's only path that honors CustomHelpTemplate, which is where the
-// inherited-options section lives.
+// that is urfave's only path that honors CustomHelpTemplate, the template carrying the
+// inherited-options section.
 func showHelp(ctx context.Context, cmd, parent *cli.Command) error {
 	switch {
 	case cmd.Root() == cmd:
@@ -45,7 +45,7 @@ func showHelp(ctx context.Context, cmd, parent *cli.Command) error {
 }
 
 // attachInheritedOptions gives every leaf a help template that also lists the flags its
-// parent declares: urfave builds GLOBAL OPTIONS from the root's persistent flags alone,
+// parent declares. Urfave builds GLOBAL OPTIONS from the root's persistent flags alone,
 // so a connection flag a leaf parses through its parent appears in no leaf's help. Only a
 // group's flags are copied down, because the root's are that GLOBAL OPTIONS section.
 func attachInheritedOptions(root *cli.Command) {
@@ -64,7 +64,7 @@ func attachInheritedOptions(root *cli.Command) {
 }
 
 // inheritedOptions renders the section. It is built in Go rather than by the template because
-// urfave's template data is the leaf, which reaches the root's flags and never its parent's, and a
+// urfave's template data is the leaf, which reaches the root's flags and never its parent's. A
 // Local flag is left out because urfave does not apply one to a subcommand.
 func inheritedOptions(flags []cli.Flag) string {
 	var section strings.Builder

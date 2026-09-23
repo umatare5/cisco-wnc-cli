@@ -84,7 +84,7 @@ func TestTagRowsCollapseAReportedEmptyString(t *testing.T) {
 
 // Local Site has three readings and they must stay three: a site tag that is local, one
 // that is not, and one the controller said nothing about. The last is why the read asks
-// for the defaults in force.
+// for the defaults in effect.
 func TestSiteTagRowsKeepTheThreeLocalSiteReadings(t *testing.T) {
 	t.Parallel()
 
@@ -132,8 +132,8 @@ func TestSiteTagLocalSiteTakesNoGlyph(t *testing.T) {
 	}
 }
 
-// The SDK types every RF tag leaf but the name as a pointer, so an omitted profile arrives nil
-// rather than as "", and the row layer is what keeps it out of the output.
+// The SDK types every RF tag leaf except the name as a pointer, so an omitted profile arrives nil
+// rather than as "", and the row layer keeps it out of the output.
 func TestRFTagRowsAbsenceRules(t *testing.T) {
 	t.Parallel()
 
@@ -188,9 +188,10 @@ func TestTagRowsCarryTheController(t *testing.T) {
 
 // The one absence rule the cells cannot pin. render.Str renders a reported empty string as
 // Absent too, so a leaf handed straight through instead of collapsed reads identically in a
-// cell and differs only in the JSON — which is where a consumer would read it as a value the
-// controller sent. Both shapes are fed in: a leaf the controller omitted, and one it reported
-// empty.
+// cell and differs only in the JSON.
+//
+// A consumer would read it there as a value the controller sent. Both shapes are fed in: a
+// leaf the controller omitted, and one it reported empty.
 func TestTagRowsOmitEveryAbsentColumnFromTheJSON(t *testing.T) {
 	t.Parallel()
 

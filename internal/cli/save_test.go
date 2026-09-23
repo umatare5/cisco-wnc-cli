@@ -10,7 +10,7 @@ import (
 
 // newFailingSaveStub answers every request with the refusal a controller gives when it will not
 // save, and returns its address. It is a stub of its own because controllerStub answers the
-// save successfully, which is what every other case here needs.
+// save successfully, which every other case here needs.
 func newFailingSaveStub(t *testing.T) string {
 	t.Helper()
 
@@ -128,7 +128,7 @@ func TestSaveConfigPromptNamesTheBlastRadius(t *testing.T) {
 }
 
 // --yes and a typed yes both reach the controller exactly once, and the reported line claims a
-// completion rather than a dispatch: this is the one write whose RPC answers with the
+// completion rather than a dispatch. This is the one write whose RPC answers with the
 // controller's own account of what it did.
 func TestSaveConfigSends(t *testing.T) {
 	tests := []struct {
@@ -138,7 +138,7 @@ func TestSaveConfigSends(t *testing.T) {
 	}{
 		{name: "yes flag", extra: []string{"--yes"}},
 		{name: "typed yes", stdin: "y\n"},
-		{name: "typed yes spelt out", stdin: "YES\n"},
+		{name: "typed yes spelled out", stdin: "YES\n"},
 	}
 
 	for _, tt := range tests {
