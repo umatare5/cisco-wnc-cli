@@ -133,7 +133,7 @@ These commands stand outside both groups for specific reasons. See [Other comman
 
 ## Customization
 
-This CLI reads its settings from flags, environment variables and a configuration file. See [Customization](docs/customization.md) for the details.
+This CLI reads its settings from flags, environment variables and a config file. See [Customization](docs/customization.md) for the details.
 
 ## Troubleshooting
 
