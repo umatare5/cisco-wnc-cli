@@ -191,7 +191,8 @@ func resolveColumns(given, keys []string) ([]string, error) {
 		c = strings.TrimSpace(c)
 
 		if !slices.Contains(keys, c) {
-			return nil, fmt.Errorf("--%s: accepted keys are %s", FlagColumns, strings.Join(keys, ", "))
+			return nil, fmt.Errorf("--%s: accepted keys are %s, or %s alone",
+				FlagColumns, strings.Join(keys, ", "), ColumnsAll)
 		}
 
 		if slices.Contains(columns, c) {

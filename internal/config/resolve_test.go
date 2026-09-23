@@ -283,7 +283,7 @@ func TestResolveRejections(t *testing.T) {
 		{name: "unknown sort key", args: []string{"-b", "nope"}, want: "accepted keys"},
 		{name: "unknown column", args: []string{"--columns", "nope"}, want: "--columns: accepted keys"},
 		{name: "empty column", args: []string{"--columns", ""}, want: "--columns: accepted keys"},
-		{name: "all beside a key", args: []string{"--columns", "all,mac"}, want: "--columns: accepted keys"},
+		{name: "all beside a key", args: []string{"--columns", "all,mac"}, want: "mac, or all alone"},
 		{name: "repeated column", args: []string{"--columns", "mac,mac"}, want: "--columns: mac is given twice"},
 	}
 
