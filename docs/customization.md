@@ -1,0 +1,58 @@
+# Customization
+
+This CLI reads a setting from a flag first, then from the environment, then from the configuration file.
+
+## Flags
+
+[`help.md`](help.md) transcribes `--help` for every command except `completion`.
+The flags a command takes follow from what that command does:
+
+| Set                     | Flags                                                              |
+| :---------------------- | :----------------------------------------------------------------- |
+| Every command           | `--config`, `--log-level`                                          |
+| Contacting a controller | `--controller`, `--access-token`, `--insecure`, `--timeout`        |
+| Reading, so `show` only | `--format`, `--pretty`, `--sort-by`, `--sort-keys`, `--sort-order` |
+| Acting, so asking first | `--yes`                                                            |
+
+`--dry-run` is a root flag rather than a per-command one, so it precedes the subcommand.
+On the root it validates the configuration and contacts nothing, and on a command that acts it stops before the request.
+
+`--insecure` drops certificate verification, so it accepts an interception as readily as a private CA.
+Trust the issuer instead, which [Troubleshooting](troubleshooting.md#tls) sets out.
+
+> [!WARNING]
+> `--ap-name` reaches the controller in the request URL and `deauth --username` in the body, and neither is bounded locally.
+> A secret mistyped into one has already left the host.
+
+## Environment Variables
+
+`WNC_CONFIG` reaches every command, and `WNC_CONTROLLER` and `WNC_ACCESS_TOKEN` reach the commands that contact a controller:
+
+| Variable           | Description                                             |
+| :----------------- | :------------------------------------------------------ |
+| `WNC_CONTROLLER`   | Controller `host[:port]`, comma separated for several   |
+| `WNC_ACCESS_TOKEN` | Basic auth token applied to every controller            |
+| `WNC_CONFIG`       | Configuration file path, replacing the default location |
+
+These are read by `wnc generate-token` alone, which contacts no controller:
+
+| Variable       | Description         |
+| :------------- | :------------------ |
+| `WNC_USERNAME` | Controller username |
+| `WNC_PASSWORD` | Controller password |
+
+## Configuration File
+
+A file keeps the controller list out of every invocation.
+[`SECURITY.md`](../SECURITY.md#exposure) ranks it first among the places the token can sit.
+[`examples/config.json`](../examples/config.json) is a working file to copy.
+
+- **The path** – `--config`, then `$WNC_CONFIG`, then `$XDG_CONFIG_HOME/wnc/config.json`, then `~/.config/wnc/config.json`
+- **One token covers the file** – every controller it lists is read with that credential, and so is a host named on `--controller`
+- **The read is strict** – an unknown, duplicated or case-differing key, a comment and a trailing comma are each rejected
+
+Check a hand-edited file without contacting anything:
+
+```bash
+wnc --config ./config.json --dry-run
+```

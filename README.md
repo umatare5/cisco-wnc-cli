@@ -24,60 +24,59 @@
 
 ## Overview
 
-This CLI reads [Catalyst 9800 controllers](https://www.cisco.com/site/us/en/products/networking/wireless/wireless-lan-controllers/catalyst-9800-series/index.html) over RESTCONF and prints their state as a table or JSON.
+This CLI manages wireless LANs across multiple [Catalyst 9800 WLCs](https://www.cisco.com/site/us/en/products/networking/wireless/wireless-lan-controllers/catalyst-9800-series/index.html).
 
-- 📤 **Shell-friendly**: A borderless table `awk` and `cut` read, and a JSON array keyed by the sort names
-- 🌐 **Multi-controller**: Read concurrently, each row labelled with its own, and a partial read prints
-- 🔭 **Joined views**: `show overview`, `show ap`, `show client` and `show wlan` join what the device splits
-- 🎨 **Pretty output**: `--pretty` borders the table and glyphs the state columns, never the JSON
+- 📤 **Shell-friendly** – A borderless table `awk` and `cut` read, and a JSON array keyed by the sort names
+- 🌐 **Multi-controller** – Read concurrently and labeled per controller, so one unreachable host costs its rows and not the run
+- 🔭 **Joined views** – `show overview`, `show ap`, `show client` and `show wlan` join what the device splits
+- 🖥️ **Terminal or pipe** – `--pretty` borders and glyphs the table, and `--format json` feeds a machine or an agent
 
 ## Supported Environment
 
 Cisco Catalyst 9800 Wireless Network Controller running on:
 
-- **Cisco IOS-XE 17.12.x** — Verified on 17.12.8 (`deauth` unavailable)
-- **Cisco IOS-XE 17.15.x** — Verified on 17.15.6
-- **Cisco IOS-XE 17.18.x** — Verified on 17.18.4a
+- **Cisco IOS-XE 17.12.5 or later** – Last verified on 17.12.8, with no `wnc deauth` before 17.15.6
+- **Cisco IOS-XE 17.15.6 or later** – Last verified on 17.15.6
+- **Cisco IOS-XE 17.18.4a or later** – Last verified on 17.18.4a
+
+> [!IMPORTANT]
+> This CLI requires these minimum versions due to RESTCONF defects in earlier releases.
+> It fails on **17.15.4b** and **17.18.1**.
+> See [cisco-ios-xe-wireless-go #28](https://github.com/umatare5/cisco-ios-xe-wireless-go/issues/28) and [cisco-ios-xe-wireless-go #29](https://github.com/umatare5/cisco-ios-xe-wireless-go/issues/29) for details.
+
+## Installation
+
+This CLI ships as a container image and as OS-specific binaries, both built from the same tagged commit.
+
+```bash
+docker pull ghcr.io/umatare5/wnc
+```
+
+Or, download the binaries from [Releases](https://github.com/umatare5/cisco-wnc-cli/releases).
+`(linux|darwin)_(amd64|arm64)` and `windows_amd64` are supported.
 
 ## Quick Start
 
-Please enable RESTCONF and HTTPS on the Catalyst 9800 before using this CLI. Please see:
+This CLI reaches a controller over RESTCONF alone, so enable RESTCONF and HTTPS on the Catalyst 9800 first.
 
-- [Cisco IOS XE 17.15 Programmability Configuration Guide — RESTCONF](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/prog/configuration/1715/b_1715_programmability_cg/restconf_protocol.html#id_125840)
+See the [Programmability Configuration Guide, Cisco IOS XE 17.15.x – RESTCONF](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/prog/configuration/1715/b_1715_programmability_cg/restconf_protocol.html#id_125840) for enabling them.
 
-### 1. Install the CLI
-
-```bash
-docker run --rm ghcr.io/umatare5/wnc:latest --help
-```
-
-> [!TIP]
-> If you prefer using binaries, download them from the [Release](https://github.com/umatare5/cisco-wnc-cli/releases).
->
-> **Supported Platform:** `linux_amd64`, `linux_arm64`, `darwin_amd64`, `darwin_arm64` and `windows_amd64`
-
-### 2. Generate a Basic Auth token
-
-Encode your controller account as Base64.
+### 1. Generate a Basic Auth token
 
 ```bash
-read -rs WNC_PASSWORD && export WNC_PASSWORD
-export WNC_ACCESS_TOKEN="$(wnc generate-token -u admin)"
+read -rs WNC_PASSWORD # < your-password
+printf '%s' "$WNC_PASSWORD" | wnc generate-token -u admin
+# Output: YWRtaW46eW91ci1wYXNzd29yZA== (admin:your-password)
 ```
 
-### 3. Set required environment variables
+### 2. Set the environment variables
 
 ```bash
 export WNC_CONTROLLER="wnc1.example.internal"
+export WNC_ACCESS_TOKEN="YWRtaW46eW91ci1wYXNzd29yZA=="
 ```
 
-`--controller` is repeatable, so several controllers need no separator at all:
-
-```bash
-wnc show overview -c wnc1.example.internal -c wnc2.example.internal
-```
-
-### 4. Read the controller
+### 3. Print a wireless overview
 
 ```bash
 wnc show overview
@@ -86,69 +85,92 @@ wnc show overview
 > [!TIP]
 > `wnc completion <shell>` writes the script to stdout, and `--help` names each shell and the line it needs.
 
-## Syntax
+## CLI Reference
 
-`wnc --help` prints every flag, and [`docs/README.md`](docs/README.md) indexes the reference pages behind it.
+This CLI groups its commands by what they do. Each one below links to its own section, with the output it prints.
 
-The `show` commands read a controller and print:
+### Show commands
 
-| Command                                                   | What it does                                                     |
-| :-------------------------------------------------------- | :--------------------------------------------------------------- |
-| [`wnc show overview`](docs/commands/show-overview.md)     | One row per radio, with the RF settings and the load on it       |
-| [`wnc show ap`](docs/commands/show-ap.md)                 | One row per access point                                         |
-| [`wnc show ap-join`](docs/commands/show-ap-join.md)       | One row per access point the controller remembers, joined or not |
-| [`wnc show ap-tag`](docs/commands/show-ap-tag.md)         | One row per access point, with the tags in force on it           |
-| [`wnc show client`](docs/commands/show-client.md)         | One row per associated client                                    |
-| [`wnc show wlan`](docs/commands/show-wlan.md)             | One row per WLAN and the policy profile bound to it              |
-| [`wnc show policy-tag`](docs/commands/show-policy-tag.md) | One row per WLAN binding a policy tag carries                    |
-| [`wnc show site-tag`](docs/commands/show-site-tag.md)     | One row per site tag, with the profiles it names                 |
-| [`wnc show rf-tag`](docs/commands/show-rf-tag.md)         | One row per RF tag, with its profile on each band                |
+These commands read a controller and print a table or JSON:
 
-The commands below **act on a controller**, in [the order they all keep](docs/README.md#acting-on-a-controller):
+| Command                                      | Description                                                      |
+| :------------------------------------------- | :--------------------------------------------------------------- |
+| [`wnc show overview`][wnc-show-overview]     | One row per radio, with the RF settings and the load on it       |
+| [`wnc show ap`][wnc-show-ap]                 | One row per access point                                         |
+| [`wnc show ap-join`][wnc-show-ap-join]       | One row per access point the controller remembers, joined or not |
+| [`wnc show ap-tag`][wnc-show-ap-tag]         | One row per access point, with the tags in effect on it          |
+| [`wnc show client`][wnc-show-client]         | One row per associated client                                    |
+| [`wnc show wlan`][wnc-show-wlan]             | One row per WLAN and the policy profile bound to it              |
+| [`wnc show policy-tag`][wnc-show-policy-tag] | One row per WLAN binding a policy tag carries                    |
+| [`wnc show site-tag`][wnc-show-site-tag]     | One row per site tag, with the profiles it names                 |
+| [`wnc show rf-tag`][wnc-show-rf-tag]         | One row per RF tag, with its profile on each band                |
 
-| Command                                                                | What it does                                       |
-| :--------------------------------------------------------------------- | :------------------------------------------------- |
-| [`wnc reset ap`](docs/commands/reset-ap.md)                            | Restart one access point                           |
-| [`wnc reset capwap`](docs/commands/reset-capwap.md)                    | Reset one access point's controller session        |
-| [`wnc (enable\|disable) (ap\|radio)`](docs/commands/enable-disable.md) | Set an access point's or one radio's admin state   |
-| [`wnc set (policy\|site\|rf)-tag`](docs/commands/set-tag.md)           | Create or update one tag                           |
-| [`wnc delete (policy\|site\|rf)-tag`](docs/commands/delete-tag.md)     | Delete one tag                                     |
-| [`wnc deauth`](docs/commands/deauth.md)                                | Deauthenticate a client, by address or by username |
+### Action commands
 
-Two commands stand outside both groups, each for a reason of its own:
+These commands **act on a controller**, in [the order they all keep](docs/architecture.md#acting-on-a-controller):
 
-| Command                                                 | What makes it different                                        |
-| :------------------------------------------------------ | :------------------------------------------------------------- |
-| [`wnc generate-token`](docs/commands/generate-token.md) | Contacts no controller — it encodes an account and prints it   |
-| [`wnc save-config`](docs/commands/save-config.md)       | Names no target, so it persists every change on the controller |
+| Command                                                                      | Description                                        |
+| :--------------------------------------------------------------------------- | :------------------------------------------------- |
+| [`wnc reset ap`][wnc-reset-ap]                                               | Restart one access point                           |
+| [`wnc reset capwap`][wnc-reset-capwap]                                       | Reset one access point's controller session        |
+| [`wnc (enable\|disable) (ap\|radio)`][wnc-enable-wnc-disable]                | Set an access point's or one radio's admin state   |
+| [`wnc set (policy\|site\|rf)-tag`][wnc-set-policy-tag-site-tag-rf-tag]       | Create or update one tag                           |
+| [`wnc delete (policy\|site\|rf)-tag`][wnc-delete-policy-tag-site-tag-rf-tag] | Delete one tag                                     |
+| [`wnc deauth`][wnc-deauth]                                                   | Deauthenticate a client, by address or by username |
 
-## Configuration
+### Other commands
 
-Three environment variables reach every command:
+These commands stand outside both groups, each for a reason of its own:
 
-| Variable           | Description                                             |
-| :----------------- | :------------------------------------------------------ |
-| `WNC_CONTROLLER`   | Controller `host[:port]`, comma separated for several   |
-| `WNC_ACCESS_TOKEN` | Basic auth token applied to every controller            |
-| `WNC_CONFIG`       | Configuration file path, replacing the default location |
+| Command                                    | Description                                                    |
+| :----------------------------------------- | :------------------------------------------------------------- |
+| [`wnc generate-token`][wnc-generate-token] | Contacts no controller, so it encodes an account and prints it |
+| [`wnc save-config`][wnc-save-config]       | Names no target, so it persists every change on the controller |
 
-`wnc generate-token` reads `WNC_USERNAME` and `WNC_PASSWORD` instead, and contacts no controller. A configuration file keeps the token out of the shell history and the process arguments — see [`docs/configuration.md`](docs/configuration.md).
+### Help
 
-> [!CAUTION]
-> `--insecure` disables TLS verification. **Never use it in production** — [trust the issuer](docs/troubleshooting.md#causetls) instead.
+`wnc --help` lists the commands, and each command's `--help` lists its flags and any nested commands.
+See [Help](docs/help.md) for the transcript of every command except `completion`.
+
+## Customization
+
+This CLI reads its settings from flags, environment variables and a configuration file.
+See [Customization](docs/customization.md) for the details.
 
 ## Troubleshooting
 
-A failed read is one stderr line ending in `(cause=…)`, and a usage fault or a refusal is one `wnc: …` line. [`docs/troubleshooting.md`](docs/troubleshooting.md) indexes both, and `--log-level debug` restores the logfmt form.
+See [Troubleshooting](docs/troubleshooting.md) for every error message this CLI prints, and what each one means.
+
+## Documentation
+
+Both pages below are written for a contributor rather than an operator.
+
+- **[Architecture](docs/architecture.md)** – the output contract, the absence rule, the exit codes, and the write order
+- **[Measurements](docs/measurements.md)** – every reading taken on a live controller, and the gaps
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the `make` targets, the Docker build and the release process.
-
-## Acknowledgement
-
-I launched this project with the help of **GitHub Copilot Coding Agent**, and I am grateful to the global developer community for their contributions to open source projects and public repositories.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development setup, the test conventions and the release steps.
 
 ## License
 
-MIT. The binary statically links MIT and BSD 3-Clause dependencies, whose notices are reproduced in [`NOTICE`](NOTICE) and shipped alongside [`LICENSE`](LICENSE) in every release archive and container image.
+MIT. The binary statically links MIT and BSD 3-Clause dependencies, so their notices are reproduced in [`NOTICE`](NOTICE).
+[`LICENSE`](LICENSE) ships beside it in every release archive and container image.
+
+[wnc-show-overview]: docs/command.show.md#wnc-show-overview
+[wnc-show-ap]: docs/command.show.md#wnc-show-ap
+[wnc-show-ap-join]: docs/command.show.md#wnc-show-ap-join
+[wnc-show-ap-tag]: docs/command.show.md#wnc-show-ap-tag
+[wnc-show-client]: docs/command.show.md#wnc-show-client
+[wnc-show-wlan]: docs/command.show.md#wnc-show-wlan
+[wnc-show-policy-tag]: docs/command.show.md#wnc-show-policy-tag
+[wnc-show-site-tag]: docs/command.show.md#wnc-show-site-tag
+[wnc-show-rf-tag]: docs/command.show.md#wnc-show-rf-tag
+[wnc-reset-ap]: docs/command.action.md#wnc-reset-ap
+[wnc-reset-capwap]: docs/command.action.md#wnc-reset-capwap
+[wnc-enable-wnc-disable]: docs/command.action.md#wnc-enable-wnc-disable
+[wnc-set-policy-tag-site-tag-rf-tag]: docs/command.action.md#wnc-set-policy-tag-site-tag-rf-tag
+[wnc-delete-policy-tag-site-tag-rf-tag]: docs/command.action.md#wnc-delete-policy-tag-site-tag-rf-tag
+[wnc-deauth]: docs/command.action.md#wnc-deauth
+[wnc-generate-token]: docs/command.other.md#wnc-generate-token
+[wnc-save-config]: docs/command.other.md#wnc-save-config
