@@ -66,6 +66,7 @@ func fanEnv(t *testing.T, format string, names ...string) (env Env, out, errOut 
 			Format:      format,
 			SortBy:      "name",
 			SortOrder:   config.OrderAsc,
+			Columns:     []string{"name", keyController},
 		},
 		Logger:    logger,
 		Out:       &stdout,
@@ -221,6 +222,32 @@ func TestRunJSONFormat(t *testing.T) {
 	want := `[{"name":"wlc-a","controller":"wlc-a"}]` + "\n"
 	if out.String() != want {
 		t.Errorf("output = %q, want %q", out.String(), want)
+	}
+}
+
+// Sorting reads every column, so a key the selection leaves out still orders the rows, in the
+// table and in the JSON alike.
+func TestRunSortsByAKeyTheSelectionLeavesOut(t *testing.T) {
+	t.Parallel()
+
+	for format, want := range map[string]string{
+		config.FormatTable: "Controller\nwlc-a\nwlc-b\n",
+		config.FormatJSON:  `[{"controller":"wlc-a"},{"controller":"wlc-b"}]` + "\n",
+	} {
+		t.Run(format, func(t *testing.T) {
+			t.Parallel()
+
+			env, out, _ := fanEnv(t, format, "wlc-b", "wlc-a")
+			env.Settings.Columns = []string{keyController}
+
+			if err := Run(t.Context(), env, fanColumns(), rowsPerController(nil, nil)); err != nil {
+				t.Fatalf("Run: %v", err)
+			}
+
+			if out.String() != want {
+				t.Errorf("output = %q, want %q", out.String(), want)
+			}
+		})
 	}
 }
 

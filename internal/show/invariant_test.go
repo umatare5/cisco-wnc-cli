@@ -228,6 +228,27 @@ func TestEveryCommandCarriesTheController(t *testing.T) {
 	}
 }
 
+// The same holds for what a view prints by default, so no default set may leave it out.
+func TestEveryDefaultSetKeepsTheController(t *testing.T) {
+	t.Parallel()
+
+	for name, keys := range map[string][]string{
+		"overview":   render.DefaultKeys(OverviewColumns()),
+		"ap":         render.DefaultKeys(APColumns()),
+		"ap-join":    render.DefaultKeys(APJoinColumns()),
+		"ap-tag":     render.DefaultKeys(APTagColumns()),
+		"client":     render.DefaultKeys(ClientColumns()),
+		"wlan":       render.DefaultKeys(WLANColumns()),
+		"policy-tag": render.DefaultKeys(PolicyTagColumns()),
+		"site-tag":   render.DefaultKeys(SiteTagColumns()),
+		"rf-tag":     render.DefaultKeys(RFTagColumns()),
+	} {
+		if !contains(keys, keyController) {
+			t.Errorf("the default set of %s leaves out the controller column", name)
+		}
+	}
+}
+
 func contains(list []string, v string) bool {
 	for _, s := range list {
 		if s == v {

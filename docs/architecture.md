@@ -4,19 +4,19 @@ This document records the contracts every command keeps, and the tests an added 
 
 ## Output
 
-Every `show` command renders one row set through two writers, and both take the same column list.
-A [`Column[T]`](../internal/render/column.go#L13) carries the sort key, the table cell and the JSON field together, so no column exists in one writer alone.
+Every `show` command renders one row set through two writers, and both take the same selection of columns.
+A [`Column[T]`](../internal/render/column.go#L13) carries the sort key, the table cell, the JSON field and whether the default set holds it, so no column exists in one writer alone.
 
 The table is borderless and space-aligned.
 It spends no column on rules and starts the first field at column zero, so `awk` and `cut` can read it.
 The [`--pretty`](../internal/render/table.go#L24) form borders it and glyphs the state columns instead, for a terminal rather than for a pipe.
 
-The JSON form is a flat array whose field names are exactly the keys [`--sort-by`](../internal/render/sort.go#L12) accepts, and `--sort-keys` prints them.
+The JSON form is a flat array whose field names are the keys [`--columns`](../internal/render/json.go#L15) selects, out of those `--sort-keys` prints.
 A number stays a number, an empty result is `[]`, and a unit belongs to the table alone.
 The table glues `dBm` to the number so a cell stays one field, while the JSON carries the bare value.
 
 Sorting reads the typed value rather than the rendered text, so `--sort-by channel` puts 6 before 11.
-A pointer column sorts through [`SortValue`](../internal/render/column.go#L46), which keeps an absence out of the ordering rather than treating it as a zero.
+A pointer column sorts through [`SortValue`](../internal/render/column.go#L74), which keeps an absence out of the ordering rather than treating it as a zero.
 
 ## Absence
 

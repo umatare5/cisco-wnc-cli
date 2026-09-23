@@ -1,16 +1,46 @@
 package render
 
 import (
+	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"fmt"
 	"io"
+	"reflect"
+	"strings"
 )
 
-// JSON writes the rows as a flat array with the field names --sort-by accepts. json/v2 marshals a
-// nil slice to [] and escapes no HTML, and MarshalWrite adds no trailing newline, so one is
-// appended here.
-func JSON[T any](w io.Writer, rows []T) error {
-	if err := json.MarshalWrite(w, rows); err != nil {
+// JSON writes the rows as a flat array of objects holding the given keys in that order, and leaves
+// out a nil pointer, the absence the row tags spell as omitzero. json/v2 marshals a nil slice to []
+// and escapes no HTML, and MarshalWrite adds no trailing newline, so one is appended here.
+func JSON[T any](w io.Writer, rows []T, keys []string) error {
+	fields := fieldsByTag[T]()
+
+	object := json.MarshalToFunc(func(enc *jsontext.Encoder, row T) error {
+		if err := enc.WriteToken(jsontext.BeginObject); err != nil {
+			return err
+		}
+
+		v := reflect.ValueOf(row)
+
+		for _, k := range keys {
+			f := v.Field(fields[k])
+			if f.Kind() == reflect.Pointer && f.IsNil() {
+				continue
+			}
+
+			if err := enc.WriteToken(jsontext.String(k)); err != nil {
+				return err
+			}
+
+			if err := json.MarshalEncode(enc, f.Interface()); err != nil {
+				return err
+			}
+		}
+
+		return enc.WriteToken(jsontext.EndObject)
+	})
+
+	if err := json.MarshalWrite(w, rows, json.WithMarshalers(object)); err != nil {
 		return fmt.Errorf("encoding rows as JSON: %w", err)
 	}
 
@@ -19,4 +49,18 @@ func JSON[T any](w io.Writer, rows []T) error {
 	}
 
 	return nil
+}
+
+// fieldsByTag indexes T's fields by json name, which an invariant test in internal/show pins to
+// the column keys.
+func fieldsByTag[T any]() map[string]int {
+	typ := reflect.TypeFor[T]()
+	out := make(map[string]int, typ.NumField())
+
+	for i := range typ.NumField() {
+		name, _, _ := strings.Cut(typ.Field(i).Tag.Get("json"), ",")
+		out[name] = i
+	}
+
+	return out
 }

@@ -37,9 +37,10 @@ func resolveWith(t *testing.T, file File, args ...string) (Settings, error) {
 			&cli.StringFlag{Name: FlagSortOrder, Aliases: []string{"o"}, Value: DefaultSortOrder},
 			&cli.StringFlag{Name: FlagSortBy, Aliases: []string{"b"}, Value: sortKey},
 			&cli.StringFlag{Name: FlagRadio, Aliases: []string{"r"}},
+			&cli.StringSliceFlag{Name: FlagColumns},
 		},
 		Action: func(_ context.Context, c *cli.Command) error {
-			got, gotErr = Resolve(c, file, []string{sortKey, "mac"}, sortKey)
+			got, gotErr = Resolve(c, file, []string{sortKey, "mac"}, sortKey, []string{sortKey})
 
 			return nil
 		},
@@ -280,6 +281,10 @@ func TestResolveRejections(t *testing.T) {
 		{name: "unknown format", args: []string{"-f", "yaml"}, want: "accepted values"},
 		{name: "unknown order", args: []string{"-o", "sideways"}, want: "accepted values"},
 		{name: "unknown sort key", args: []string{"-b", "nope"}, want: "accepted keys"},
+		{name: "unknown column", args: []string{"--columns", "nope"}, want: "--columns: accepted keys"},
+		{name: "empty column", args: []string{"--columns", ""}, want: "--columns: accepted keys"},
+		{name: "all beside a key", args: []string{"--columns", "all,mac"}, want: "--columns: accepted keys"},
+		{name: "repeated column", args: []string{"--columns", "mac,mac"}, want: "--columns: mac is given twice"},
 	}
 
 	for _, tt := range tests {
@@ -296,6 +301,34 @@ func TestResolveRejections(t *testing.T) {
 
 			if !strings.Contains(err.Error(), tt.want) {
 				t.Errorf("error %q does not mention %q", err, tt.want)
+			}
+		})
+	}
+}
+
+// The default applies only while --columns is absent, and all alone selects every key.
+func TestResolveColumns(t *testing.T) {
+	file := File{Token: strp(fakeToken), Controllers: []Controller{{Host: strp("192.0.2.10")}}}
+
+	for _, tt := range []struct {
+		name string
+		args []string
+		want string
+	}{
+		{name: "the default", args: nil, want: "ap_name"},
+		{name: "the order given", args: []string{"--columns", "mac,ap_name"}, want: "mac,ap_name"},
+		{name: "a repeated flag", args: []string{"--columns", "mac", "--columns", "ap_name"}, want: "mac,ap_name"},
+		{name: "padded elements", args: []string{"--columns", " mac , ap_name "}, want: "mac,ap_name"},
+		{name: "every key", args: []string{"--columns", "all"}, want: "ap_name,mac"},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := resolveWith(t, file, tt.args...)
+			if err != nil {
+				t.Fatalf("Resolve: %v", err)
+			}
+
+			if s := strings.Join(got.Columns, ","); s != tt.want {
+				t.Errorf("columns = %s, want %s", s, tt.want)
 			}
 		})
 	}

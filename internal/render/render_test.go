@@ -94,7 +94,7 @@ func TestJSONShape(t *testing.T) {
 	zero, note := 0, "ok"
 
 	var buf bytes.Buffer
-	if err := JSON(&buf, []row{{Name: "a", Count: &zero, Note: &note}, {Name: "b"}}); err != nil {
+	if err := JSON(&buf, []row{{Name: "a", Count: &zero, Note: &note}, {Name: "b"}}, Keys(cols())); err != nil {
 		t.Fatalf("JSON: %v", err)
 	}
 
@@ -114,7 +114,7 @@ func TestJSONEmptyIsAnArray(t *testing.T) {
 			t.Parallel()
 
 			var buf bytes.Buffer
-			if err := JSON(&buf, rows); err != nil {
+			if err := JSON(&buf, rows, Keys(cols())); err != nil {
 				t.Fatalf("JSON: %v", err)
 			}
 
@@ -133,12 +133,31 @@ func TestJSONDoesNotEscapeHTML(t *testing.T) {
 	name := "a&b<c>"
 
 	var buf bytes.Buffer
-	if err := JSON(&buf, []row{{Name: name}}); err != nil {
+	if err := JSON(&buf, []row{{Name: name}}, Keys(cols())); err != nil {
 		t.Fatalf("JSON: %v", err)
 	}
 
 	if !strings.Contains(buf.String(), name) {
 		t.Errorf("JSON = %s, want the raw %q", buf.String(), name)
+	}
+}
+
+// The keys decide both the members and their order, so a reported field they leave out is dropped.
+func TestJSONCarriesTheKeysInTheirOrder(t *testing.T) {
+	t.Parallel()
+
+	zero, note := 0, "ok"
+
+	rows := []row{{Name: "a", Count: &zero, Note: &note}, {Name: "b"}}
+
+	var buf bytes.Buffer
+	if err := JSON(&buf, rows, []string{"note", "name"}); err != nil {
+		t.Fatalf("JSON: %v", err)
+	}
+
+	want := `[{"note":"ok","name":"a"},{"name":"b"}]` + "\n"
+	if got := buf.String(); got != want {
+		t.Errorf("JSON =\n%s\nwant\n%s", got, want)
 	}
 }
 
@@ -345,6 +364,21 @@ func TestKeysMatchColumnOrder(t *testing.T) {
 
 	if got := strings.Join(Keys(cols()), ","); got != "name,count,note" {
 		t.Errorf("Keys = %s", got)
+	}
+}
+
+func TestDefaultKeysSkipHiddenAndSelectKeepsTheOrder(t *testing.T) {
+	t.Parallel()
+
+	c := cols()
+	c[1].Hidden = true
+
+	if got := strings.Join(DefaultKeys(c), ","); got != "name,note" {
+		t.Errorf("DefaultKeys = %s", got)
+	}
+
+	if got := strings.Join(Keys(Select(c, []string{"note", "count"})), ","); got != "note,count" {
+		t.Errorf("Select = %s", got)
 	}
 }
 

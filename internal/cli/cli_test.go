@@ -356,6 +356,7 @@ func TestFaultsNeverEchoACredential(t *testing.T) {
 		{"show", "ap", "-c", "h", "--access-token", fakeToken, "--sort-by", fakeToken},
 		{"show", "ap", "-c", "h", "--access-token", fakeToken, "--sort-order", fakeToken},
 		{"show", "ap", "-c", "h", "--access-token", fakeToken, "--format", fakeToken},
+		{"show", "ap", "-c", "h", "--access-token", fakeToken, "--columns", fakeToken},
 		{"--log-level", fakeToken, "show", "ap"},
 		{"show", "client", "-c", "h", "--access-token", fakeToken, "--radio", fakeToken},
 	}
@@ -457,6 +458,18 @@ func TestSettingsFaults(t *testing.T) {
 			name:     "unknown sort key",
 			args:     []string{"show", "ap-tag", "-c", "h", "--access-token", fakeToken, "-b", "bogus"},
 			mentions: "accepted keys",
+		},
+		{
+			name:     "unknown column",
+			args:     []string{"show", "ap-tag", "-c", "h", "--access-token", fakeToken, "--columns", "bogus"},
+			mentions: "--columns: accepted keys",
+		},
+		{
+			name: "repeated column",
+			args: []string{
+				"show", "ap-tag", "-c", "h", "--access-token", fakeToken, "--columns", "ap_name,ap_name",
+			},
+			mentions: "--columns: ap_name is given twice",
 		},
 		{
 			name:     "unknown sort order",
@@ -682,6 +695,7 @@ func TestSortKeysOutranksARejectedValue(t *testing.T) {
 		{"show", "ap", "--sort-keys", "-b", "bogus"},
 		{"show", "ap", "--sort-keys", "-t", "0"},
 		{"show", "ap", "--sort-keys", "-c", "192.0.2.1"},
+		{"show", "ap", "--sort-keys", "--columns", "bogus"},
 	} {
 		t.Run(strings.Join(args[2:], " "), func(t *testing.T) {
 			got := runCLI(t, "", false, args...)
@@ -697,8 +711,7 @@ func TestSortKeysOutranksARejectedValue(t *testing.T) {
 	}
 }
 
-// Both flags are declared per leaf because urfave's GLOBAL OPTIONS section lists the
-// root's flags only: declared on the show parent they would work and be invisible.
+// Both flags are declared per leaf because the default --sort-by takes differs per leaf.
 func TestEveryShowSubcommandCarriesTheSortFlags(t *testing.T) {
 	root := newRootCommand(Streams{Out: &bytes.Buffer{}, Err: &bytes.Buffer{}})
 

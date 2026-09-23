@@ -110,20 +110,24 @@ func collect[R any](logger *logrus.Logger, results []result[R]) (rows []R, faile
 	return rows, failed, degraded
 }
 
+// renderRows sorts on every column before selecting, so a key --columns leaves out still orders
+// the rows.
 func renderRows[R any](env Env, cols []render.Column[R], rows []R) error {
 	if err := render.Sort(rows, cols, env.Settings.SortBy, env.Settings.Descending()); err != nil {
 		return fmt.Errorf("--%s: %w", config.FlagSortBy, err)
 	}
 
 	if env.Settings.Format == config.FormatJSON {
-		return render.JSON(env.Out, rows)
+		return render.JSON(env.Out, rows, env.Settings.Columns)
 	}
+
+	shown := render.Select(cols, env.Settings.Columns)
 
 	if env.Settings.Pretty {
-		return render.PrettyTable(env.Out, cols, rows)
+		return render.PrettyTable(env.Out, shown, rows)
 	}
 
-	return render.Table(env.Out, cols, rows)
+	return render.Table(env.Out, shown, rows)
 }
 
 // outcome classifies the run.

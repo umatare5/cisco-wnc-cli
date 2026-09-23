@@ -37,7 +37,10 @@ type OverviewRow struct {
 func OverviewColumns() []render.Column[OverviewRow] {
 	return []render.Column[OverviewRow]{
 		{Key: keyAPName, Header: headAPName, Cell: func(r OverviewRow) string { return render.StrPtr(r.APName) }},
-		{Key: keyAPMAC, Header: "AP MAC", Cell: func(r OverviewRow) string { return render.StrPtr(r.APMAC) }},
+		{
+			Key: keyAPMAC, Header: "AP MAC", Hidden: true,
+			Cell: func(r OverviewRow) string { return render.StrPtr(r.APMAC) },
+		},
 		{
 			Key: keySlot, Header: "Slot",
 			Cell: func(r OverviewRow) string { return render.IntPtr(r.Slot) },

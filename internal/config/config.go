@@ -24,6 +24,7 @@ const (
 	FlagSortBy      = "sort-by"
 	FlagSortKeys    = "sort-keys"
 	FlagSortOrder   = "sort-order"
+	FlagColumns     = "columns"
 	FlagRadio       = "radio"
 	FlagSSID        = "ssid"
 	FlagAPName      = "ap-name"
@@ -71,6 +72,9 @@ const (
 	OrderDesc = "desc"
 )
 
+// ColumnsAll is the --columns value that, given alone, selects every key of the view.
+const ColumnsAll = "all"
+
 // Flag defaults, declared once so the flag definition in internal/cli and the merge
 // below cannot disagree about what an unset value means.
 const (
@@ -103,6 +107,7 @@ type Settings struct {
 	Pretty      bool
 	SortBy      string
 	SortOrder   string
+	Columns     []string
 }
 
 func (s Settings) Descending() bool {
@@ -120,7 +125,9 @@ func stringIsSet(cmd *cli.Command, name string) bool {
 // Resolve merges one show command's settings. Precedence is the flag or its
 // environment variable, then the file, then the flag's own default: urfave marks an
 // environment-sourced flag as set, so IsSet covers both of the first two.
-func Resolve(cmd *cli.Command, file File, sortKeys []string, defaultSortBy string) (Settings, error) {
+func Resolve(
+	cmd *cli.Command, file File, sortKeys []string, defaultSortBy string, defaultColumns []string,
+) (Settings, error) {
 	targets, err := resolveTargets(cmd, file)
 	if err != nil {
 		return Settings{}, err
@@ -150,6 +157,14 @@ func Resolve(cmd *cli.Command, file File, sortKeys []string, defaultSortBy strin
 		}
 	}
 
+	columns := defaultColumns
+	if cmd.IsSet(FlagColumns) {
+		columns, err = resolveColumns(cmd.StringSlice(FlagColumns), sortKeys)
+		if err != nil {
+			return Settings{}, err
+		}
+	}
+
 	return Settings{
 		Controllers: targets,
 		Timeout:     timeout,
@@ -158,7 +173,35 @@ func Resolve(cmd *cli.Command, file File, sortKeys []string, defaultSortBy strin
 		Pretty:      resolveBool(cmd, FlagPretty, file.Pretty),
 		SortBy:      sortBy,
 		SortOrder:   order,
+		Columns:     columns,
 	}, nil
+}
+
+// resolveColumns checks an explicit --columns, trimming each element as --controller does. An
+// unknown element is withheld for the reason resolveChoice gives. A repeat is refused and named,
+// being one of the view's own keys, because it would put one name twice in a JSON object.
+func resolveColumns(given, keys []string) ([]string, error) {
+	if len(given) == 1 && strings.TrimSpace(given[0]) == ColumnsAll {
+		return keys, nil
+	}
+
+	columns := make([]string, 0, len(given))
+
+	for _, c := range given {
+		c = strings.TrimSpace(c)
+
+		if !slices.Contains(keys, c) {
+			return nil, fmt.Errorf("--%s: accepted keys are %s", FlagColumns, strings.Join(keys, ", "))
+		}
+
+		if slices.Contains(columns, c) {
+			return nil, fmt.Errorf("--%s: %s is given twice", FlagColumns, c)
+		}
+
+		columns = append(columns, c)
+	}
+
+	return columns, nil
 }
 
 // ResolveExec merges the settings an action needs. It is separate from Resolve rather

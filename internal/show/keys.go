@@ -1,8 +1,8 @@
 package show
 
 // The key lists below are each command's column order and, at the same time, the vocabulary of its
-// --sort-by flag and the field names of its JSON output. json/v2 rejects a duplicated json tag
-// outright, so an invariant test asserts a Row's tags are exactly these, in this order.
+// --sort-by and --columns flags and the field names of its JSON output. json/v2 rejects a duplicated
+// json tag outright, so an invariant test asserts a Row's tags are exactly these, in this order.
 
 // Keys more than one command declares. The invariant test compares these against the struct tags,
 // which must stay literal.

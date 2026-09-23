@@ -43,14 +43,18 @@ type APJoinRow struct {
 func APJoinColumns() []render.Column[APJoinRow] {
 	return []render.Column[APJoinRow]{
 		{Key: keyAPName, Header: headAPName, Cell: func(r APJoinRow) string { return render.StrPtr(r.APName) }},
-		{Key: keyRadioMAC, Header: headRadioMAC, Cell: func(r APJoinRow) string { return render.StrPtr(r.RadioMAC) }},
 		{
-			Key: keyEthernetMAC, Header: headEthernetMAC,
+			Key: keyRadioMAC, Header: headRadioMAC, Hidden: true,
+			Cell: func(r APJoinRow) string { return render.StrPtr(r.RadioMAC) },
+		},
+		{
+			Key: keyEthernetMAC, Header: headEthernetMAC, Hidden: true,
 			Cell: func(r APJoinRow) string { return render.StrPtr(r.EthernetMAC) },
 		},
 		{
 			Key:    keyIPAddress,
 			Header: headIPAddress,
+			Hidden: true,
 			Cell:   func(r APJoinRow) string { return render.StrPtr(r.IPAddress) },
 		},
 		{

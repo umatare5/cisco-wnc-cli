@@ -242,7 +242,7 @@ func runShow[R any](
 		return printSortKeys(cmd, st.Logger, sortKeys)
 	}
 
-	settings, err := config.Resolve(cmd, st.File, sortKeys, defaultSortBy)
+	settings, err := config.Resolve(cmd, st.File, sortKeys, defaultSortBy, render.DefaultKeys(cols))
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrUsage, err)
 	}
@@ -294,7 +294,7 @@ func printWouldRead(cmd *cli.Command, targets []config.Target) error {
 // every invocation of anyone who exports the token.
 var ignoredBySortKeys = []string{
 	config.FlagController, config.FlagInsecure,
-	config.FlagFormat, config.FlagTimeout, config.FlagPretty,
+	config.FlagFormat, config.FlagTimeout, config.FlagPretty, config.FlagColumns,
 	config.FlagSortBy, config.FlagSortOrder,
 	config.FlagRadio, config.FlagSSID, config.FlagAPName,
 }
