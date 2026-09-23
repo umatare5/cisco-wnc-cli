@@ -27,8 +27,8 @@
 This CLI manages wireless LANs across multiple [Catalyst 9800 Wireless Network Controllers](https://www.cisco.com/site/us/en/products/networking/wireless/wireless-lan-controllers/catalyst-9800-series/index.html).
 
 - 🌐 **Unified Views**: Concurrently reads to hide AP assignments load-balanced across multiple WLCs
-- 📤 **Shell Friendly**: Provides borderless tables for `awk`, `sed` and `cut`, and structured JSON for `jq`
 - 🔭 **Cross Entities**: `show overview`, `show ap`, `show client` and `show wlan` join entities split by device
+- 📤 **Shell Friendly**: Provides borderless tables for `awk`, `sed` and `cut`, and structured JSON for `jq`
 - 🎨 **Flexible Output**: `--pretty` format for humans, while `--format json` feeds machines and AIs
 
 ## Supported Environment
