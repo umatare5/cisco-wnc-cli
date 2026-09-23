@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v3"
@@ -158,7 +159,15 @@ func dryRun(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("%w: %s: %w", ErrUsage, st.Path, err)
 	}
 
-	_, err = fmt.Fprintf(cmd.Root().Writer, "%s: valid, %d controller(s)\n", st.Path, len(targets))
+	_, err = fmt.Fprintf(cmd.Root().Writer, "%s: valid, %s\n", st.Path, pluralControllers(len(targets)))
 
 	return err
+}
+
+func pluralControllers(n int) string {
+	if n == 1 {
+		return "1 controller"
+	}
+
+	return strconv.Itoa(n) + " controllers"
 }
