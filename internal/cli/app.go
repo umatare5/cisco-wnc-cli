@@ -130,9 +130,10 @@ func rootBefore(streams Streams) cli.BeforeFunc {
 	}
 }
 
-// rootAction handles the two ways the root is reached with no subcommand.
+// rootAction handles the two ways the root is reached with no subcommand. A leftover word is a
+// mistyped command even under --dry-run, which would otherwise answer it by validating the file.
 func rootAction(ctx context.Context, cmd *cli.Command) error {
-	if cmd.Bool(config.FlagDryRun) {
+	if cmd.Bool(config.FlagDryRun) && !cmd.Args().Present() {
 		return dryRun(ctx, cmd)
 	}
 

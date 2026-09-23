@@ -123,6 +123,12 @@ func TestExitCodes(t *testing.T) {
 			name: "dry-run after the leaf", args: []string{"show", "ap", "--dry-run"},
 			want: ExitUsage, mentions: "no controller given",
 		},
+		{
+			// A mistyped command leaves the root holding --dry-run, which must not validate the
+			// file in its place.
+			name: "a mistyped command under dry-run", args: []string{"shwo", "ap", "--dry-run"},
+			want: ExitUsage, mentions: `unknown command "shwo"`,
+		},
 	}
 
 	for _, tt := range tests {
