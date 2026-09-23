@@ -8,7 +8,7 @@ import (
 	"github.com/umatare5/cisco-wnc-cli/internal/wnc"
 )
 
-// The three views below list what set and delete write. show ap-tag reports only the tags
+// The views below list what set and delete write. show ap-tag reports only the tags
 // resolved onto an access point, so it cannot show a tag that exists and is bound to nothing.
 
 // PolicyTagRow is one row of show policy-tag: one policy tag paired with one WLAN binding it
@@ -166,8 +166,8 @@ func FetchRFTags(ctx context.Context, c *wnc.Client, t config.Target, _ *Reporte
 }
 
 // policyTagRows expands each tag over its bindings. A tag binding nothing keeps a row of
-// its own: it exists, it is a candidate for a delete, and dropping it is what an inner
-// join would do.
+// its own: it exists, it is a candidate for a delete, and an inner join
+// would drop it.
 func policyTagRows(tags []wnc.PolicyTag, t config.Target) []PolicyTagRow {
 	rows := make([]PolicyTagRow, 0, len(tags))
 

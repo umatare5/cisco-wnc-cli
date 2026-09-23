@@ -97,9 +97,10 @@ func (c *Client) DeletePolicyTag(ctx context.Context, name string) error {
 }
 
 // CreateSiteTag creates a site tag. A flex profile forces is-local-site false rather than leaving
-// it to the operator: the leaf carries when "../is-local-site = 'false'" and is-local-site defaults
-// to TRUE, so a body naming a flex profile without it is a when-violation, and the SDK's own setter
-// does the same on the update path.
+// it to the operator. The leaf carries when "../is-local-site = 'false'" and is-local-site
+// defaults to TRUE, so a body naming a flex profile without it is a when-violation.
+//
+// The SDK's own setter does the same on the update path.
 func (c *Client) CreateSiteTag(ctx context.Context, name string, f TagFields) error {
 	local := f.LocalSite
 	if f.FlexProfile != nil {
@@ -117,8 +118,8 @@ func (c *Client) CreateSiteTag(ctx context.Context, name string, f TagFields) er
 }
 
 // UpdateSiteTag applies the named fields. The flex profile is applied last because the
-// SDK's setter for it also forces is-local-site to false — a flex profile is only in
-// force on a non-local site — so applying --local-site afterwards would undo the binding.
+// SDK's setter for it also forces is-local-site to false. A flex profile is only in
+// effect on a non-local site – so applying --local-site afterwards would undo the binding.
 func (c *Client) UpdateSiteTag(ctx context.Context, name string, f TagFields) error {
 	if f.Description != nil {
 		if err := c.sdk.SiteTag().SetDescription(ctx, name, *f.Description); err != nil {

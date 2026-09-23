@@ -12,7 +12,7 @@ import (
 // rootFlags are the flags every command sees, except --dry-run: that one is Local
 // so "wnc show ap --dry-run" is rejected as an unknown flag rather than silently
 // validating nothing. Local governs parsing and not reading, so "wnc --dry-run reset
-// ap" still reaches the leaf, which is what stops an action running under it.
+// ap" still reaches the leaf, which stops an action running under it.
 func rootFlags() []cli.Flag {
 	return []cli.Flag{
 		&cli.StringFlag{
@@ -34,11 +34,12 @@ func rootFlags() []cli.Flag {
 }
 
 // showFlags are shared by every show subcommand. urfave makes a parent's flag persistent unless
-// Local is set, so declaring them here is what puts them on all nine.
+// Local is set, so declaring them here puts them on every one.
 func showFlags() []cli.Flag {
 	return []cli.Flag{
-		// Deliberately no Sources: urfave applies a slice flag's environment value at
-		// the level that declares it, then appends what a deeper command supplies, so
+		// Deliberately no Sources. urfave applies a slice flag's environment value at
+		// the level that declares it, then appends what a deeper command supplies.
+		//
 		// "show ap -c host" with WNC_CONTROLLER exported would query the named host
 		// and the exported ones. config.Resolve reads the variable itself instead.
 		&cli.StringSliceFlag{
@@ -88,10 +89,11 @@ func showFlags() []cli.Flag {
 	}
 }
 
-// execFlags are shared by the commands that act on a controller. The four connection
-// flags are spelt again rather than extracted from showFlags: extracting them would
-// move --timeout from sixth to fourth in every show command's help, and the OPTIONS
-// transcripts in docs would all have to move with it.
+// execFlags are shared by the commands that act on a controller. The connection flags are
+// spelled again rather than extracted from showFlags.
+//
+// Extracting them would reorder --timeout in every show command's help, and the OPTIONS
+// transcripts in docs would have to move with it.
 func execFlags() []cli.Flag {
 	return []cli.Flag{
 		// No Sources, for the reason showFlags gives: urfave appends a slice flag's
@@ -196,8 +198,10 @@ func descriptionFlag(kind string) cli.Flag {
 }
 
 // sortFlags builds the per-command sort pair. Neither can be declared once on the
-// parent: the default differs per command, and urfave's GLOBAL OPTIONS section lists
-// the root's persistent flags only, so a flag the show parent declares would work from
+// parent. The default differs per command, and urfave's GLOBAL OPTIONS section lists
+// the root's persistent flags only.
+//
+// A flag the show parent declares would work from
 // a leaf while appearing in no leaf's help.
 func sortFlags(defaultKey string) []cli.Flag {
 	return []cli.Flag{
@@ -215,7 +219,7 @@ func sortFlags(defaultKey string) []cli.Flag {
 }
 
 // radioFlag filters rows by band. The values are the band column's own display
-// strings so a filter and a rendered row read alike.
+// strings, so a filter and a rendered row match exactly.
 func radioFlag() cli.Flag {
 	return &cli.StringFlag{
 		Name:    config.FlagRadio,

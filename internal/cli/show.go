@@ -46,7 +46,7 @@ func overviewCommand() *cli.Command {
 		Description: "One row per access point radio, sorted by ap_name.\n" +
 			absenceNote + "\n" +
 			"Admin is the radio's own state: an access-point-level disable leaves it\n" +
-			"Enabled with Oper reading Down, and wnc show ap is the authority instead.",
+			"Enabled with Oper reading Down, so read wnc show ap for that state.",
 		Flags: append(sortFlags(show.DefaultSortAPName),
 			radioFlag(),
 		),
@@ -97,8 +97,8 @@ func apJoinCommand() *cli.Command {
 	}
 }
 
-// apTagCommand takes "tag" rather than a single letter: "wnc show t -t 30s" reads
-// as neither the command nor the timeout.
+// apTagCommand takes "tag" rather than a single letter: "wnc show t -t 30s" does not
+// read as the command or as the timeout.
 func apTagCommand() *cli.Command {
 	return &cli.Command{
 		Name:    "ap-tag",
@@ -106,8 +106,8 @@ func apTagCommand() *cli.Command {
 		Usage:   "Tag assignment and its resolved values, per access point",
 		Description: "One row per access point, sorted by ap_name.\n" +
 			absenceNote + "\n" +
-			"The tag columns are the resolved tags in force; the two profile columns\n" +
-			"come from the configured site tag and agree only while Tag Source is Static.",
+			"The tag columns are the tags resolved onto the access point. The profile\n" +
+			"columns come from the site tag and agree only while Tag Source is Static.",
 		Flags: sortFlags(show.DefaultSortAPName),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return runShow(ctx, cmd, show.APTagKeys(), show.DefaultSortAPName,
@@ -134,7 +134,7 @@ func clientCommand() *cli.Command {
 			},
 			&cli.StringFlag{
 				Name:  config.FlagAPName,
-				Usage: "keep only clients on this AP",
+				Usage: "keep only clients on this access point",
 			},
 		),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -172,8 +172,8 @@ func wlanCommand() *cli.Command {
 	}
 }
 
-// The three tag views take no alias: "s" is the show group's own and "-r" is --radio. "tag" stays
-// on ap-tag, which is the one tag view an operator reaches during an incident.
+// The policy-tag, site-tag and rf-tag views take no alias: "s" is the show group's own and "-r"
+// is --radio. "tag" stays on ap-tag, the one tag view an operator reaches during an incident.
 func policyTagCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "policy-tag",
@@ -196,7 +196,7 @@ func siteTagCommand() *cli.Command {
 		Usage: "Configured site tags and the profiles they name",
 		Description: "One row per site tag, sorted by site_tag.\n" +
 			absenceNote + "\n" +
-			"The read asks for the values in force, so a leaf a tag left at its default\n" +
+			"The read asks for the values in effect, so a leaf a tag left at its default\n" +
 			"is reported rather than arriving as an absence.",
 		Flags: sortFlags(show.DefaultSortSiteTag),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -212,8 +212,8 @@ func rfTagCommand() *cli.Command {
 		Usage: "Configured RF tags and their per-band RF profiles",
 		Description: "One row per RF tag, sorted by rf_tag.\n" +
 			absenceNote + "\n" +
-			"The read asks for the values in force, because a plain read omits the\n" +
-			"built-in tag's three per-band profile names.",
+			"The read asks for the values in effect, because a plain read omits the\n" +
+			"built-in tag's per-band profile names.",
 		Flags: sortFlags(show.DefaultSortRFTag),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return runShow(ctx, cmd, show.RFTagKeys(), show.DefaultSortRFTag,
@@ -225,7 +225,7 @@ func rfTagCommand() *cli.Command {
 // runShow is the body every show subcommand shares: resolve the settings against the
 // configuration file, then hand the fan-out its columns and its read. Resolution
 // happens here rather than in the root's Before because a subcommand's own flags are
-// not visible from the root, and IsSet is what gives a flag precedence over the file.
+// not visible from the root, and IsSet gives a flag precedence over the file.
 func runShow[R any](
 	ctx context.Context,
 	cmd *cli.Command,
@@ -252,8 +252,8 @@ func runShow[R any](
 	}
 
 	// IsSet and not settings.Pretty: a configuration file carrying pretty next to
-	// format json would otherwise warn on every run, when nobody asked for both in
-	// this invocation.
+	// format json would otherwise warn on every run, where the invocation asked for
+	// only one of them.
 	if cmd.IsSet(config.FlagPretty) && settings.Format == config.FormatJSON {
 		st.Logger.Warn("--" + config.FlagPretty + " styles the table only; --" +
 			config.FlagFormat + " " + config.FormatJSON + " output is unchanged")
@@ -270,8 +270,9 @@ func runShow[R any](
 // ignoredBySortKeys are the flags a listing parses and does not act on. Naming them
 // is cheaper than the alternative: --sort-keys short-circuits before the settings are
 // resolved, so a value that would have been rejected there passes unremarked.
+//
 // --access-token is deliberately absent: it is the one flag here with an environment
-// source, and IsSet is true for an exported variable, so listing it would warn on
+// source, and IsSet is true for an exported variable. Listing it would warn on
 // every invocation of anyone who exports the token.
 var ignoredBySortKeys = []string{
 	config.FlagController, config.FlagInsecure,

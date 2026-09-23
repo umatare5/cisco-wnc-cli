@@ -33,8 +33,8 @@ type APRow struct {
 }
 
 // APColumns describes the access point view. Uptime is the access point's own age from
-// boot-time and Assoc is the age of the current CAPWAP association from join-time; a controller
-// switchover renews only the second, so one column for both would report it as a fleet reboot.
+// boot-time and Assoc is the age of the current CAPWAP association from join-time. A controller
+// switchover renews only the second, so one column for both would report it as a reboot of every access point.
 func APColumns() []render.Column[APRow] {
 	return []render.Column[APRow]{
 		{Key: keyAPName, Header: headAPName, Cell: func(r APRow) string { return render.StrPtr(r.APName) }},

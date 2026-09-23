@@ -10,8 +10,8 @@ import (
 
 // RadioAdmin is one radio's identity and admin state. BandWire is the number
 // set-ap-slot-admin-state takes and follows radio-type, BandLabel is the band the radio is
-// serving and follows current-active-band, and a spelling neither table holds leaves its own
-// field empty for the caller to refuse.
+// serving and follows current-active-band. A spelling one table does not hold leaves only
+// its own field empty for the caller to refuse.
 type RadioAdmin struct {
 	Slot      int
 	Type      string
@@ -50,7 +50,7 @@ var radioTypeBand = map[string]uint32{
 }
 
 // activeBandLabel maps current-active-band to the band the operator is shown, and stays a table
-// of its own because neither leaf determines the other: dot11-6-ghz-band takes band 3 on an XOR
+// of its own because neither leaf determines the other. dot11-6-ghz-band takes band 3 on an XOR
 // radio where a dedicated 6 GHz radio takes 4. dot11-invalid-band is absent because it is an
 // explicit member of the read domain and names no band a prompt may claim.
 var activeBandLabel = map[string]string{
@@ -116,8 +116,8 @@ func (c *Client) RadioBySlot(ctx context.Context, radioMAC string, slot int) (*R
 
 	r := resp.RadioOperData[0]
 
-	// A spelling one table does not hold leaves only its own field empty, which is what
-	// radioForAdmin refuses on.
+	// A spelling one table does not hold leaves only its own field empty, and
+	// radioForAdmin refuses on that.
 	return &RadioAdmin{
 		Slot:      r.RadioSlotID,
 		Type:      string(r.RadioType),
@@ -129,8 +129,9 @@ func (c *Client) RadioBySlot(ctx context.Context, radioMAC string, slot int) (*R
 }
 
 // SetAPAdminState enables or disables one access point. The access point stays registered and does
-// not reboot, and both radios go on reporting their own admin-state as enabled while their
-// oper-state goes down, so show ap's Admin column is the authority here and show overview's is not.
+// not reboot, and its radios go on reporting their own admin-state as enabled while their
+// oper-state goes down. show ap's Admin column carries this state, and show overview's Admin
+// column carries the radio's.
 func (c *Client) SetAPAdminState(ctx context.Context, apName string, on bool) error {
 	if on {
 		return c.sdk.AP().EnableAPByName(ctx, apName)
@@ -141,7 +142,7 @@ func (c *Client) SetAPAdminState(ctx context.Context, apName string, on bool) er
 
 // SetRadioAdminState enables or disables one radio, named by its slot and by the radio type the
 // controller reported for it. The SDK derives the band number from that type and refuses no slot,
-// so radioTypeBand reaches no wire and stays only to feed slotAllowedForBand;
+// so radioTypeBand reaches no wire and stays only to feed slotAllowedForBand.
 // TestRadioTypeBandMatchesTheSDKsOwnDerivation keeps the two derivations from drifting apart.
 func (c *Client) SetRadioAdminState(
 	ctx context.Context, radioMAC string, slot int, radioType string, on bool,

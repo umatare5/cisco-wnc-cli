@@ -19,7 +19,7 @@ func onUsageError(_ context.Context, cmd *cli.Command, err error, _ bool) error 
 	msg := redactInvalidValue(cmd, redactUndefinedFlag(cmd, raw))
 
 	// The near miss is scored on the argument as it arrived rather than on what survived the
-	// redaction, because the redaction now withholds a name it cannot vouch for and a typo is
+	// redaction. The redaction now withholds a name it cannot vouch for and a typo is
 	// exactly the case that needs one matched. It cannot echo either way: SuggestFlag returns
 	// one of this tree's own names and suggestion floors the rest.
 	if arg, found := strings.CutPrefix(raw, undefinedFlag); found {
@@ -53,8 +53,8 @@ func redactUndefinedFlag(cmd *cli.Command, msg string) string {
 
 // declaredFlagName names the flag an undefined argument began with, and only where the command
 // declares that name. A remainder that is command-shaped is read as a mistyped long name and gives
-// no name at all, because reporting its first character would name a flag that is in fact declared
-// — and an all-lower-case password takes that branch too.
+// no name at all, because reporting its first character would name a flag that is in fact declared.
+// And an all-lower-case password takes that branch too.
 func declaredFlagName(cmd *cli.Command, arg string) string {
 	typed := strings.TrimLeft(arg, "-")
 
@@ -123,8 +123,10 @@ func usageFault(cmd *cli.Command, msg string) error {
 }
 
 // suggestion offers urfave's nearest match, which is only ever one of this CLI's own names and so
-// cannot echo what was typed. Three floors urfave has none of: a match must start as the typed word
-// does, must be longer than an alias, and must differ from it.
+// cannot echo what was typed.
+//
+// The floors below are ones urfave has none of. A match must start as the typed word does, must
+// be longer than an alias, and must differ from it.
 func suggestion(typed, match string) string {
 	name := strings.TrimLeft(match, "-")
 	if len(name) < 2 || typed == "" || typed == name || typed[0] != name[0] {
@@ -135,8 +137,8 @@ func suggestion(typed, match string) string {
 }
 
 // parsedFlags is every flag the command parses: each ancestor's persistent ones, then
-// its own, which is the set urfave assembles for the parse itself. Building it is what
-// lets a fault at a leaf name a flag the parent declares.
+// its own, which is the set urfave assembles for the parse itself. Building it lets
+// a fault at a leaf name a flag the parent declares.
 func parsedFlags(cmd *cli.Command) []cli.Flag {
 	var flags []cli.Flag
 
@@ -164,8 +166,8 @@ func attachUsageHandler(cmd *cli.Command) {
 	}
 }
 
-// refuseArgs makes a leftover positional argument a usage fault. urfave raises none of its own — a
-// word that names no subcommand is handed to the action through Args() — and the count is reported
+// refuseArgs makes a leftover positional argument a usage fault. urfave raises none of its own – a
+// word that names no subcommand is handed to the action through Args(). And the count is reported
 // without the word, because a leftover on generate-token can be the password a wrapper misplaced.
 func refuseArgs(cmd *cli.Command) error {
 	n := cmd.Args().Len()
@@ -220,7 +222,7 @@ func synopsis(flags ...string) string {
 }
 
 // synopsisChoice stages the same fragment for two flags a leaf takes one of. deauth is the only
-// such leaf, so the brackets are spelt here rather than in synopsis, which joins its flags as a
+// such leaf, so the brackets are spelled here rather than in synopsis, which joins its flags as a
 // conjunction.
 func synopsisChoice(a, b string) string {
 	return "(" + synopsis(a) + " | " + synopsis(b) + ")"
@@ -232,7 +234,7 @@ func synopsisChoice(a, b string) string {
 // leftover word inside that subtree is urfave's to ignore rather than this tree's to refuse.
 //
 // A childless node with no action is skipped, because urfave installs its own help action for one
-// during setup and the closure would call nil; TestEveryLeafDeclaresAnAction keeps that from being
+// during setup and the closure would call nil. TestEveryLeafDeclaresAnAction keeps that from being
 // a silent hole.
 func attachLeafRules(cmd *cli.Command, path string) {
 	path = strings.TrimSpace(path + " " + cmd.Name)
@@ -295,7 +297,7 @@ func unknownCommand(cmd *cli.Command, arg string) error {
 	return usageFault(cmd, fmt.Sprintf("unknown command %q%s", name, suggestion(name, match)))
 }
 
-// commandShaped reports whether a word is spelt the way this tree spells its command names:
+// commandShaped reports whether a word is spelled the way this tree spells its command names:
 // lower-case letters, digits and hyphens. A Basic auth token carries upper case, so the shape
 // separates a mistyped command from a pasted credential, imperfectly.
 func commandShaped(s string) bool {

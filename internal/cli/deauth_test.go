@@ -60,7 +60,7 @@ func TestDeauthRefusesBeforeContactingAnything(t *testing.T) {
 			// so sending both would let the controller pick which one the operator meant.
 			name:     "both arms",
 			args:     []string{"--mac", testClientMAC, "--username", testClientUsername},
-			mentions: "one invocation gives one of them",
+			mentions: "select different clients, so give only one of them",
 		},
 		{
 			name:     "an empty address",
@@ -68,8 +68,8 @@ func TestDeauthRefusesBeforeContactingAnything(t *testing.T) {
 			mentions: "must not be empty",
 		},
 		{
-			// An empty username is the value most clients carry, so it would select nearly the
-			// whole fleet rather than nothing.
+			// An empty username is the value most clients carry, so it would select nearly
+			// every client rather than none.
 			name:     "an empty username",
 			args:     []string{"--username", ""},
 			mentions: "must not be empty",
@@ -144,7 +144,7 @@ func TestDeauthRefusesAnAddressTheControllerDoesNotHold(t *testing.T) {
 }
 
 // A dry run and a declined prompt are both completed runs that changed nothing. The dry run
-// still reads, so it doubles as an existence probe — which is the only thing it can report,
+// still reads, so it doubles as an existence probe – which is the only thing it can report,
 // since the RPC's answer says nothing either way.
 func TestDeauthReportsWithoutSendingWhenItMust(t *testing.T) {
 	tests := []struct {
@@ -212,7 +212,7 @@ func TestDeauthSends(t *testing.T) {
 	}{
 		{name: "yes flag", extra: []string{"--yes"}},
 		{name: "typed yes", stdin: "y\n"},
-		{name: "typed yes spelt out", stdin: "YES\n"},
+		{name: "typed yes spelled out", stdin: "YES\n"},
 		{
 			// One post per invocation on this arm too: the RPC takes the username and the
 			// controller decides how many sessions that is, so the CLI must not loop over them.
@@ -253,9 +253,9 @@ func TestDeauthSends(t *testing.T) {
 
 // A release that does not serve the operation answers 400, not 404, so the status alone reaches
 // the operator as an opaque refusal. The target was read on the same controller a moment
-// earlier, which is what licenses naming the release instead. Both arms are covered because the
-// re-wording is one call each makes, and an arm that dropped it would fail on neither the other's
-// test nor the unit test of the classification.
+// earlier, so the message names the release instead. Both arms are covered because the
+// re-wording is one call each makes, and an arm that dropped it would pass both the other's
+// test and the unit test of the classification.
 func TestDeauthWordsARejectedPathAsAnAbsentOperation(t *testing.T) {
 	tests := map[string][]string{
 		"the address arm":  {"--mac", testClientMAC},
@@ -301,9 +301,9 @@ func TestDeauthPromptNamesTheTargetAndTheRecovery(t *testing.T) {
 	}
 }
 
-// The username arm's resolve adds one thing to what the operator typed, and the prompt is where
-// it belongs: the RPC's user-name leaf states no cardinality, so how many sessions the controller
-// holds is the operator's only warning of the blast radius. The singular row is what keeps the
+// The username arm's resolve adds one thing to what the operator typed, and the prompt carries it.
+// The RPC's user-name leaf states no cardinality, so the number of sessions the controller holds is
+// the operator's only warning of how many clients the post drops. The singular row keeps the
 // count from being rendered as a bare plural on the common case.
 func TestDeauthPromptNamesHowManySessionsAUsernameHolds(t *testing.T) {
 	tests := []struct {
@@ -336,7 +336,7 @@ func TestDeauthPromptNamesHowManySessionsAUsernameHolds(t *testing.T) {
 }
 
 // A username the controller holds no session under is refused before the post, for the reason the
-// address arm is: the RPC answers 204 either way, so a reported deauthentication and a typo would
+// address arm is. The RPC answers 204 either way, so a reported deauthentication and a typo would
 // otherwise be the same output.
 func TestDeauthRefusesAUsernameTheControllerDoesNotHold(t *testing.T) {
 	stub := newControllerStub(t, http.StatusOK)
@@ -358,7 +358,7 @@ func TestDeauthRefusesAUsernameTheControllerDoesNotHold(t *testing.T) {
 }
 
 // WNC_USERNAME is the controller login generate-token reads, and this flag shares its name with
-// that one. So the variable must not reach here: an operator with it exported would otherwise
+// that one. So the variable must not reach here. An operator with it exported would otherwise
 // have a deauth target chosen for them, and the sessions it selected would be whichever clients
 // happened to authenticate under the controller account's name.
 func TestDeauthDoesNotTakeItsTargetFromTheControllerAccountVariable(t *testing.T) {

@@ -26,9 +26,9 @@ func TestNormalizeTagName(t *testing.T) {
 		{name: "not ascii", kind: KindRFTag, in: "タグ", wantErr: "printable ASCII"},
 		{name: "a tab is not printable", kind: KindRFTag, in: "a\tb", wantErr: "printable ASCII"},
 		{
-			// The served YANG declares no length on any of the three key leaves, and the
-			// controller enforces 32 on all three anyway — measured per kind on 17.12.8,
-			// each with its own error message. The model is not the arbiter here.
+			// The served YANG declares no length on any key leaf, and the
+			// controller enforces 32 on all three anyway – measured per kind on 17.12.8,
+			// each with its own error message. The model does not decide this.
 			name: "policy tag over the limit", kind: KindPolicyTag,
 			in: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", wantErr: "at most 32 characters",
 		},

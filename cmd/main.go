@@ -1,4 +1,4 @@
-// Package main is the wnc entry point. It holds nothing but the exit call: a
+// Package main is the wnc entry point. It holds only the exit call: a
 // deferred function here would not run under os.Exit, so the signal context and
 // every other cleanup lives inside internal/cli.Run.
 package main

@@ -21,7 +21,7 @@ const EnvConfig = "WNC_CONFIG"
 const groupOtherPerm fs.FileMode = 0o077
 
 // File mirrors the on-disk configuration. Every scalar field is a pointer so a key the
-// file never set stays distinguishable from one set to a zero value, which is what
+// file never set stays distinguishable from one set to a zero value, which
 // lets a flag default win only where the file is genuinely silent.
 type File struct {
 	Note     *string `json:"note"`
@@ -37,7 +37,7 @@ type File struct {
 }
 
 // Controller is one entry of the file's controllers array. Name labels the rows a
-// controller produced; note carries an operational remark, because JSON has no
+// controller produced. Note carries an operational remark, because JSON has no
 // comments and a rejected unknown key leaves nowhere else to put one.
 type Controller struct {
 	Name *string `json:"name"`
@@ -60,7 +60,7 @@ func DefaultPath() string {
 }
 
 // Path picks the configuration file. The value passed in is the --config flag, which urfave has
-// already filled from WNC_CONFIG, so the environment is not consulted twice; the bool reports
+// already filled from WNC_CONFIG, so the environment is not consulted twice. The bool reports
 // whether the choice was explicit, which decides whether a missing file is an error.
 func Path(flagValue string) (path string, explicit bool) {
 	if flagValue != "" {
@@ -129,9 +129,9 @@ func redactDecodeError(err error) error {
 		return err
 	}
 
-	// The cause is what may quote the input: a TextUnmarshaler failure carries the text it could
-	// not parse, and timeout is the one member of this file that has one. Only the two causes
-	// naming a member rather than a value survive.
+	// The cause may quote the input: a TextUnmarshaler failure carries the text it could not
+	// parse, and timeout is the one member of this file that has one. Only the causes naming a
+	// member rather than a value survive.
 	if serr.Err != nil && safeCause(serr.Err) {
 		return fmt.Errorf("%s: %w", serr.JSONPointer, serr.Err)
 	}

@@ -7,8 +7,9 @@ import (
 
 // The client address is an RFC 7042 documentation MAC, which no interface can hold, and the route
 // is keyed the way the controller keys the list. rowClientMAC is the same address in the other
-// case, so a read that echoed its argument instead of returning the row cannot pass — every
-// client-mac a controller serves is lowercase, which is the fixture's own device here.
+// case, so a read that echoed its argument instead of returning the row cannot pass. Every
+// client-mac a controller serves is lowercase, so the upper-case form here is a fixture value
+// and not a shape any controller sends.
 const (
 	macClient    = "00:00:5e:00:53:a1"
 	rowClientMAC = "00:00:5E:00:53:A1"
@@ -34,7 +35,7 @@ const (
 		`{"client-mac":"00:00:5E:00:53:A4","username":""}]}`
 )
 
-// The address the row carries is what goes on the wire, so the read has to return it rather
+// The address the row carries goes on the wire, so the read has to return it rather
 // than echo what the caller passed.
 func TestClientByMACReturnsTheRowsAddress(t *testing.T) {
 	t.Parallel()
@@ -141,10 +142,12 @@ func TestClientsByUsernamePrunesTheReadToTheTwoLeavesItNeeds(t *testing.T) {
 		t.Fatalf("ClientsByUsername: %v", err)
 	}
 
-	// Spelt out rather than built from clientUsernameFields, for the reason
-	// TestAPTagsPrunesTheRequestToTheTagContainer gives: comparing the constant against
-	// itself would pass whatever the constant became. Equality and not a substring, so a
-	// second parameter appearing beside it is a failure too.
+	// Spelled out rather than built from clientUsernameFields, for the reason
+	// TestAPTagsPrunesTheRequestToTheTagContainer gives. Comparing the constant against
+	// itself would pass whatever the constant became.
+	//
+	// Equality and not a substring, so a second parameter appearing beside it is a
+	// failure too.
 	if want := "fields=client-mac;username"; query != want {
 		t.Errorf("query = %q, want %q", query, want)
 	}
@@ -235,7 +238,7 @@ func TestDeauthenticateClientAcceptsAnAnswerWithNoBody(t *testing.T) {
 	}
 }
 
-// A release that does not serve the operation answers 400 rather than 404 — measured on
+// A release that does not serve the operation answers 400 rather than 404 – measured on
 // 17.12.8, carrying error-tag malformed-message and error-message "invalid path". The CLI
 // re-words that status, so this pins the classification the re-wording keys on, for both arms.
 func TestDeauthenticateClientReportsTheRejectedPath(t *testing.T) {

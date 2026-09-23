@@ -30,9 +30,8 @@ type APJoin struct {
 // APJoins reads the join view. One collection carries every column, so there is
 // nothing to join and no secondary read to degrade.
 //
-// A controller with no access point answers 204, which the SDK returns as a non-nil
-// pointer to a zero struct rather than as nil, so the empty slice below is what an
-// empty fleet produces.
+// A controller with no access point answers 204, which the SDK returns as a non-nil pointer to
+// a zero struct rather than as nil. That case produces the empty slice below.
 func (c *Client) APJoins(ctx context.Context) ([]APJoin, error) {
 	resp, err := c.sdk.AP().ListAPJoinStats(ctx)
 	if err != nil {

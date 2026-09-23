@@ -11,7 +11,7 @@ import (
 	"github.com/umatare5/cisco-wnc-cli/internal/log"
 )
 
-// The paths the harness routes on. Both RPC paths are spelt out because the CLI declares neither
+// The paths the harness routes on. Both RPC paths are spelled out because the CLI declares neither
 // and the SDK's route constants are internal, so the operation each request must land on is
 // asserted rather than restated.
 const (
@@ -63,7 +63,7 @@ func TestAPRadioMACByNameReportsAnAbsentNameAsNotFound(t *testing.T) {
 
 // The bool is the whole reason this returns three values. A 200 carrying no row is not a
 // measured shape for this list, so it must not decode to an access point with an empty
-// address: that address is what the keyed radio read is keyed on.
+// address: the keyed radio read is keyed on that address.
 func TestAPRadioMACByNameReportsAnAnswerWithNoRowAsAnAbsence(t *testing.T) {
 	t.Parallel()
 
@@ -116,9 +116,9 @@ func TestAPRadioMACByNameReadsTheWholeRowRatherThanPruningIt(t *testing.T) {
 	}
 }
 
-// The RPC's input is a mandatory choice and the controller answers 400 when neither arm is sent,
-// but nothing in the response distinguishes a well-formed payload from a lucky one, so the body is
-// asserted. The name arm is what this posts, where the SDK's other path resolves an address first.
+// The RPC's input is a mandatory choice and the controller answers 400 when neither arm is sent.
+// Nothing in the response distinguishes a well-formed payload from a lucky one, so the body is
+// asserted. This posts the name arm, where the SDK's other path resolves an address first.
 func TestResetAPSendsTheNameArm(t *testing.T) {
 	t.Parallel()
 
@@ -143,7 +143,7 @@ func TestResetAPSendsTheNameArm(t *testing.T) {
 }
 
 // A 204 with no body is the whole success signal, because the RPC declares no output. The
-// harness fails the test if an unrouted path is requested, which is what proves the RPC is
+// harness fails the test if an unrouted path is requested, which proves the RPC is
 // reached without a collection read in front of it.
 func TestResetAP(t *testing.T) {
 	t.Parallel()

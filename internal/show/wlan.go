@@ -126,7 +126,7 @@ func FetchWLANs(ctx context.Context, c *wnc.Client, t config.Target, rep *Report
 }
 
 // wlanRows pairs each WLAN with the policy profiles bound to it. A binding may name a WLAN profile
-// that has no configuration entry, which the model permits; those bindings produce no row, so
+// that has no configuration entry, which the model permits. Those bindings produce no row, so
 // their count is reported rather than hidden.
 func wlanRows(view wnc.WLANView, t config.Target, rep *Reporter) []WLANRow {
 	bound, dangling := groupBindings(view)
@@ -136,7 +136,7 @@ func wlanRows(view wnc.WLANView, t config.Target, rep *Reporter) []WLANRow {
 	for _, entry := range view.Entries {
 		pairs := bound[entry.ProfileName]
 		if len(pairs) == 0 {
-			// An unbound WLAN still exists; only the policy half of the row is unreported.
+			// An unbound WLAN still exists. Only the policy half of the row is unreported.
 			rows = append(rows, wlanRow(entry, wnc.PolicyProfile{}, false, nil, t))
 
 			continue
@@ -230,10 +230,11 @@ func wlanRow(
 	return row
 }
 
-// security names the WLAN's link-layer security, and the order is what makes it right.
-// security-wpa is the master switch and defaults to true, so it is read first; WEP and OSEN each
-// give a WLAN with every AKM leaf false that is nonetheless not open, so they precede the AKM set,
-// and shared-key authentication decides one whose AKM set came out empty. The FT suffix comes from
+// security names the WLAN's link-layer security, and the order makes it right.
+// security-wpa is the master switch and defaults to true, so it is read first. WEP and OSEN each
+// give a WLAN with every AKM leaf false that is nonetheless not open, so they precede the AKM set.
+//
+// Shared-key authentication decides a WLAN whose AKM set came out empty. The FT suffix comes from
 // the FT-specific AKM leaves and never from ft-mode, whose default is the adaptive member.
 func security(e wnc.WLANEntry) string {
 	if isFalse(e.SecurityWPA) {

@@ -7,7 +7,7 @@ import (
 	sdk "github.com/umatare5/cisco-ios-xe-wireless-go"
 )
 
-// All three reads below ask for the defaults in force. There is no fallback to a plain read: a
+// Every read below asks for the defaults in effect. There is no fallback to a plain read: a
 // controller that refuses with-defaults answers 400 and the read fails, because a plain answer
 // would report a default as an absence.
 
@@ -17,7 +17,7 @@ type PolicyTag struct {
 	Bindings    []PolicyBinding
 }
 
-// PolicyBinding is one WLAN profile the tag binds and the policy profile it is bound to; both
+// PolicyBinding is one WLAN profile the tag binds and the policy profile it is bound to. Both
 // leaves are keys of the wlan-policy list, so neither half occurs alone. This is not Binding, which
 // names the tag as well because the WLAN view reaches these pairs from the WLAN side.
 type PolicyBinding struct {
@@ -25,9 +25,9 @@ type PolicyBinding struct {
 	PolicyProfile string
 }
 
-// SiteTag is one site tag's configuration. The five fields are exactly the leaves the SDK marks as
-// seen on a live controller; the six it declares from the model alone are left out rather than
-// rendered on a model's word.
+// SiteTag is one site tag's configuration. The fields are exactly the leaves the SDK marks as
+// seen on a live controller. The leaves it declares from the model alone are left out rather
+// than rendered on a model's word.
 type SiteTag struct {
 	Name          string
 	Description   *string
@@ -35,12 +35,12 @@ type SiteTag struct {
 	FlexProfile   *string
 
 	// LocalSite is a pointer because its absence is not "not local": the leaf carries a
-	// schema default, which is why this read asks for the defaults in force.
+	// schema default, which is why this read asks for the defaults in effect.
 	LocalSite *bool
 }
 
-// RFTag is one RF tag's configuration. The per-slot rf-tag-radio-profiles list is neither read nor
-// written, so the three band leaves are the whole of what this CLI carries for an RF tag.
+// RFTag is one RF tag's configuration. This CLI does not read or write the per-slot
+// rf-tag-radio-profiles list, so the three band leaves are the whole of what it carries for an RF tag.
 type RFTag struct {
 	Name         string
 	Description  *string

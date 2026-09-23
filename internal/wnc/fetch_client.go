@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-// WirelessClient is one associated client, joined across the five collections that
-// describe it. Every field carries what the controller sent; the zero values are
+// WirelessClient is one associated client, joined across the collections that
+// describe it. Every field carries what the controller sent. The zero values are
 // resolved into absences one layer up, where the rule per field is documented.
 type WirelessClient struct {
 	MAC      string
@@ -41,8 +41,8 @@ type WirelessClient struct {
 }
 
 // ClientReads reports which of the secondary reads failed. A filter whose source is
-// among them must not be applied: reporting zero matches would claim the fleet has no
-// such client, when the truth is that nothing was read.
+// among them must not be applied: reporting zero matches would claim no controller
+// has such a client, when nothing was read at all.
 type ClientReads struct {
 	Dot11 error
 	Stats error
@@ -110,7 +110,7 @@ type dot11Facts struct {
 }
 
 // clientDot11 indexes the 802.11 facts by client. The band comes from radio-type, whose typedef
-// genuinely denotes a band; the similarly named ms-radio-type leaf on the common collection is
+// genuinely denotes a band. The similarly named ms-radio-type leaf on the common collection is
 // typed with the PHY-generation typedef instead and restates the protocol.
 func (c *Client) clientDot11(ctx context.Context) (map[string]dot11Facts, error) {
 	resp, err := c.sdk.Client().ListDot11Info(ctx)
@@ -222,8 +222,8 @@ func (c *Client) clientDevices(ctx context.Context) (map[string]string, error) {
 	return out, nil
 }
 
-// pickIPv6 chooses one address from a binding list the schema bounds at eight entries. Link-local
-// addresses are dropped because every client has one, and the rest are compared as parsed values
+// pickIPv6 chooses one address from a binding list the schema bounds at eight entries. Link-local addresses
+// are dropped because every client has one, and the rest are compared as parsed values
 // rather than as text, because the controller compresses some entries with "::" and not others.
 func pickIPv6(addrs []string) string {
 	var best netip.Addr

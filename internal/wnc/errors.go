@@ -13,7 +13,7 @@ import (
 )
 
 // Cause labels a failed request, a write included. The set is closed so
-// docs/TROUBLESHOOTING.md can index it, and it is what the log line carries as a field.
+// docs/troubleshooting.md can index it, and the log line carries it as a field.
 type Cause string
 
 const (
@@ -30,7 +30,7 @@ const (
 
 // Classify names the cause of a failed request and, where the controller answered, the status it
 // answered with. The order is load-bearing: a deadline arrives as ErrRequestTimeout and never as
-// an APIError, and a certificate fault is a transport fault too, so both are settled before the
+// an APIError. A certificate fault is a transport fault too, so both are settled before the
 // generic connection case can claim them.
 func Classify(err error) (cause Cause, status int) {
 	switch {
@@ -89,9 +89,9 @@ func isTLS(err error) bool {
 }
 
 // Message is the one-line description of a failure that is safe to show an operator, and every
-// class is written here rather than taken from the error. An *APIError carries up to 512 bytes of
-// the controller's own error document, which on some paths echoes the configuration that was read,
-// and a transport failure carries a *url.Error naming the full request URL.
+// class is written here rather than taken from the error. An *APIError puts up to 512 bytes of the
+// controller's own error document into its message, which on some paths echoes the configuration
+// that was read. A transport failure carries a *url.Error naming the full request URL.
 func Message(err error) string {
 	var apiErr *sdk.APIError
 	if errors.As(err, &apiErr) {
@@ -112,9 +112,9 @@ func Message(err error) string {
 		return "the controller could not be reached"
 	}
 
-	// The residual class is the one place the error is quoted, and that is load-bearing:
-	// absentOperation's re-wording of a pre-17.15 rejection is a bare errors.New and reaches the
-	// operator only through here. What else lands here is a decode or envelope fault whose text is
+	// The residual class is the one place the error is quoted, and that is load-bearing.
+	// absentOperation re-words a pre-17.15 rejection as a bare errors.New, which reaches the
+	// operator only through here. Anything else landing here is a decode or envelope fault whose text is
 	// the SDK's and can carry the request path.
 	return err.Error()
 }

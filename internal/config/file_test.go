@@ -65,7 +65,7 @@ func TestLoadAcceptsAFullFile(t *testing.T) {
 }
 
 // A key the file never set must stay distinguishable from one set to a zero value,
-// which is what lets a flag default win only where the file is genuinely silent.
+// which lets a flag default win only where the file is genuinely silent.
 func TestLoadKeepsOmissionDistinctFromZero(t *testing.T) {
 	t.Parallel()
 

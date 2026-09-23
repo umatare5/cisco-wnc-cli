@@ -9,7 +9,7 @@ import (
 )
 
 // OverviewRow is one row of show overview: one access point radio. ap_mac is the access point's
-// base radio address and is the same on every radio of one access point, so the row identity is
+// base radio address and is the same on every radio of one access point. The row identity is
 // the (controller, ap_mac, slot) triple and the column is not called "radio mac".
 type OverviewRow struct {
 	APName     *string `json:"ap_name,omitzero"`
@@ -32,7 +32,7 @@ type OverviewRow struct {
 // its YANG declaring no units, so the cell says "ch".
 //
 // Of the units here only dBm and the percentage are declared by the controller, on
-// curr-tx-power-in-dbm and cca-util-percentage; MHz rests on chan-width's own enum descriptions,
+// curr-tx-power-in-dbm and cca-util-percentage. MHz rests on chan-width's own enum descriptions,
 // because the leaf is a bare uint8 and the module declares no Hz unit.
 func OverviewColumns() []render.Column[OverviewRow] {
 	return []render.Column[OverviewRow]{

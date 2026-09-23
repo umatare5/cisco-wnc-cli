@@ -83,7 +83,7 @@ func TestDebugFormatterIsLogfmtAndDeterministic(t *testing.T) {
 }
 
 // One diagnostic renders as one sentence rather than as logfmt. The three middle
-// field sets are internal/show/reporter.go's; the first is the fieldless TLS
+// field sets are internal/show/reporter.go's. The first is the fieldless TLS
 // advisory internal/cli emits and the last a field nothing attaches.
 func TestPlainFormatterRendersOneSentence(t *testing.T) {
 	t.Parallel()
@@ -221,7 +221,7 @@ func TestSDKLoggerMapsEverythingToDebug(t *testing.T) {
 }
 
 // The SDK reports every failure the fan-out also reports, so a run at the default
-// level must not carry a second copy. Enabled consults the same mapper, which is what
+// level must not carry a second copy. Enabled consults the same mapper, which
 // makes even an Error record silent here.
 func TestSDKLoggerSilentAtTheDefaultLevel(t *testing.T) {
 	t.Parallel()
@@ -256,9 +256,9 @@ func TestLevelsOffersOnlyTheReachableThree(t *testing.T) {
 		}
 	}
 
-	// The four this CLI never emits at stay out. panic and fatal answer a failed run
+	// Levels() leaves out every level this CLI never emits at. panic and fatal answer a failed run
 	// with a non-zero exit and an empty stderr, which defeats the failure report the
-	// fan-out exists to produce; info and trace cannot be told from warning and debug.
+	// fan-out exists to produce. Info and trace cannot be told from warning and debug.
 	for _, name := range []string{"panic", "fatal", "info", "trace"} {
 		if slices.Contains(got, name) {
 			t.Errorf("Levels() offers %q, which no code path emits at", name)

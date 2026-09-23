@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-// The envelope key and the result string are the ones a controller sent; only the whitespace is
-// invented, and JSON reads the device's pretty-printed answer and this compact one alike.
+// The envelope key and the result string are the ones a controller sent. Only the whitespace is
+// invented, and JSON reads the device's pretty-printed answer and this compact one the same.
 const (
 	savedResult = "Save running-config successful"
 	saveReply   = `{"cisco-ia:output":{"result":"` + savedResult + `"}}`

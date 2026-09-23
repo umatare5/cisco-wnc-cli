@@ -11,9 +11,8 @@ import (
 	"github.com/umatare5/cisco-wnc-cli/internal/wnc"
 )
 
-// tagKind binds one tag kind to the writes that reach it. The three kinds live in three separate
-// lists on the controller, keyed independently, so a name is unique within a kind and never across
-// them.
+// tagKind binds one tag kind to the writes that reach it. Each kind lives in a separate list on
+// the controller, keyed independently, so a name is unique within a kind and never across them.
 type tagKind struct {
 	leaf string
 	noun string
@@ -88,8 +87,8 @@ func tagKinds() []tagKind {
 	}
 }
 
-// setCommand creates or updates a tag, and is one of the three configuration surfaces AGENTS.md
-// admits.
+// setCommand creates or updates a tag, and is on the closed configuration surface
+// docs/architecture.md lists.
 func setCommand() *cli.Command {
 	leaves := make([]*cli.Command, 0, len(tagKinds()))
 
@@ -153,7 +152,7 @@ func deleteLeaf(k tagKind) *cli.Command {
 
 // runTagSet creates or updates one tag. The guard order is the reset tree's: everything
 // decidable without the controller is decided first, so exit 2 keeps meaning nothing was
-// sent, and the read that follows decides between a create and an update.
+// sent. The read that follows decides between a create and an update.
 func runTagSet(ctx context.Context, cmd *cli.Command, k tagKind) error {
 	fields := tagFields(cmd)
 
@@ -202,7 +201,7 @@ func runTagSet(ctx context.Context, cmd *cli.Command, k tagKind) error {
 }
 
 // runTagDelete removes one tag. The tag is read first so a name the controller does not
-// hold is reported as such: RESTCONF answers a delete of an absent node with 404, which
+// hold is reported as such. RESTCONF answers a delete of an absent node with 404, which
 // would otherwise reach the operator as an opaque status rather than as the plain fact.
 func runTagDelete(ctx context.Context, cmd *cli.Command, k tagKind) error {
 	name, err := requireTagName(cmd, k.noun)
@@ -267,15 +266,15 @@ func verifyPolicyTagFields(f wnc.TagFields) error {
 // own is accepted and clears the flag itself.
 func verifySiteTagFields(f wnc.TagFields) error {
 	if f.FlexProfile != nil && f.LocalSite != nil && *f.LocalSite {
-		return fmt.Errorf("--%s cannot be set with --%s: a flex profile is in force on a non-local site only",
+		return fmt.Errorf("--%s cannot be set with --%s: a flex profile is in effect on a non-local site only",
 			config.FlagLocalSite, config.FlagFlexProfile)
 	}
 
 	return nil
 }
 
-// tagFields reads the binding flags. A flag the operator did not give stays nil, which is
-// what the write layer reads as "leave this alone".
+// tagFields reads the binding flags. A flag the operator did not give stays nil, which the
+// write layer reads as "leave this alone".
 func tagFields(cmd *cli.Command) wnc.TagFields {
 	return wnc.TagFields{
 		Description:   stringFlag(cmd, config.FlagDescription),

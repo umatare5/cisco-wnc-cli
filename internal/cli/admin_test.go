@@ -11,7 +11,7 @@ import (
 )
 
 // The last element each request arrives on. The access point's own admin state and one
-// radio's are separate RPCs, so the element is what says which of the two a run reached.
+// radio's are separate RPCs, so the element says which of the two a run reached.
 const (
 	apAdminRPC    = "Cisco-IOS-XE-wireless-access-point-cfg-rpc:set-ap-admin-state"
 	radioAdminRPC = "Cisco-IOS-XE-wireless-access-point-cfg-rpc:set-ap-slot-admin-state"
@@ -26,7 +26,7 @@ const (
 )
 
 // The rows the keyed radio read answers with. Every band, radio-type and state spelling is a
-// declared member of the schema the controller serves; the three pairs the RPC's must
+// declared member of the schema the controller serves. The three pairs the RPC's must
 // statement forbids are composed here, because no controller reports them.
 const (
 	radio24InSlot0 = `{"radio-slot-id":0,"radio-type":"radio-80211bg",` +
@@ -55,8 +55,8 @@ const (
 		`"admin-state":"enabled"}`
 )
 
-// radioAnswer is what the keyed radio read returns. An empty row is a list the controller
-// returned with no member and a status is the read failing outright; the refusals below have
+// radioAnswer is the body the keyed radio read returns. An empty row is a list the controller
+// returned with no member and a status is the read failing outright. The refusals below have
 // to keep those two apart from each other and from a row that is present.
 type radioAnswer struct {
 	status int
@@ -173,8 +173,8 @@ var adminLeaves = []struct {
 		leaf: leafAP, rpc: apAdminRPC,
 		names: []string{testAPName},
 		// Measured on 17.15.6: after an AP-level disable both radios still report their own
-		// admin-state as enabled, so which of the two states is being set is not something
-		// the operator can infer from the radio rows afterwards.
+		// admin-state as enabled, so the operator cannot infer from the radio rows
+		// afterwards which state was set.
 		prompt: "not one radio's",
 	},
 	{
@@ -197,7 +197,7 @@ var adminModes = []struct {
 }
 
 // Both trees come out of adminVerbs, and an inverted on field there leaves the exit code, the
-// request count and the path unchanged, so the mode field of the body is the only place the
+// request count and the path unchanged. The mode field of the body is the only place the
 // difference appears. The report is checked beside it because a format string carrying the other
 // verb's word would lie about a write that was correct.
 func TestAdminSendsTheModeItsVerbNames(t *testing.T) {
@@ -255,7 +255,7 @@ func TestAdminSendsTheModeItsVerbNames(t *testing.T) {
 				}
 
 				// An access point is identified by name and never by address. The resolve
-				// answered with one, and the radio write puts it on the wire, so nothing but
+				// answered with one, and the radio write puts it on the wire, so only
 				// a format string keeps it off the stream.
 				if strings.Contains(got.stdout, docMAC) {
 					t.Errorf("stdout %q carries an address", got.stdout)
@@ -490,9 +490,10 @@ func TestAdminRadioRefusesAStateTheRPCCannotName(t *testing.T) {
 }
 
 // A dry run resolves the target and stops. Reading is not changing, so it does contact the
-// controller; the assertion is that the RPC does not. The radio leaf's line names the band as
-// well, which is knowable only after the read — the reason runRadioAdmin cannot reuse
-// runAPAction.
+// controller. The assertion is that the RPC does not.
+//
+// The radio leaf's line names the band as well, which is knowable only after the read. That is
+// why runRadioAdmin cannot reuse runAPAction.
 func TestAdminDryRunReadsAndSendsNothing(t *testing.T) {
 	for _, leaf := range adminLeaves {
 		for _, verb := range adminModes {
@@ -533,10 +534,12 @@ func TestAdminDryRunReadsAndSendsNothing(t *testing.T) {
 	}
 }
 
-// The prompt, the cancellation and the flag past it. runRadioAdmin does not reuse runAPAction —
-// the radio read has to land before the prompt so the band is checked rather than consented
-// to — so this tree holds a second copy of the sequence and both leaves are driven through
-// it. One verb runs it, because what differs per verb is the wording and not the guard.
+// The prompt, the cancellation and the flag past it. runRadioAdmin does not reuse runAPAction,
+// because the radio read has to land before the prompt so the band is checked rather than
+// consented to.
+//
+// This tree holds a second copy of the sequence, and both leaves are driven through it. One
+// verb runs it, because what differs per verb is the wording and not the guard.
 func TestAdminConfirmation(t *testing.T) {
 	answers := []struct {
 		name     string
@@ -585,7 +588,7 @@ func TestAdminConfirmation(t *testing.T) {
 }
 
 // The one place this file pins the suffix every usage fault carries. It belongs on a leaf two
-// levels down: FullName is what makes the suffix a command an operator can retype, and the
+// levels down: FullName makes the suffix a command an operator can retype, and the
 // suggestion is drawn from the flags this leaf parses, its own --slot included.
 func TestAdminRadioUsageFaultNamesTheLeafsOwnHelp(t *testing.T) {
 	got := runCLI(t, "", false, "enable", "radio", "--slotx", "1", "--ap-name", testAPName)

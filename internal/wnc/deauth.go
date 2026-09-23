@@ -2,8 +2,8 @@ package wnc
 
 import "context"
 
-// Neither arm of apf-ms-delete-all reports whether a client was there: the RPC declares no output
-// container and answers 204 for an identifier matching nothing exactly as for a session it
+// No arm of apf-ms-delete-all reports whether a client was there. The RPC declares no output
+// container and answers 204 for a target matching nothing exactly as for a session it
 // dropped, which is why each call has a resolve in front of it.
 
 // DeauthenticateClientByMAC drops the session of the client at one address. The SDK lowercases the

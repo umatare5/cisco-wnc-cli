@@ -18,8 +18,8 @@ type ClientFilter struct {
 }
 
 // needsDot11 reports whether a filter reads from the 802.11 collection, which promotes that
-// collection to primary: zero matches would claim the fleet holds no such client when the truth
-// is that nothing was read.
+// collection to primary. Zero matches would claim no controller holds such a client, when
+// nothing was read at all.
 func (f ClientFilter) needsDot11() bool {
 	return f.Band != "" || f.SSID != ""
 }
@@ -173,7 +173,7 @@ func clientRows(
 			// A channel is never zero on an associated client, so zero is an omission.
 			Channel: zeroAbsent(cl.Channel),
 			State:   optional(showClientState(cl.State)),
-			// An RSSI of exactly 0 dBm is not a reading a controller reports; an SNR of
+			// An RSSI of exactly 0 dBm is not a reading a controller reports. An SNR of
 			// 0 dB is, so the first is zero-sentinelled and the second arrives already
 			// nil where the traffic counters carried no row for this client.
 			RSSI:       zeroAbsent(cl.RSSI),

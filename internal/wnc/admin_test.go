@@ -9,7 +9,7 @@ import (
 
 // The paths the harness routes on. The keyed read carries the list's whole key in the last element,
 // wtp-mac and radio-slot-id joined by a comma, so a read naming another slot routes nowhere. Both
-// admin-state paths are spelt out because the CLI declares neither and the SDK's route constants
+// admin-state paths are spelled out because the CLI declares neither and the SDK's route constants
 // are internal.
 const (
 	apAdminStateRPC  = "Cisco-IOS-XE-wireless-access-point-cfg-rpc:set-ap-admin-state"
@@ -29,7 +29,7 @@ func radioOperData(rows string) string {
 }
 
 // The wire number comes from the radio type and the label from the band the radio serves, and
-// neither leaf determines the other: one type reports two served bands over its life and takes one
+// neither leaf determines the other. One type reports two served bands over its life and takes one
 // number either way, while dot11-6-ghz-band takes 3 on an XOR radio and 4 on a dedicated one. The
 // two rows carrying only one of the pair are the assertion that a missing key leaves its own field
 // empty rather than zeroing the other's.
@@ -72,7 +72,7 @@ func TestRadioBySlotTakesTheWireFromTheTypeAndTheLabelFromTheBand(t *testing.T) 
 			isRadio: true,
 		},
 		{
-			// A dual-band radio serving 2.4 GHz takes 3 and not 1 — measured on 17.12, where
+			// A dual-band radio serving 2.4 GHz takes 3 and not 1 – measured on 17.12.8, where
 			// band 1 against this type answered 400 and band 3 answered 204.
 			name:  "a dual-band radio a write has already disabled",
 			route: keyedSlot0AP1, mac: macAP1, slot: 0,
@@ -183,7 +183,7 @@ func TestRadioBySlotTakesTheWireFromTheTypeAndTheLabelFromTheBand(t *testing.T) 
 }
 
 // A slot the access point does not hold and a controller that failed must not arrive as the
-// same thing: the CLI reports the first as holding no radio in the slot and the second as a
+// same thing. The CLI reports the first as holding no radio in the slot and the second as a
 // read failure naming the controller.
 func TestRadioBySlotSeparatesAnAbsentRadioFromAFailedRead(t *testing.T) {
 	t.Parallel()
@@ -237,10 +237,10 @@ func TestRadioBySlotSeparatesAnAbsentRadioFromAFailedRead(t *testing.T) {
 	}
 }
 
-// This read is deliberately not pruned, and nothing in the answer shows that: a fields
+// This read is deliberately not pruned, and nothing in the answer shows that. A fields
 // expression naming a node the release does not declare answers 200 with a body that stops
 // mid-object, and every leaf this decodes is when-guarded on the radio type. The query is
-// asserted so an optimisation cannot add one silently.
+// asserted so an optimization cannot add one silently.
 func TestRadioBySlotReadsTheWholeRecordRatherThanPruningIt(t *testing.T) {
 	t.Parallel()
 
@@ -291,7 +291,7 @@ func TestSetRadioAdminStateSendsTheBandTheRadioTypeTakes(t *testing.T) {
 				`"slot-id":2,"band":"3","mac-addr":"` + macAP1 + `"}}`,
 		},
 		{
-			// The second row is what stops the table answering dual band unconditionally.
+			// The second row stops the table answering dual band unconditionally.
 			name: "disable a dedicated radio", route: keyedSlot1AP1, row: fiveGHzSlot1, slot: 1, on: false,
 			want: `{"Cisco-IOS-XE-wireless-access-point-cfg-rpc:input":{"mode":"admin-state-disabled",` +
 				`"slot-id":1,"band":"2","mac-addr":"` + macAP1 + `"}}`,
@@ -493,7 +493,7 @@ func TestSlotAllowedMirrorsTheRPCMustClause(t *testing.T) {
 
 // MaxRadioSlot is derived from the must table rather than declared beside it, so a slot added
 // to a band there moves the bound the CLI reports without a second edit. The number is the
-// table's own maximum and 3 is what the CLI's two --slot messages read.
+// table's own maximum, and the CLI's --slot messages read 3.
 func TestMaxRadioSlotIsTheMustTablesOwnMaximum(t *testing.T) {
 	t.Parallel()
 
@@ -515,7 +515,7 @@ func TestMaxRadioSlotIsTheMustTablesOwnMaximum(t *testing.T) {
 }
 
 // The eight members of enm-radio-type that 17.12 and 17.15 declare, against the band number the
-// RPC takes for each; the ninth 17.18 adds is covered below. Three carry no number: the RPC's
+// RPC takes for each. The ninth 17.18 adds is covered below. Three carry no number: the RPC's
 // domain is 1 to 4 and nothing there names an invalid radio, a UWB radio or a remote-LAN port.
 func TestRadioTypeBandHoldsEveryMemberOfTheRadioTypeEnum(t *testing.T) {
 	t.Parallel()

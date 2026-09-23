@@ -15,7 +15,7 @@ import (
 
 // Nothing in this file runs in parallel, and that is deliberate. urfave reads the
 // WNC_* variables at parse time, so a developer's own shell would otherwise decide
-// what these assertions see; clearing the environment needs t.Setenv, which forbids
+// what these assertions see. Clearing the environment needs t.Setenv, which forbids
 // t.Parallel.
 
 // fakeToken looks like a Basic auth token and decodes to nothing real.
@@ -100,7 +100,7 @@ func TestExitCodes(t *testing.T) {
 		},
 		{
 			// urfave builds its own cli.Exit for this path, which matches none of this
-			// package's sentinels; the ExitCoder branch of the mapper catches it and
+			// package's sentinels. The ExitCoder branch of the mapper catches it and
 			// failureLine replaces its text, which would otherwise echo the word.
 			name: "help for an unknown topic", args: []string{"--help", "bogus"},
 			want: ExitUsage, mentions: "unknown help topic",
@@ -150,7 +150,7 @@ func TestExitCodes(t *testing.T) {
 
 // urfave evaluates the help flag before the usage hook, so an explicit --help placed
 // first wins over a later unknown flag. Fixing that would mean reordering the
-// library's own run loop; it is recorded here as the accepted behavior instead.
+// library's own run loop. It is recorded here as the accepted behavior instead.
 func TestHelpBeforeUnknownFlagWins(t *testing.T) {
 	first := runCLI(t, "", false, "--help", "--bogus")
 	if first.code != ExitOK || first.stdout == "" {
@@ -234,7 +234,7 @@ func TestGenerateToken(t *testing.T) {
 }
 
 // urfave applies a slice flag's environment value at the level that declares it and
-// then appends what a deeper command supplies, so a controller flag sourced from the
+// then appends what a deeper command supplies. A controller flag sourced from the
 // environment would query the host the operator named plus every exported one. The
 // flag therefore declares no source and config.Resolve reads the variable itself.
 func TestControllerFlagIsNotMergedWithItsEnvironmentVariable(t *testing.T) {
@@ -311,14 +311,14 @@ func TestFaultsNeverEchoACredential(t *testing.T) {
 		// declaration lookup separates the name from the value.
 		{"generate-token", "-u", "admin", "-p" + fakeToken},
 		{"show", "ap-tag", "-t" + fakeToken},
-		// The same shape spelt entirely in the characters a flag name uses. The name is
+		// The same shape spelled entirely in the characters a flag name uses. The name is
 		// withheld here rather than cut, because -p is declared and reporting it would
 		// leave the rest of the word in the message.
 		{"generate-token", "-u", "admin", "-psecret-password"},
 		// An attached value behind a letter no command declares. Nothing here can be
 		// named, so nothing is.
 		{"show", "ap-tag", "-z" + fakeToken},
-		// A long flag whose name is a stray colon leaves trimArg nothing but the dash.
+		// A long flag whose name is a stray colon leaves trimArg only the dash.
 		// Without the empty check the first-character lookup would index past the end of
 		// the string. One dash instead of two makes it a positional argument, refused by
 		// count before any of this.
@@ -327,7 +327,7 @@ func TestFaultsNeverEchoACredential(t *testing.T) {
 		// reaches a parse the flag itself performs. urfave quotes the value and the
 		// duration parser quotes it again, which printed it twice.
 		{"show", "-t", fakeToken, "ap"},
-		// A leftover word is refused by count and never repeated, which is what makes a
+		// A leftover word is refused by count and never repeated, which makes a
 		// wrapper's misplaced password on generate-token safe to report.
 		{"generate-token", "-u", "admin", fakeToken},
 		{"show", "ap-tag", "-c", "h", "--access-token", fakeToken, fakeToken},
@@ -335,8 +335,8 @@ func TestFaultsNeverEchoACredential(t *testing.T) {
 		{"show", fakeToken},
 		{fakeToken},
 		// A word after --help is a help topic, and urfave answers an unknown one with
-		// its own ExitCoder whose text carries the word — the one error this package
-		// does not build, replaced wholesale by failureLine.
+		// its own ExitCoder whose text carries the word. That is the one error this
+		// package does not build, and failureLine replaces it wholesale.
 		{"--help", fakeToken},
 		{"show", "-h", fakeToken},
 		{"show", "ap", "--help", fakeToken},
@@ -367,7 +367,7 @@ func TestFaultsNeverEchoACredential(t *testing.T) {
 }
 
 // TestFaultsNeverEchoACredential pins one direction only: nothing secret comes out.
-// These pin the other — which name does come out — one case per branch of
+// These pin the other – which name does come out – one case per branch of
 // declaredFlagName plus the help-topic replacement, so deleting a branch fails a test
 // rather than only widening the silence.
 func TestUndefinedFlagFaultsNameOnlyDeclaredFlags(t *testing.T) {
@@ -389,7 +389,7 @@ func TestUndefinedFlagFaultsNameOnlyDeclaredFlags(t *testing.T) {
 			mentions: "not defined: -p",
 		},
 		{
-			// A flag-spelt remainder reads as a mistyped long name, so no name is safe.
+			// A flag-spelled remainder reads as a mistyped long name, so no name is safe.
 			name:     "flag-shaped remainder withholds the name",
 			args:     []string{"generate-token", "-u", "admin", "-psecret-password"},
 			mentions: "not defined", rejects: "not defined: -",
@@ -544,7 +544,7 @@ func TestConfigFile(t *testing.T) {
 		path := writeFile(t, `{"format":"json","token":"`+fakeToken+`","controllers":[{"host":"h"}]}`)
 
 		// The file's format is valid and the flag's is not, so the fault itself is
-		// the proof the flag won; the rejected value is withheld from the message.
+		// the proof the flag won. The rejected value is withheld from the message.
 		got := runCLI(t, "", false, "--config", path, "show", "ap-tag", "-f", "yaml")
 		if got.code != ExitUsage || !strings.Contains(got.stderr, "--format") {
 			t.Errorf("the flag did not reach validation: exit %d, stderr %q", got.code, got.stderr)
@@ -710,8 +710,8 @@ func TestShowHelpLinesStayNarrow(t *testing.T) {
 }
 
 // -o is the conventional output-format shorthand, so --format owns it here and --sort-order is
-// long-only. Each fault names the flag that consumed the value and withholds the value, which is
-// what makes the swap visible in both directions.
+// long-only. Each fault names the flag that consumed the value and withholds the value, which
+// makes the swap visible in both directions.
 func TestFormatOwnsTheOutputShorthand(t *testing.T) {
 	for _, tt := range []struct {
 		name     string
@@ -758,8 +758,8 @@ func TestOutputShorthandReachesTheRead(t *testing.T) {
 }
 
 // urfave appends the completion subtree during its own setup pass, after newRootCommand has
-// returned, so TestEveryCommandHasAUsageHook cannot see those five nodes;
-// ConfigureShellCompletionCommand is what carries the hook to them.
+// returned, so TestEveryCommandHasAUsageHook cannot see those nodes.
+// ConfigureShellCompletionCommand carries the hook to them.
 func TestCompletionSubtreeCarriesTheUsageHook(t *testing.T) {
 	for _, args := range [][]string{
 		{"completion", "--bogus"},
@@ -981,7 +981,7 @@ func TestEveryLeafDeclaresAnAction(t *testing.T) {
 }
 
 // The completion subtree is urfave's own and answers for its own arguments. It is appended during
-// the library's setup pass, after every walk in newRootCommand has run, so the refusal cannot
+// the library's setup pass, after every walk in newRootCommand has run. The refusal cannot
 // reach it and must not: that subtree took the shell name as a positional argument on earlier
 // releases.
 func TestCompletionSubtreeKeepsItsOwnArguments(t *testing.T) {
@@ -1001,12 +1001,12 @@ func TestCompletionSubtreeKeepsItsOwnArguments(t *testing.T) {
 }
 
 // The same bound TestShowHelpLinesStayNarrow holds the show leaves to. --ap-name widens the names
-// column on the six leaves that declare it, which takes --slot's own line over the bound unless
-// its default text is hidden, and generate-token is out because it already prints wider.
+// column on every leaf that declares it, which takes --slot's own line over the bound unless its
+// default text is hidden. generate-token is out because it already prints wider.
 //
-// save-config and deauth are out because, being flat, each declares the connection flags itself,
-// so what a nested acting command shows under INHERITED OPTIONS lands in its OPTIONS instead and
-// this scan reads only one of the two headings.
+// save-config and deauth are out because, being flat, each declares the connection flags itself.
+// What a nested acting command shows under INHERITED OPTIONS lands in its OPTIONS instead, and
+// this scan reads one heading only.
 func TestExecHelpLinesStayNarrow(t *testing.T) {
 	const limit = 90
 
@@ -1072,7 +1072,7 @@ func TestActingLeavesNameTheirTargetInTheSynopsis(t *testing.T) {
 	}
 }
 
-// The counterpart to TestFaultsNeverEchoACredential: a word spelt like a command name is
+// The counterpart to TestFaultsNeverEchoACredential: a word spelled like a command name is
 // still repeated, and still carries the near miss. Without this the redaction could swallow
 // every word and the credential test would go on passing.
 func TestUnknownCommandStillNamesACommandShapedWord(t *testing.T) {

@@ -53,7 +53,7 @@ func resolveWith(t *testing.T, file File, args ...string) (Settings, error) {
 }
 
 // resolveExecWith drives ResolveExec through a command declaring only the flags the
-// exec tree does, which is the point of the assertion: the output and sort flags are
+// exec tree does, which is the point of the assertion. The output and sort flags are
 // absent, so anything ResolveExec read from them would fail here.
 func resolveExecWith(t *testing.T, file File, args ...string) (Settings, error) {
 	t.Helper()
@@ -504,7 +504,7 @@ func TestValidateFile(t *testing.T) {
 }
 
 // The file's enum slots sit two keys from its token, so a fault on either may name
-// only the key and the accepted set — the rejected value can be that token.
+// only the key and the accepted set – the rejected value can be that token.
 func TestValidateFileNeverEchoesAValue(t *testing.T) {
 	t.Parallel()
 

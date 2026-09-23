@@ -19,7 +19,7 @@ type Client struct {
 }
 
 // NewClient builds the client for one controller. All three timeouts are set from
-// the one flag: the SDK's own response-header and handshake defaults are a few
+// the one flag. The SDK's own response-header and handshake defaults are a few
 // seconds, short enough that a whole-container read of a busy controller trips them
 // long before the request timeout is spent.
 func NewClient(t config.Target, s config.Settings, logger *logrus.Logger, userAgent string) (*Client, error) {

@@ -22,8 +22,8 @@ func resetCommand() *cli.Command {
 }
 
 // resetAPCommand names its target with --ap-name. Both RPCs in this tree declare a mandatory choice
-// offering an ap-name or a mac-addr arm, so the name an operator reads out of show ap is what goes
-// on the wire and no address is spelt anywhere.
+// offering an ap-name or a mac-addr arm, so the name an operator reads out of show ap goes on
+// the wire and no address is spelled anywhere.
 func resetAPCommand() *cli.Command {
 	return &cli.Command{
 		Name:      leafAP,
@@ -38,8 +38,8 @@ func resetAPCommand() *cli.Command {
 }
 
 // resetCAPWAPCommand restarts the controller session rather than the access point. The
-// access point's own uptime is unchanged across it, which is what makes this the smaller
-// remedy of the two and why it is a separate leaf rather than a flag on reset ap.
+// access point's own uptime is unchanged across it, which makes this the smaller
+// remedy and why it is a separate leaf rather than a flag on reset ap.
 func resetCAPWAPCommand() *cli.Command {
 	return &cli.Command{
 		Name:      "capwap",
@@ -65,13 +65,12 @@ func runResetAP(ctx context.Context, cmd *cli.Command) error {
 	})
 }
 
-// runResetCAPWAP resets one access point's controller session.
 func runResetCAPWAP(ctx context.Context, cmd *cli.Command) error {
 	return runAPAction(ctx, cmd, writeWording{
 		question: "Reset the CAPWAP session of %s on %s? " +
 			"It rejoins within about ten seconds and does not reboot. [y/N]: ",
 		dryRun: "%s on %s: would reset the CAPWAP session\n",
-		sent:   "%s on %s: capwap reset sent\n",
+		sent:   "%s on %s: CAPWAP reset sent\n",
 		failed: "resetting the CAPWAP session of %s on %s",
 	}, func(ctx context.Context, c *wnc.Client, name string) error {
 		return c.ResetCAPWAP(ctx, name)

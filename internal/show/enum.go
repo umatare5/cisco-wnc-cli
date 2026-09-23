@@ -24,14 +24,14 @@ const (
 )
 
 // Band display strings. They must match config.Band24, Band5 and Band6, the accepted values of
-// --radio, so a filter and the cell it selects on read alike.
+// --radio, so a filter and the cell it selects on match exactly.
 const (
 	dispBand24 = "2.4"
 	dispBand5  = "5"
 	dispBand6  = "6"
 )
 
-// radioBand is enm-ewlc-dot11-radio-band, the AP radio's operating band.
+// radioBand is enm-ewlc-dot11-radio-band, the access point radio's operating band.
 // dot11-invalid-band is an explicit member, so it maps to a value of its own and
 // must stay distinct from the leaf being absent.
 var radioBand = map[string]string{
@@ -59,8 +59,8 @@ var (
 )
 
 // apAdmin is the read side of the AP admin state, wireless-enum-types:admin-state.
-// The RPC that sets it uses enm-admin-status, spelt "admin-state-enabled", with the
-// same numbers — the two domains must never share a table.
+// The RPC that sets it uses enm-admin-status, spelled "admin-state-enabled", with the
+// same numbers – the two domains must never share a table.
 var apAdmin = map[string]string{
 	"adminstate-enabled":  dispEnabled,
 	"adminstate-disabled": dispDisabled,
@@ -146,7 +146,7 @@ var radioMode = map[string]string{
 	"radio-mode-wgb-scan":           "WGB-Scan",
 }
 
-// apMode is wireless-types:enm-ewlc-spam-ap-modes. Member zero is spelt local-mode
+// apMode is wireless-types:enm-ewlc-spam-ap-modes. Member zero is spelled local-mode
 // while the rest are mode-*, so no prefix rule produces this table.
 var apMode = map[string]string{
 	"local-mode":              dispLocal,
