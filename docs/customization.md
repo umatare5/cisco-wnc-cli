@@ -15,7 +15,7 @@ The flags a command takes follow from what that command does:
 | Acting, so asking first | `--yes`                                                            |
 
 Without a command, `--dry-run` validates the configuration and contacts nothing.
-With one, a `show` command names the controllers it would read, and an action stops before its request.
+With one, a `show` command names the controllers it would read and contacts none, while [Architecture](architecture.md#acting-on-a-controller) sets out where an action stops.
 
 `--insecure` drops certificate verification, so it accepts an interception as readily as a private CA.
 Trust the issuer instead, which [Troubleshooting](troubleshooting.md#tls) sets out.

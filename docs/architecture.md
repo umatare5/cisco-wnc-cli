@@ -96,7 +96,7 @@ An RPC's input is a YANG `choice`, and this documentation calls each branch of i
 `reset ap` declares an `ap-name` arm and a `mac-addr` arm, and one invocation fills exactly one.
 
 [`--dry-run`](../internal/cli/exec.go#L87) resolves the target and posts nothing.
-It cannot report whether anything needed doing, and [Customization](customization.md#flags) states what it does on the other commands.
+It cannot report whether anything needed doing, and [Customization](customization.md#flags) states what it does on the root and on a `show` command.
 
 The prompt is the last gate, and [`--yes`](../internal/cli/exec.go#L93) answers it.
 With stdin piped and neither flag given the run is refused rather than assumed.

@@ -259,7 +259,8 @@ func runShow[R any](
 			config.FlagFormat + " " + config.FormatJSON + " output is unchanged")
 	}
 
-	// Past every check a real run makes, and short of show.Run, which opens the connections.
+	// After the settings checks and the warnings a real run prints, and before show.Run builds any
+	// client.
 	if cmd.Bool(config.FlagDryRun) {
 		return printWouldRead(cmd, settings.Controllers)
 	}
