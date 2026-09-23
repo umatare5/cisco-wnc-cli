@@ -226,21 +226,28 @@ func TestRunJSONFormat(t *testing.T) {
 }
 
 // Sorting reads every column, so a key the selection leaves out still orders the rows, in the
-// table and in the JSON alike.
+// table and in the JSON alike. The names run against the controller order, so a sort on the
+// shown column would print the rows the other way round.
 func TestRunSortsByAKeyTheSelectionLeavesOut(t *testing.T) {
 	t.Parallel()
 
+	reversed := func(_ context.Context, _ *wnc.Client, target config.Target, _ *Reporter) ([]fanRow, error) {
+		name := map[string]string{"wlc-a": "2", "wlc-b": "1"}[target.Name]
+
+		return []fanRow{{Name: &name, Controller: target.Name}}, nil
+	}
+
 	for format, want := range map[string]string{
-		config.FormatTable: "Controller\nwlc-a\nwlc-b\n",
-		config.FormatJSON:  `[{"controller":"wlc-a"},{"controller":"wlc-b"}]` + "\n",
+		config.FormatTable: "Controller\nwlc-b\nwlc-a\n",
+		config.FormatJSON:  `[{"controller":"wlc-b"},{"controller":"wlc-a"}]` + "\n",
 	} {
 		t.Run(format, func(t *testing.T) {
 			t.Parallel()
 
-			env, out, _ := fanEnv(t, format, "wlc-b", "wlc-a")
+			env, out, _ := fanEnv(t, format, "wlc-a", "wlc-b")
 			env.Settings.Columns = []string{keyController}
 
-			if err := Run(t.Context(), env, fanColumns(), rowsPerController(nil, nil)); err != nil {
+			if err := Run(t.Context(), env, fanColumns(), reversed); err != nil {
 				t.Fatalf("Run: %v", err)
 			}
 

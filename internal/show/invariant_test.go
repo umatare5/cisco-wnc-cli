@@ -232,7 +232,34 @@ func TestEveryCommandCarriesTheController(t *testing.T) {
 func TestEveryDefaultSetKeepsTheController(t *testing.T) {
 	t.Parallel()
 
-	for name, keys := range map[string][]string{
+	for name, keys := range defaultSets() {
+		if !contains(keys, keyController) {
+			t.Errorf("the default set of %s leaves out the controller column", name)
+		}
+	}
+}
+
+// An address, a serial, a username or an LLDP neighbor identifies a device or a person, which is
+// why the default sets exist, so none of them may return to one.
+func TestNoDefaultSetCarriesAnIdentifier(t *testing.T) {
+	t.Parallel()
+
+	identifiers := []string{
+		keyAPMAC, keyRadioMAC, keyEthernetMAC, keyIPAddress, DefaultSortMAC,
+		"ipv4", "ipv6", "username", "serial", "lldp_neighbor",
+	}
+
+	for name, keys := range defaultSets() {
+		for _, k := range identifiers {
+			if contains(keys, k) {
+				t.Errorf("the default set of %s carries %s", name, k)
+			}
+		}
+	}
+}
+
+func defaultSets() map[string][]string {
+	return map[string][]string{
 		"overview":   render.DefaultKeys(OverviewColumns()),
 		"ap":         render.DefaultKeys(APColumns()),
 		"ap-join":    render.DefaultKeys(APJoinColumns()),
@@ -242,10 +269,6 @@ func TestEveryDefaultSetKeepsTheController(t *testing.T) {
 		"policy-tag": render.DefaultKeys(PolicyTagColumns()),
 		"site-tag":   render.DefaultKeys(SiteTagColumns()),
 		"rf-tag":     render.DefaultKeys(RFTagColumns()),
-	} {
-		if !contains(keys, keyController) {
-			t.Errorf("the default set of %s leaves out the controller column", name)
-		}
 	}
 }
 

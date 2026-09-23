@@ -2,6 +2,8 @@ package cli
 
 import (
 	"bytes"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"slices"
@@ -607,6 +609,44 @@ func TestShowDryRunReadsNothing(t *testing.T) {
 
 			if got.stderr != "" {
 				t.Errorf("stderr = %q, want empty", got.stderr)
+			}
+		})
+	}
+}
+
+// runShow hands the view's default set to the writers, so a hidden key stays out of the JSON until
+// --columns names it.
+func TestShowJSONCarriesTheDefaultSetUntilColumnsNamesMore(t *testing.T) {
+	srv := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/yang-data+json")
+		_, _ = w.Write([]byte(`{"Cisco-IOS-XE-wireless-access-point-oper:capwap-data":[` +
+			`{"wtp-mac":"` + docMAC + `","name":"` + testAPName + `"}]}`))
+	}))
+	srv.StartTLS()
+
+	addr := srv.Listener.Addr().String()
+
+	for _, tt := range []struct {
+		name  string
+		extra []string
+		want  string
+	}{
+		{name: "the default set", want: `[{"ap_name":"` + testAPName + `","controller":"` + addr + `"}]`},
+		{
+			name: "every key", extra: []string{"--columns", "all"},
+			want: `[{"ap_name":"` + testAPName + `","ap_mac":"` + docMAC + `","controller":"` + addr + `"}]`,
+		},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			args := []string{"show", "ap-tag", "-c", addr, "--access-token", fakeToken, "-k", "-f", "json"}
+
+			got := runCLI(t, "", false, append(args, tt.extra...)...)
+			if got.code != ExitOK {
+				t.Fatalf("exit = %d, want %d (stderr %q)", got.code, ExitOK, got.stderr)
+			}
+
+			if got.stdout != tt.want+"\n" {
+				t.Errorf("stdout = %q, want %q", got.stdout, tt.want+"\n")
 			}
 		})
 	}
