@@ -239,6 +239,21 @@ func TestEveryDefaultSetKeepsTheController(t *testing.T) {
 	}
 }
 
+// The default set of show ap is the table command.show.md prints, so a column added to the view
+// arrives hidden unless that page changes with it.
+func TestAPDefaultSetIsTheDocumentedTable(t *testing.T) {
+	t.Parallel()
+
+	want := []string{
+		keyAPName, "model", "sw_version", keyMode, keyAdmin, keyState,
+		"power_mode", "uptime_seconds", "assoc_uptime_seconds", keyController,
+	}
+
+	if got := render.DefaultKeys(APColumns()); strings.Join(got, ",") != strings.Join(want, ",") {
+		t.Errorf("default keys\n  %s\nwant\n  %s", strings.Join(got, ","), strings.Join(want, ","))
+	}
+}
+
 // An address, a serial, a username, an LLDP neighbor or a coordinate identifies a device, a person
 // or a site, which is why the default sets exist, so none of them may return to one.
 func TestNoDefaultSetCarriesAnIdentifier(t *testing.T) {

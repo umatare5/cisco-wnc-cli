@@ -118,7 +118,7 @@ func TestAPs(t *testing.T) {
 		   "ap-state":{"ap-admin-state":"adminstate-enabled","ap-operation-state":"registered"},
 		   "ap-mode-data":{"wtp-mode":"mode-flex-connect","ap-sub-mode":"ap-sub-mode-none"},
 		   "ap-time-info":{"boot-time":"2026-08-20T00:00:00.55648+00:00","join-time":"2026-08-20T01:00:00.801621+00:00"}},
-		  {"wtp-mac":"` + macAP2 + `","name":"TEST-AP02"}
+		  {"wtp-mac":"` + macAP2 + `","name":"TEST-AP02","ap-location":{"floor-id":0}}
 		]}`},
 		"oper-data": {body: `{"Cisco-IOS-XE-wireless-access-point-oper:oper-data":[
 		  {"wtp-mac":"` + macAP1 + `","ap-pow":{"power-type":"pwr-src-poe-plus","power-mode":"dot11-default-high-pwr"}},
@@ -177,6 +177,11 @@ func TestAPs(t *testing.T) {
 	if aps[1].PowerType != "" {
 		t.Errorf("an omitted power container produced %q", aps[1].PowerType)
 	}
+
+	// A floor id of 0 sits inside set-ap-floor's range, so it is a floor and not an absence.
+	if f := aps[1].Floor; f == nil || *f != 0 {
+		t.Errorf("floor = %v, want a reading of 0", f)
+	}
 }
 
 // The prune is asserted on the request because a stub cannot reproduce what the controller does
@@ -191,7 +196,7 @@ func TestAPsPrunesTheRequestToTheRenderedNodes(t *testing.T) {
 		"capwap-data": {query: &got, body: `{"Cisco-IOS-XE-wireless-access-point-oper:capwap-data":[
 		  {"wtp-mac":"` + macAP1 + `","name":"TEST-AP01","num-radio-slots":2,
 		   "device-detail":{"static-info":{"board-data":{"wtp-serial-num":"TST0000AP01"}}},
-		   "ap-state":{"ap-admin-state":"adminstate-enabled"}}
+		   "ap-state":{"ap-admin-state":"adminstate-enabled"},"ap-location":{"floor-id":-1}}
 		]}`},
 		"oper-data":       {},
 		"lldp-neigh":      {},
@@ -204,7 +209,7 @@ func TestAPsPrunesTheRequestToTheRenderedNodes(t *testing.T) {
 	}
 
 	want := "fields=name;wtp-mac;ip-addr;num-radio-slots;country-code;" +
-		"device-detail;ap-mode-data;ap-state;ap-time-info"
+		"device-detail;ap-mode-data;ap-state;ap-time-info;ap-location/floor-id"
 	if got != want {
 		t.Errorf("query = %q, want %q", got, want)
 	}
@@ -222,6 +227,11 @@ func TestAPsPrunesTheRequestToTheRenderedNodes(t *testing.T) {
 
 	if aps[0].Slots != 2 {
 		t.Errorf("slots = %d, want 2", aps[0].Slots)
+	}
+
+	// The floor is the one leaf the expression picks out of its container.
+	if f := aps[0].Floor; f == nil || *f != -1 {
+		t.Errorf("floor did not survive the prune: %v", f)
 	}
 }
 
@@ -274,15 +284,19 @@ func TestAPsKeepsRowsWhenASecondaryFails(t *testing.T) {
 		t.Fatalf("got %d rows, want the row to survive", len(aps))
 	}
 
-	if aps[0].PowerType != "" || len(aps[0].Neighbors) != 0 || aps[0].Longitude != nil || aps[0].Latitude != nil {
-		t.Errorf("a failed read produced values: %+v", aps[0])
+	first := aps[0]
+	if first.PowerType != "" || len(first.Neighbors) != 0 ||
+		first.Longitude != nil || first.Latitude != nil || first.Height != nil {
+		t.Errorf("a failed read produced values: %+v", first)
 	}
 }
 
 // The position joins on the base radio address, so the record keyed on TEST-AP01's Ethernet
 // address attaches to nothing. A record whose halves do not both parse within their bounds yields
-// no position at all: TEST-AP03 sends a longitude alone, TEST-AP04 a NaN, TEST-AP05 the choice's
-// invalid case, and TEST-AP06 the fixture pair swapped, whose latitude falls past 90 degrees.
+// no pair at all: TEST-AP03 sends a longitude alone, TEST-AP04 a NaN, TEST-AP05 the choice's
+// invalid case, and TEST-AP06 the fixture pair swapped, whose latitude falls past 90 degrees. The
+// height is read apart from the pair: TEST-AP05 keeps its above-ground height beside the invalid
+// location, and TEST-AP03's sea-level height is left out.
 func TestAPsJoinsThePositionOnTheRadioAddress(t *testing.T) {
 	t.Parallel()
 
@@ -302,10 +316,12 @@ func TestAPsJoinsThePositionOnTheRadioAddress(t *testing.T) {
 		"lldp-neigh": {},
 		"ap-geo-loc-data": {body: `{"Cisco-IOS-XE-wireless-geolocation-oper:ap-geo-loc-data":[
 		  {"ap-mac":"00:00:5e:00:53:11","loc":{"ellipse":{"center":{` + nemo + `}}}},
-		  {"ap-mac":"00:00:5e:00:53:02","loc":{"ellipse":{"center":{` + nemo + `}}}},
-		  {"ap-mac":"00:00:5e:00:53:03","loc":{"ellipse":{"center":{"longitude":"-123.393333"}}}},
+		  {"ap-mac":"00:00:5e:00:53:02","loc":{"ellipse":{"center":{` + nemo + `}}},
+		   "elevation":{"agl-data":{"height":3}}},
+		  {"ap-mac":"00:00:5e:00:53:03","loc":{"ellipse":{"center":{"longitude":"-123.393333"}}},
+		   "elevation":{"msl-data":{"height":3}}},
 		  {"ap-mac":"00:00:5e:00:53:04","loc":{"ellipse":{"center":{"longitude":"-123.393333","latitude":"NaN"}}}},
-		  {"ap-mac":"00:00:5e:00:53:05","loc":{"invalid":true}},
+		  {"ap-mac":"00:00:5e:00:53:05","loc":{"invalid":true},"elevation":{"agl-data":{"height":3}}},
 		  {"ap-mac":"00:00:5e:00:53:06","loc":{"ellipse":{"center":{"longitude":"-48.876667","latitude":"-123.393333"}}}}
 		]}`},
 	})
@@ -314,6 +330,8 @@ func TestAPsJoinsThePositionOnTheRadioAddress(t *testing.T) {
 	if err != nil || reads.Geolocation != nil {
 		t.Fatalf("APs: %v, position read: %v", err, reads.Geolocation)
 	}
+
+	wantHeight := map[string]bool{"TEST-AP02": true, "TEST-AP05": true}
 
 	for _, ap := range aps {
 		placed := ap.Longitude != nil && ap.Latitude != nil
@@ -325,6 +343,12 @@ func TestAPsJoinsThePositionOnTheRadioAddress(t *testing.T) {
 			t.Errorf("%s = %v, %v, want the fixture pair", ap.Name, *ap.Longitude, *ap.Latitude)
 		case ap.Name != "TEST-AP02" && (ap.Longitude != nil || ap.Latitude != nil):
 			t.Errorf("%s carries a position: %v, %v", ap.Name, ap.Longitude, ap.Latitude)
+		}
+
+		if high := ap.Height != nil; high != wantHeight[ap.Name] {
+			t.Errorf("%s: height reported %t, want %t", ap.Name, high, wantHeight[ap.Name])
+		} else if high && *ap.Height != 3 {
+			t.Errorf("%s: height = %d, want 3", ap.Name, *ap.Height)
 		}
 	}
 }
@@ -348,7 +372,7 @@ func TestAPsTreatANoContentPositionListAsNone(t *testing.T) {
 		t.Fatalf("APs: %v, position read: %v", err, reads.Geolocation)
 	}
 
-	if len(aps) != 1 || aps[0].Longitude != nil || aps[0].Latitude != nil {
+	if len(aps) != 1 || aps[0].Longitude != nil || aps[0].Latitude != nil || aps[0].Height != nil {
 		t.Errorf("rows = %+v, want one row with no position", aps)
 	}
 }

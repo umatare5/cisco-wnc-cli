@@ -12,9 +12,10 @@ import (
 // The fields expression names the nodes this view renders and no others. It keeps the
 // certificate leaves, the external-module serial numbers and proxy-info on the controller, and
 // an unpruned read returns proxy-info's username and password. The serial number survives
-// under device-detail because the Serial column renders it.
+// under device-detail because the Serial column renders it. ap-location is cut to the floor id,
+// because its location leaf is free text the operator typed.
 const apViewFields = "name;wtp-mac;ip-addr;num-radio-slots;country-code;" +
-	"device-detail;ap-mode-data;ap-state;ap-time-info"
+	"device-detail;ap-mode-data;ap-state;ap-time-info;ap-location/floor-id"
 
 // AP is one access point's identity, state, power, uplink neighbor and position. BootTime is the
 // instant the access point itself came up, and JoinTime the instant the current CAPWAP
@@ -42,9 +43,12 @@ type AP struct {
 	PowerMode   string
 	Neighbors   []string
 
-	// Longitude and Latitude are WGS 84 degrees, both set or both nil.
+	// Longitude and Latitude are WGS 84 degrees, both set or both nil. Height is meters above
+	// ground level. Floor is the floor id, which every access point read at 17.15.6 carried.
 	Longitude *float64
 	Latitude  *float64
+	Height    *int16
+	Floor     *int
 }
 
 // APReads reports which secondary read failed.
@@ -93,15 +97,15 @@ func (c *Client) APs(ctx context.Context) ([]AP, APReads, error) {
 			BootTime:    parseInstant(ap.ApTimeInfo.BootTime),
 			JoinTime:    parseInstant(ap.ApTimeInfo.JoinTime),
 			Neighbors:   neighbors[ap.WtpMAC],
+			Floor:       ptrTo(ap.ApLocation.FloorID),
 		}
 
 		if p, ok := power[ap.WtpMAC]; ok {
 			row.PowerType, row.PowerMode = p.kind, p.mode
 		}
 
-		if pos, ok := positions[ap.WtpMAC]; ok {
-			row.Longitude, row.Latitude = ptrTo(pos.longitude), ptrTo(pos.latitude)
-		}
+		pos := positions[ap.WtpMAC]
+		row.Longitude, row.Latitude, row.Height = pos.longitude, pos.latitude, pos.height
 
 		aps = append(aps, row)
 	}
@@ -173,14 +177,17 @@ const (
 )
 
 type position struct {
-	longitude float64
-	latitude  float64
+	longitude *float64
+	latitude  *float64
+	height    *int16
 }
 
 // apPositions indexes the position by access point. Measured on 17.15.6, ap-mac is the base radio
-// address capwap-data keys on, and not the Ethernet address. A record yields a position only when
-// both halves parse within their bounds, because one half alone names no place. The invalid case
-// of the location choice carries no ellipse, so the nil chain covers it.
+// address capwap-data keys on, and not the Ethernet address. A pair is kept only when both halves
+// parse within their bounds, because one half alone names no place. The invalid case of the
+// location choice carries no ellipse, so the nil chain covers it. The height is read apart from
+// the pair, because an invalid location still carries one, and the sea-level case of the
+// elevation choice is left out, because a height above the sea is not one above the ground.
 func (c *Client) apPositions(ctx context.Context) (map[string]position, error) {
 	resp, err := c.sdk.Geolocation().ListAPGeolocationData(ctx)
 	if err != nil {
@@ -194,16 +201,22 @@ func (c *Client) apPositions(ctx context.Context) (map[string]position, error) {
 	out := make(map[string]position, len(resp.ApGeoLocData))
 
 	for _, g := range resp.ApGeoLocData {
-		if g.Loc == nil || g.Loc.Ellipse == nil || g.Loc.Ellipse.Center == nil {
-			continue
+		var pos position
+
+		if elev := g.Elevation; elev != nil && elev.AGLData != nil {
+			pos.height = elev.AGLData.Height
 		}
 
-		lon, lonOK := parseDegrees(g.Loc.Ellipse.Center.Longitude, longitudeBound)
-		lat, latOK := parseDegrees(g.Loc.Ellipse.Center.Latitude, latitudeBound)
+		if loc := g.Loc; loc != nil && loc.Ellipse != nil && loc.Ellipse.Center != nil {
+			lon, lonOK := parseDegrees(loc.Ellipse.Center.Longitude, longitudeBound)
+			lat, latOK := parseDegrees(loc.Ellipse.Center.Latitude, latitudeBound)
 
-		if lonOK && latOK {
-			out[g.ApMAC] = position{longitude: lon, latitude: lat}
+			if lonOK && latOK {
+				pos.longitude, pos.latitude = ptrTo(lon), ptrTo(lat)
+			}
 		}
+
+		out[g.ApMAC] = pos
 	}
 
 	return out, nil

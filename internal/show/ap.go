@@ -27,6 +27,8 @@ type APRow struct {
 	LLDPNeighbor *string  `json:"lldp_neighbor,omitzero"`
 	Longitude    *float64 `json:"longitude,omitzero"`
 	Latitude     *float64 `json:"latitude,omitzero"`
+	Height       *int16   `json:"height_meters,omitzero"`
+	Floor        *int     `json:"floor,omitzero"`
 	PowerType    *string  `json:"power_type,omitzero"`
 	PowerMode    *string  `json:"power_mode,omitzero"`
 	Uptime       *int64   `json:"uptime_seconds,omitzero"`
@@ -93,6 +95,16 @@ func APColumns() []render.Column[APRow] {
 			Sort: func(r APRow) any { return render.SortValue(r.Latitude) },
 		},
 		{
+			Key: "height_meters", Header: "Height", Hidden: true,
+			Cell: func(r APRow) string { return render.UnitPtr(r.Height, "m") },
+			Sort: func(r APRow) any { return render.SortValue(r.Height) },
+		},
+		{
+			Key: "floor", Header: "Floor", Hidden: true,
+			Cell: func(r APRow) string { return render.IntPtr(r.Floor) },
+			Sort: func(r APRow) any { return render.SortValue(r.Floor) },
+		},
+		{
 			Key: "power_type", Header: "Power Type", Hidden: true,
 			Cell: func(r APRow) string { return render.StrPtr(r.PowerType) },
 		},
@@ -150,6 +162,8 @@ func apRows(aps []wnc.AP, t config.Target) []APRow {
 			LLDPNeighbor: optional(strings.Join(ap.Neighbors, ", ")),
 			Longitude:    ap.Longitude,
 			Latitude:     ap.Latitude,
+			Height:       ap.Height,
+			Floor:        ap.Floor,
 			PowerType:    optional(showPowerType(ap.PowerType)),
 			PowerMode:    optional(showPowerMode(ap.PowerMode)),
 			Uptime:       render.SecondsSince(now, ap.BootTime),

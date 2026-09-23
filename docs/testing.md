@@ -150,7 +150,8 @@ wnc show overview -c "<host>" --insecure
 The tag views compare against `show wireless tag {rf,site,policy} summary` and `detailed <name>`.
 
 Add `--columns all` to compare the columns the default set leaves out as well.
-`show ap geolocation summary` covers the coordinates among them.
+`show ap geolocation summary` covers the coordinates and the height among them.
+The floor has no `show` of its own, so compare it with the `ap name <name> floor` given.
 
 Some headings differ from the device's on purpose, because these views follow the YANG leaf and the write flag.
 [`measurements.md`](measurements.md#device-heading-map) maps them in full.
