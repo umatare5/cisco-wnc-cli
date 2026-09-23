@@ -29,7 +29,7 @@ This CLI manages wireless LANs across multiple [Catalyst 9800 Wireless Network C
 - 🌐 **Unified Views**: Reads concurrently to hide AP assignments load-balanced across multiple WLCs
 - 🔭 **Joined Entities**: Combines fine-grained wireless entities from `show overview`, `show ap`, and `show client`
 - 📤 **Shell Friendly**: Provides borderless tables for `grep`, `awk`, `sed` and `cut`, and structured JSON for `jq`
-- 🎨 **Flexible Output**: The `--pretty` format is for humans, and `--format json` is for machines and AIs
+- 🎨 **Flexible Output**: Supports `--pretty` format for humans, and `--format json` for machines and AIs
 
 ## Supported Environment
 
