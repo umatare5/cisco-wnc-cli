@@ -29,7 +29,7 @@ This CLI manages wireless LANs across multiple [Catalyst 9800 Wireless Network C
 - 📤 **Shell Friendly**: A borderless table `awk` and `cut` read, and a JSON array keyed by the sort names
 - 🌐 **Multi Controller**: Reads concurrently and labels per WLC, so offline hosts drop rows and not the run
 - 🔭 **Joined Views**: `show overview`, `show ap`, `show client` and `show wlan` join what the device splits
-- 🖥️ **Terminal or Pipe**: `--pretty` borders and glyphs the table, and `--format json` feeds machines
+- 🖥️ **Terminal or Pipe**: `--pretty` borders and glyphs the table, and `--format json` feeds machines and AIs
 
 ## Supported Environment
 
