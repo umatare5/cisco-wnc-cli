@@ -79,7 +79,7 @@ func OverviewColumns() []render.Column[OverviewRow] {
 			Sort: func(r OverviewRow) any { return render.SortValue(r.Clients) },
 		},
 		{
-			Key: "channel_utilization", Header: "ChUtil",
+			Key: "channel_utilization", Header: "Utilization",
 			Cell: func(r OverviewRow) string { return render.UnitPtr(r.ChUtil, "%") },
 			Sort: func(r OverviewRow) any { return render.SortValue(r.ChUtil) },
 		},
