@@ -77,10 +77,7 @@ func ClientColumns() []render.Column[ClientRow] {
 			Sort: func(r ClientRow) any { return render.SortValue(r.Slot) },
 		},
 		{Key: keyBand, Header: "Band", Cell: func(r ClientRow) string { return render.StrPtr(r.Band) }},
-		{
-			Key: "protocol", Header: "Protocol", Hidden: true,
-			Cell: func(r ClientRow) string { return render.StrPtr(r.Protocol) },
-		},
+		{Key: "protocol", Header: "Protocol", Cell: func(r ClientRow) string { return render.StrPtr(r.Protocol) }},
 		{
 			Key: keyChannel, Header: "Channel",
 			Cell: func(r ClientRow) string { return render.UnitPtr(r.Channel, "ch") },

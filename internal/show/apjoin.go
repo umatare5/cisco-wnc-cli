@@ -71,11 +71,11 @@ func APJoinColumns() []render.Column[APJoinRow] {
 			Cell: func(r APJoinRow) string { return render.StrPtr(r.LastJoinFailure) },
 		},
 		{
-			Key: "last_config_failure", Header: "Last Config Failure",
+			Key: "last_config_failure", Header: "Last Config Failure", Hidden: true,
 			Cell: func(r APJoinRow) string { return render.StrPtr(r.LastConfigFailure) },
 		},
 		{
-			Key: "last_disc_failure", Header: "Last Discovery Failure",
+			Key: "last_disc_failure", Header: "Last Discovery Failure", Hidden: true,
 			Cell: func(r APJoinRow) string { return render.StrPtr(r.LastDiscFailure) },
 		},
 		{
@@ -92,12 +92,12 @@ func APJoinColumns() []render.Column[APJoinRow] {
 			Sort: func(r APJoinRow) any { return render.SortValue(r.LastJoin) },
 		},
 		{
-			Key: "last_config_seconds", Header: "Last Config",
+			Key: "last_config_seconds", Header: "Last Config", Hidden: true,
 			Cell: func(r APJoinRow) string { return render.Duration(r.LastConfig) },
 			Sort: func(r APJoinRow) any { return render.SortValue(r.LastConfig) },
 		},
 		{
-			Key: "last_discovery_seconds", Header: "Last Discovery",
+			Key: "last_discovery_seconds", Header: "Last Discovery", Hidden: true,
 			Cell: func(r APJoinRow) string { return render.Duration(r.LastDiscovery) },
 			Sort: func(r APJoinRow) any { return render.SortValue(r.LastDiscovery) },
 		},

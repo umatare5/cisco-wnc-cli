@@ -117,10 +117,10 @@ wnc show ap-join
 ### Expected result
 
 ```text
-AP Name    Status  Last Failure Phase  Last Join Failure        Last Config Failure  Last Discovery Failure  Last Disconnect Reason      Reboot Reason                 Last Join  Last Config  Last Discovery  Last Error  Controller
-TEST-AP01  Joined  Join                jf-dtls-alert-from-peer  None                 None                    DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h3m         3h3m            3h7m        WNC1
-TEST-AP02  Joined  Image-Download      None                     None                 None                    Image Download Success      ap-reboot-reason-img-upgrade  3h3m       3h3m         3h3m            3h9m        WNC1
-TEST-AP03  Joined  Join                jf-dtls-alert-from-peer  None                 None                    DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h3m         3h3m            3h7m        WNC1
+AP Name    Status  Last Failure Phase  Last Join Failure        Last Disconnect Reason      Reboot Reason                 Last Join  Last Error  Controller
+TEST-AP01  Joined  Join                jf-dtls-alert-from-peer  DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h7m        WNC1
+TEST-AP02  Joined  Image-Download      None                     Image Download Success      ap-reboot-reason-img-upgrade  3h3m       3h9m        WNC1
+TEST-AP03  Joined  Join                jf-dtls-alert-from-peer  DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h7m        WNC1
 ```
 
 ### Use cases
@@ -136,7 +136,8 @@ wnc show ap-join -f json | jq -r '.[] | select(.status != "Joined") | "\(.ap_nam
 <details><summary>Case 2: Find the access points that joined but were never configured</summary><p>
 
 ```bash
-wnc show ap-join -f json | jq -r '.[] | select(.last_join_seconds and (.last_config_seconds | not)) | .ap_name'
+wnc show ap-join -f json --columns ap_name,last_join_seconds,last_config_seconds \
+  | jq -r '.[] | select(.last_join_seconds and (.last_config_seconds | not)) | .ap_name'
 ```
 
 </p></details>
@@ -207,10 +208,10 @@ wnc show client
 ### Expected result
 
 ```text
-Device          SSID          AP Name    Band  Channel  State           RSSI    SNR   Rate     Assoc  Rx        Tx       Controller
-Example Vendor  test-essid01  TEST-AP03  2.4   6ch      Run             -21dBm  78dB  143Mbps  2h15m  17.0MiB   19.6MiB  WNC1
-Example Phone   test-essid02  TEST-AP01  5     64ch     Run             -43dBm  56dB  866Mbps  17m    107.9KiB  30.7KiB  WNC1
-Example Sensor  test-essid03  TEST-AP03  6     5ch      Authenticating  -55dBm  40dB  -        42s    -         -        WNC1
+Device          SSID          AP Name    Band  Protocol  Channel  State           RSSI    SNR   Rate     Assoc  Rx        Tx       Controller
+Example Vendor  test-essid01  TEST-AP03  2.4   11ax      6ch      Run             -21dBm  78dB  143Mbps  2h15m  17.0MiB   19.6MiB  WNC1
+Example Phone   test-essid02  TEST-AP01  5     11ac      64ch     Run             -43dBm  56dB  866Mbps  17m    107.9KiB  30.7KiB  WNC1
+Example Sensor  test-essid03  TEST-AP03  6     11be      5ch      Authenticating  -55dBm  40dB  -        42s    -         -        WNC1
 ```
 
 ### Use cases
