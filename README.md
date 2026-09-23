@@ -24,12 +24,12 @@
 
 ## Overview
 
-This CLI manages wireless LANs across multiple [Catalyst 9800 WLCs](https://www.cisco.com/site/us/en/products/networking/wireless/wireless-lan-controllers/catalyst-9800-series/index.html).
+This CLI manages wireless LANs across multiple [Catalyst 9800 Wireless LAN Controllers](https://www.cisco.com/site/us/en/products/networking/wireless/wireless-lan-controllers/catalyst-9800-series/index.html).
 
-- 📤 **Shell-friendly** – A borderless table `awk` and `cut` read, and a JSON array keyed by the sort names
-- 🌐 **Multi-controller** – Read concurrently and labeled per controller, so one unreachable host costs its rows and not the run
-- 🔭 **Joined views** – `show overview`, `show ap`, `show client` and `show wlan` join what the device splits
-- 🖥️ **Terminal or pipe** – `--pretty` borders and glyphs the table, and `--format json` feeds a machine or an agent
+- 📤 **Shell Friendly** – A borderless table `awk` and `cut` read, and a JSON array keyed by the sort names
+- 🌐 **Multi Controller** – Reads concurrently and labels per WLC, so offline hosts drop rows and not the run
+- 🔭 **Joined Views** – `show overview`, `show ap`, `show client` and `show wlan` join what the device splits
+- 🖥️ **Terminal or Pipe** – `--pretty` borders and glyphs the table, and `--format json` feeds machines
 
 ## Supported Environment
 
@@ -46,7 +46,7 @@ Cisco Catalyst 9800 Wireless Network Controller running on:
 
 ## Installation
 
-This CLI ships as a container image and as OS-specific binaries, both built from the same tagged commit.
+This CLI needs to enable RESTCONF and HTTPS on the Catalyst 9800 Wireless Controller first.
 
 ```bash
 docker pull ghcr.io/umatare5/wnc
@@ -87,55 +87,53 @@ wnc show overview
 
 ## CLI Reference
 
-This CLI groups its commands by what they do. Each one below links to its own section, with the output it prints.
+This CLI groups commands by purpose. Each links to a section showing its output.
 
 ### Show commands
 
-These commands read a controller and print a table or JSON:
+These commands read a controller and print a table or JSON. See [Show commands](docs/command.show.md) for details.
 
-| Command                                      | Description                                                      |
-| :------------------------------------------- | :--------------------------------------------------------------- |
-| [`wnc show overview`][wnc-show-overview]     | One row per radio, with the RF settings and the load on it       |
-| [`wnc show ap`][wnc-show-ap]                 | One row per access point                                         |
-| [`wnc show ap-join`][wnc-show-ap-join]       | One row per access point the controller remembers, joined or not |
-| [`wnc show ap-tag`][wnc-show-ap-tag]         | One row per access point, with the tags in effect on it          |
-| [`wnc show client`][wnc-show-client]         | One row per associated client                                    |
-| [`wnc show wlan`][wnc-show-wlan]             | One row per WLAN and the policy profile bound to it              |
-| [`wnc show policy-tag`][wnc-show-policy-tag] | One row per WLAN binding a policy tag carries                    |
-| [`wnc show site-tag`][wnc-show-site-tag]     | One row per site tag, with the profiles it names                 |
-| [`wnc show rf-tag`][wnc-show-rf-tag]         | One row per RF tag, with its profile on each band                |
+| Command                                      | Description                                                 |
+| :------------------------------------------- | :---------------------------------------------------------- |
+| [`wnc show overview`][wnc-show-overview]     | One row per radio, with RF summary across 2.4, 5 and 6 GHz  |
+| [`wnc show ap`][wnc-show-ap]                 | One row per associated access point                         |
+| [`wnc show ap-join`][wnc-show-ap-join]       | One row per access point's join, discovery and DTLS outcome |
+| [`wnc show ap-tag`][wnc-show-ap-tag]         | One row per access point, with assigned and resolved tags   |
+| [`wnc show client`][wnc-show-client]         | One row per associated wireless client                      |
+| [`wnc show wlan`][wnc-show-wlan]             | One row per WLAN and its bound policy profile               |
+| [`wnc show policy-tag`][wnc-show-policy-tag] | One row per policy tag and the WLANs it binds               |
+| [`wnc show site-tag`][wnc-show-site-tag]     | One row per site tag and the profiles it names              |
+| [`wnc show rf-tag`][wnc-show-rf-tag]         | One row per RF tag and its per-band RF profiles             |
 
 ### Action commands
 
-These commands **act on a controller**, in [the order they all keep](docs/architecture.md#acting-on-a-controller):
+These commands act on a controller in [order](docs/architecture.md#acting-on-a-controller). See [Action commands](docs/command.action.md) for details.
 
-| Command                                                                      | Description                                        |
-| :--------------------------------------------------------------------------- | :------------------------------------------------- |
-| [`wnc reset ap`][wnc-reset-ap]                                               | Restart one access point                           |
-| [`wnc reset capwap`][wnc-reset-capwap]                                       | Reset one access point's controller session        |
-| [`wnc (enable\|disable) (ap\|radio)`][wnc-enable-wnc-disable]                | Set an access point's or one radio's admin state   |
-| [`wnc set (policy\|site\|rf)-tag`][wnc-set-policy-tag-site-tag-rf-tag]       | Create or update one tag                           |
-| [`wnc delete (policy\|site\|rf)-tag`][wnc-delete-policy-tag-site-tag-rf-tag] | Delete one tag                                     |
-| [`wnc deauth`][wnc-deauth]                                                   | Deauthenticate a client, by address or by username |
+| Command                                                                      | Description                                     |
+| :--------------------------------------------------------------------------- | :---------------------------------------------- |
+| [`wnc reset ap`][wnc-reset-ap]                                               | Restart one access point                        |
+| [`wnc reset capwap`][wnc-reset-capwap]                                       | Reset one access point's controller session     |
+| [`wnc (enable\|disable) (ap\|radio)`][wnc-enable-wnc-disable]                | Enable or disable one access point or one radio |
+| [`wnc set (policy\|site\|rf)-tag`][wnc-set-policy-tag-site-tag-rf-tag]       | Create or update one tag on a controller        |
+| [`wnc delete (policy\|site\|rf)-tag`][wnc-delete-policy-tag-site-tag-rf-tag] | Delete one tag from a controller                |
+| [`wnc deauth`][wnc-deauth]                                                   | Deauthenticate one client by MAC or username    |
 
 ### Other commands
 
-These commands stand outside both groups, each for a reason of its own:
+These commands stand outside both groups for specific reasons. See [Other commands](docs/command.other.md) for details.
 
-| Command                                    | Description                                                    |
-| :----------------------------------------- | :------------------------------------------------------------- |
-| [`wnc generate-token`][wnc-generate-token] | Contacts no controller, so it encodes an account and prints it |
-| [`wnc save-config`][wnc-save-config]       | Names no target, so it persists every change on the controller |
+| Command                                    | Description                                                 |
+| :----------------------------------------- | :---------------------------------------------------------- |
+| [`wnc generate-token`][wnc-generate-token] | Generate the Basic auth token for a controller account      |
+| [`wnc save-config`][wnc-save-config]       | Save the running configuration to the startup configuration |
 
 ### Help
 
-`wnc --help` lists the commands, and each command's `--help` lists its flags and any nested commands.
-See [Help](docs/help.md) for the transcript of every command except `completion`.
+`--help` lists commands and flags. See [Help](docs/help.md) for all transcripts but `completion`.
 
 ## Customization
 
-This CLI reads its settings from flags, environment variables and a configuration file.
-See [Customization](docs/customization.md) for the details.
+This CLI reads its settings from flags, environment variables and a configuration file.See [Customization](docs/customization.md) for the details.
 
 ## Troubleshooting
 

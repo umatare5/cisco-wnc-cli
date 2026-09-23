@@ -49,15 +49,15 @@ Install [`gotestsum`](https://github.com/gotestyourself/gotestsum), [`golangci-l
 Ship a test with the change it covers, and run the suite before every commit.
 
 1. Add the test beside the code it covers, in the same package.
-2. Take every fixture and sample identity from [`docs/testing.md`](docs/testing.md#fixture-identities), never from a device.
+2. Use identities from [`testing.md`](docs/testing.md#fixture-identities), never a real device.
 3. Run `make test-unit` – every package under `gotestsum`, with `-race` and a coverage profile.
 4. Run `make test-unit-coverage` for the HTML report under `./coverage`.
 
 Note the following as well.
 
-- **The floor is enforced in CI** – the [coverage workflow](.github/workflows/go-test-coverage.yml) sets `coverage_threshold`, and fails below it.
-- **The environment is cleared** – `make test-unit` unsets `WNC_*`, so a new one is added there and in `cli_test.go`.
-- **The suite is documented** – [`docs/testing.md`](docs/testing.md) covers the column invariants and the TLS harness that stands in for a controller.
+- **Coverage floor** – [CI](.github/workflows/go-test-coverage.yml) enforces `coverage_threshold`.
+- **The environment is cleared** – `make test-unit` drops `WNC_*`; define new ones in `cli_test.go`.
+- **Documented suite** – [`testing.md`](docs/testing.md) details invariants and the TLS harness.
 
 ## Code Style
 
@@ -67,12 +67,12 @@ Note the following as well.
 
 Every fact has one page that owns it, and the other pages link to it rather than restating it.
 
-- **Headings are pinned** – [`.markdownlint-cli2.jsonc`](.markdownlint-cli2.jsonc) fixes the heading order wherever it sets `MD043`.
+- **Headings are pinned** – [`cli2.jsonc`](.markdownlint-cli2.jsonc) enforces the order via `MD043`.
 - **Contracts travel** – a heading change ships with its contract in the same pull request.
-- **The transcript is verbatim** – [`docs/help.md`](docs/help.md) carries the binary's own `--help`, so a flag or usage change updates it.
-- **Its `VERSION:` line reads `dev`** – `make build` stamps the version into the binary, so the transcript comes from `go build`.
+- **Verbatim transcript** – [`help.md`](docs/help.md) carries `--help`; usage changes update it.
+- **Version reads `dev`** – `make build` stamps it, so the transcript comes from `go build`.
 - **[`NOTICE`](NOTICE) tracks the module set** – a change to what the binary links updates it.
-- **Links are checked in CI only** – that run reaches third-party hosts, and `lychee .` reproduces a failure locally.
+- **CI checks links** – it reaches third-party hosts. Use `lychee .` to test locally.
 
 ## Release
 
@@ -99,13 +99,13 @@ A push to `main` touching `VERSION` runs the [release workflow](https://github.c
 Open a pull request against `main`, as a draft by default.
 
 1. Fork the repository and create a feature branch.
-2. Commit with a [Conventional Commits](https://www.conventionalcommits.org/) subject and a `Signed-off-by:` trailer.
+2. Write [Conventional Commits](https://www.conventionalcommits.org/) and add `Signed-off-by:`.
 3. Add tests and update the documentation beside the code.
 4. Run `make lint` and `make test-unit`, then rebase against `main`.
 5. Open the pull request.
 
 Nothing in a commit identifies a real device or carries a credential.
 
-- **`gitleaks` reads shapes** – a token a document or a fixture needs is registered in [`.gitleaks.toml`](.gitleaks.toml) by both path and text.
-- **Each entry sets `condition = "AND"`** – registering by path alone would exempt every secret in that file.
-- **A token that opens a real account stays out of the repository** – no allowlist entry makes it safe.
+- **`gitleaks` shapes** – register tokens in [`.gitleaks.toml`](.gitleaks.toml) by path and text.
+- **Set `condition = "AND"`** – a path-only entry exempts every secret in that file.
+- **Real tokens stay out** – no allowlist entry makes a production credential safe.

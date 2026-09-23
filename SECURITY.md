@@ -33,20 +33,20 @@ Then include the following.
 
 ## Exposure
 
-The access token is the base64 of `user:password`, so it carries the account password itself rather than a scoped token.
+The token is the base64 of `user:password`, carrying the password instead of a scoped token.
 Keep it out of the places another person can read, in order of preference.
 
-1. **A configuration file at mode `0600`.** The token stays out of the shell history and the process list. A looser mode warns.
+1. **A config file at mode `0600`.** It avoids the shell history and process list. A looser mode warns.
 2. **`$WNC_ACCESS_TOKEN`.** Visible in the process environment.
 3. **`--access-token`.** Visible in the process list, so use it interactively only.
 
-`wnc generate-token` reads `--password`, then `$WNC_PASSWORD`, then a piped password, so leave the first two unset.
+`wnc generate-token` reads `--password`, `$WNC_PASSWORD`, then piped stdin. Leave the first two unset.
 
-- **Posture** – each exposure above is documented rather than accidental, so keep the token on a controlled path.
+- **Posture** – each exposure is documented, not accidental, so keep the token on a controlled path.
 - **Transport** – a controller is reached over HTTPS alone, and `--insecure` drops the certificate check.
 
 > [!IMPORTANT]
-> A leaked token is a leaked password, so rotating it means changing the account password on the controller.
+> A leaked token is a leaked password. Rotating it requires changing the controller account password.
 
 ## In Scope
 
