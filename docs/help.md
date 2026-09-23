@@ -57,8 +57,8 @@ OPTIONS:
    --access-token string                                              Basic auth token for the controller [$WNC_ACCESS_TOKEN]
    --insecure, -k                                                     skip TLS certificate verification
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
-   --mac string                                                       client MAC address, as shown in the mac column of wnc show client
-   --username string                                                  client username, as shown in the username column of wnc show client
+   --mac string                                                       client MAC address, as wnc show client --columns mac prints it
+   --username string                                                  client username, as wnc show client --columns username prints it
    --yes                                                              act without the confirmation prompt
    --help, -h                                                         show help
 
@@ -672,6 +672,7 @@ OPTIONS:
    --pretty                                                           draw the table with borders and status glyphs
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
    --sort-order string                                                sort direction (asc|desc) (default: "asc")
+   --columns keys [ --columns keys ]                                  comma-separated keys to print, or all (see --sort-keys)
    --help, -h                                                         show help
 
 GLOBAL OPTIONS:
@@ -697,7 +698,7 @@ DESCRIPTION:
 
 OPTIONS:
    --sort-by key, -b key      sort key (see --sort-keys) (default: "ap_name")
-   --sort-keys                print the keys --sort-by accepts, then exit
+   --sort-keys                print the keys --sort-by and --columns accept, then exit
    --radio string, -r string  band filter (2.4|5|6)
    --help, -h                 show help
 
@@ -714,6 +715,7 @@ INHERITED OPTIONS:
    --pretty                                                           draw the table with borders and status glyphs
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
    --sort-order string                                                sort direction (asc|desc) (default: "asc")
+   --columns keys [ --columns keys ]                                  comma-separated keys to print, or all (see --sort-keys)
 ```
 
 ## wnc show ap
@@ -733,7 +735,7 @@ DESCRIPTION:
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --sort-keys) (default: "ap_name")
-   --sort-keys            print the keys --sort-by accepts, then exit
+   --sort-keys            print the keys --sort-by and --columns accept, then exit
    --help, -h             show help
 
 GLOBAL OPTIONS:
@@ -749,6 +751,7 @@ INHERITED OPTIONS:
    --pretty                                                           draw the table with borders and status glyphs
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
    --sort-order string                                                sort direction (asc|desc) (default: "asc")
+   --columns keys [ --columns keys ]                                  comma-separated keys to print, or all (see --sort-keys)
 ```
 
 ## wnc show ap-join
@@ -768,7 +771,7 @@ DESCRIPTION:
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --sort-keys) (default: "ap_name")
-   --sort-keys            print the keys --sort-by accepts, then exit
+   --sort-keys            print the keys --sort-by and --columns accept, then exit
    --help, -h             show help
 
 GLOBAL OPTIONS:
@@ -784,6 +787,7 @@ INHERITED OPTIONS:
    --pretty                                                           draw the table with borders and status glyphs
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
    --sort-order string                                                sort direction (asc|desc) (default: "asc")
+   --columns keys [ --columns keys ]                                  comma-separated keys to print, or all (see --sort-keys)
 ```
 
 ## wnc show ap-tag
@@ -803,7 +807,7 @@ DESCRIPTION:
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --sort-keys) (default: "ap_name")
-   --sort-keys            print the keys --sort-by accepts, then exit
+   --sort-keys            print the keys --sort-by and --columns accept, then exit
    --help, -h             show help
 
 GLOBAL OPTIONS:
@@ -819,6 +823,7 @@ INHERITED OPTIONS:
    --pretty                                                           draw the table with borders and status glyphs
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
    --sort-order string                                                sort direction (asc|desc) (default: "asc")
+   --columns keys [ --columns keys ]                                  comma-separated keys to print, or all (see --sort-keys)
 ```
 
 ## wnc show client
@@ -831,14 +836,14 @@ USAGE:
    wnc show client [options]
 
 DESCRIPTION:
-   One row per associated client, sorted by mac.
+   One row per associated client, sorted by ap_name.
    A cell reading "-" is a value the controller did not send.
    --radio, --ssid and --ap-name narrow the list. A client whose band the
    controller did not report is excluded by --radio, and the count is logged.
 
 OPTIONS:
-   --sort-by key, -b key      sort key (see --sort-keys) (default: "mac")
-   --sort-keys                print the keys --sort-by accepts, then exit
+   --sort-by key, -b key      sort key (see --sort-keys) (default: "ap_name")
+   --sort-keys                print the keys --sort-by and --columns accept, then exit
    --radio string, -r string  band filter (2.4|5|6)
    --ssid string, -s string   keep only clients on this SSID
    --ap-name string           keep only clients on this access point
@@ -857,6 +862,7 @@ INHERITED OPTIONS:
    --pretty                                                           draw the table with borders and status glyphs
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
    --sort-order string                                                sort direction (asc|desc) (default: "asc")
+   --columns keys [ --columns keys ]                                  comma-separated keys to print, or all (see --sort-keys)
 ```
 
 ## wnc show wlan
@@ -876,7 +882,7 @@ DESCRIPTION:
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --sort-keys) (default: "wlan_id")
-   --sort-keys            print the keys --sort-by accepts, then exit
+   --sort-keys            print the keys --sort-by and --columns accept, then exit
    --help, -h             show help
 
 GLOBAL OPTIONS:
@@ -892,6 +898,7 @@ INHERITED OPTIONS:
    --pretty                                                           draw the table with borders and status glyphs
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
    --sort-order string                                                sort direction (asc|desc) (default: "asc")
+   --columns keys [ --columns keys ]                                  comma-separated keys to print, or all (see --sort-keys)
 ```
 
 ## wnc show policy-tag
@@ -911,7 +918,7 @@ DESCRIPTION:
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --sort-keys) (default: "policy_tag")
-   --sort-keys            print the keys --sort-by accepts, then exit
+   --sort-keys            print the keys --sort-by and --columns accept, then exit
    --help, -h             show help
 
 GLOBAL OPTIONS:
@@ -927,6 +934,7 @@ INHERITED OPTIONS:
    --pretty                                                           draw the table with borders and status glyphs
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
    --sort-order string                                                sort direction (asc|desc) (default: "asc")
+   --columns keys [ --columns keys ]                                  comma-separated keys to print, or all (see --sort-keys)
 ```
 
 ## wnc show site-tag
@@ -946,7 +954,7 @@ DESCRIPTION:
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --sort-keys) (default: "site_tag")
-   --sort-keys            print the keys --sort-by accepts, then exit
+   --sort-keys            print the keys --sort-by and --columns accept, then exit
    --help, -h             show help
 
 GLOBAL OPTIONS:
@@ -962,6 +970,7 @@ INHERITED OPTIONS:
    --pretty                                                           draw the table with borders and status glyphs
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
    --sort-order string                                                sort direction (asc|desc) (default: "asc")
+   --columns keys [ --columns keys ]                                  comma-separated keys to print, or all (see --sort-keys)
 ```
 
 ## wnc show rf-tag
@@ -981,7 +990,7 @@ DESCRIPTION:
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --sort-keys) (default: "rf_tag")
-   --sort-keys            print the keys --sort-by accepts, then exit
+   --sort-keys            print the keys --sort-by and --columns accept, then exit
    --help, -h             show help
 
 GLOBAL OPTIONS:
@@ -997,4 +1006,5 @@ INHERITED OPTIONS:
    --pretty                                                           draw the table with borders and status glyphs
    --timeout duration, -t duration                                    request timeout (default: 1m0s)
    --sort-order string                                                sort direction (asc|desc) (default: "asc")
+   --columns keys [ --columns keys ]                                  comma-separated keys to print, or all (see --sort-keys)
 ```

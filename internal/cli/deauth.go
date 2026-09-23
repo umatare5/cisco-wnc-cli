@@ -39,7 +39,7 @@ func deauthCommand() *cli.Command {
 func macFlag() cli.Flag {
 	return &cli.StringFlag{
 		Name:  config.FlagMAC,
-		Usage: "client MAC address, as shown in the mac column of wnc show client",
+		Usage: "client MAC address, as wnc show client --columns mac prints it",
 	}
 }
 
@@ -50,7 +50,7 @@ func macFlag() cli.Flag {
 func clientUsernameFlag() cli.Flag {
 	return &cli.StringFlag{
 		Name:  config.FlagUsername,
-		Usage: "client username, as shown in the username column of wnc show client",
+		Usage: "client username, as wnc show client --columns username prints it",
 	}
 }
 

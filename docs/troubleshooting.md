@@ -154,7 +154,7 @@ The target is resolved before anything is sent, so nothing was written. Both a s
 
 The controller holds that access point and sent no base radio address for it.
 The slot is keyed on that address, so nothing could be read and nothing was sent.
-Read `wnc show ap` for the record as the controller has it.
+Read `wnc show ap --columns ap_name,radio_mac` for the record as the controller has it.
 
 ### Why does `enable radio` say the controller holds no radio in that slot?
 

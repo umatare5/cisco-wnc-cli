@@ -15,14 +15,14 @@ wnc show overview
 ### Expected result
 
 ```text
-AP Name    AP MAC             Slot  Mode         Band  Admin    Oper  Channel  Width  TxPower  Clients    ChUtil  RF Profile         Controller
-TEST-AP01  00:00:5e:00:53:01  0     FlexConnect  2.4   Enabled  Up    11ch     20MHz  20dBm    1clients   23%     test-rf-profile01  WNC1
-TEST-AP01  00:00:5e:00:53:01  1     FlexConnect  5     Enabled  Up    64ch     40MHz  18dBm    1clients   1%      test-rf-profile03  WNC1
-TEST-AP02  00:00:5e:00:53:02  0     FlexConnect  2.4   Enabled  Up    1ch      20MHz  19dBm    2clients   16%     test-rf-profile01  WNC1
-TEST-AP02  00:00:5e:00:53:02  1     FlexConnect  5     Enabled  Up    48ch     40MHz  17dBm    0clients   1%      test-rf-profile04  WNC1
-TEST-AP03  00:00:5e:00:53:03  0     FlexConnect  2.4   Enabled  Up    6ch      20MHz  22dBm    14clients  10%     test-rf-profile01  WNC1
-TEST-AP03  00:00:5e:00:53:03  1     FlexConnect  5     Enabled  Up    116ch    40MHz  22dBm    2clients   2%      test-rf-profile03  WNC1
-TEST-AP03  00:00:5e:00:53:03  2     FlexConnect  6     Enabled  Up    5ch      40MHz  18dBm    1clients   2%      test-rf-profile05  WNC1
+AP Name    Slot  Mode         Band  Admin    Oper  Channel  Width  TxPower  Clients    ChUtil  RF Profile         Controller
+TEST-AP01  0     FlexConnect  2.4   Enabled  Up    11ch     20MHz  20dBm    1clients   23%     test-rf-profile01  WNC1
+TEST-AP01  1     FlexConnect  5     Enabled  Up    64ch     40MHz  18dBm    1clients   1%      test-rf-profile03  WNC1
+TEST-AP02  0     FlexConnect  2.4   Enabled  Up    1ch      20MHz  19dBm    2clients   16%     test-rf-profile01  WNC1
+TEST-AP02  1     FlexConnect  5     Enabled  Up    48ch     40MHz  17dBm    0clients   1%      test-rf-profile04  WNC1
+TEST-AP03  0     FlexConnect  2.4   Enabled  Up    6ch      20MHz  22dBm    14clients  10%     test-rf-profile01  WNC1
+TEST-AP03  1     FlexConnect  5     Enabled  Up    116ch    40MHz  22dBm    2clients   2%      test-rf-profile03  WNC1
+TEST-AP03  2     FlexConnect  6     Enabled  Up    5ch      40MHz  18dBm    1clients   2%      test-rf-profile05  WNC1
 ```
 
 ### Use cases
@@ -53,7 +53,7 @@ wnc show overview -b clients --sort-order desc
 
 ## wnc show ap
 
-One row per access point: what it is, how it is powered, what it is plugged into and how long it has been up.
+One row per access point: what it is, its state and power mode, and how long it has been up.
 
 ### Format
 
@@ -64,10 +64,10 @@ wnc show ap
 ### Expected result
 
 ```text
-AP Name    Model             Serial       Ethernet MAC       Radio MAC          IP Address    SW Version  Slots  Country  Mode         Admin    State       LLDP Neighbor                     Power Type    Power Mode  Uptime  Assoc  Controller
-TEST-AP01  AIR-AP1815I-Q-K9  TST0000AP01  00:00:5e:00:53:11  00:00:5e:00:53:01  192.168.0.11  17.12.7.13  2      J4       FlexConnect  Enabled  Registered  test-sw01.example.internal:Gi0/2  PoE+          Full Power  1d14h   1d14h  WNC1
-TEST-AP02  AIR-AP2802I-Q-K9  TST0000AP02  00:00:5e:00:53:12  00:00:5e:00:53:02  192.168.0.12  17.12.7.13  2      J4       FlexConnect  Enabled  Registered  test-sw01.example.internal:Gi0/4  PoE+          Full Power  1d1h    1d1h   WNC1
-TEST-AP03  CW9166I-Q         TST0000AP03  00:00:5e:00:53:13  00:00:5e:00:53:03  192.168.0.13  17.12.7.13  3      J4       FlexConnect  Enabled  Registered  test-sw01.example.internal:Gi0/3  PoE (legacy)  Full Power  5d20h   5d20h  WNC1
+AP Name    Model             SW Version  Mode         Admin    State       Power Mode  Uptime  Assoc  Controller
+TEST-AP01  AIR-AP1815I-Q-K9  17.12.7.13  FlexConnect  Enabled  Registered  Full Power  1d14h   1d14h  WNC1
+TEST-AP02  AIR-AP2802I-Q-K9  17.12.7.13  FlexConnect  Enabled  Registered  Full Power  1d1h    1d1h   WNC1
+TEST-AP03  CW9166I-Q         17.12.7.13  FlexConnect  Enabled  Registered  Full Power  5d20h   5d20h  WNC1
 ```
 
 ### Use cases
@@ -96,6 +96,14 @@ wnc show ap -b uptime_seconds
 
 </p></details>
 
+<details><summary>Case 4: Print the identifiers the default set leaves out</summary><p>
+
+```bash
+wnc show ap --columns ap_name,serial,ethernet_mac,radio_mac,ip_address,lldp_neighbor
+```
+
+</p></details>
+
 ## wnc show ap-join
 
 One row per access point the controller remembers, joined or not.
@@ -109,10 +117,10 @@ wnc show ap-join
 ### Expected result
 
 ```text
-AP Name    Radio MAC          Ethernet MAC       IP Address    Status  Last Failure Phase  Last Join Failure        Last Config Failure  Last Discovery Failure  Last Disconnect Reason      Reboot Reason                 Last Join  Last Config  Last Discovery  Last Error  Controller
-TEST-AP01  00:00:5e:00:53:01  00:00:5e:00:53:11  192.168.0.11  Joined  Join                jf-dtls-alert-from-peer  None                 None                    DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h3m         3h3m            3h7m        WNC1
-TEST-AP02  00:00:5e:00:53:02  00:00:5e:00:53:12  192.168.0.12  Joined  Image-Download      None                     None                 None                    Image Download Success      ap-reboot-reason-img-upgrade  3h3m       3h3m         3h3m            3h9m        WNC1
-TEST-AP03  00:00:5e:00:53:03  00:00:5e:00:53:13  192.168.0.13  Joined  Join                jf-dtls-alert-from-peer  None                 None                    DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h3m         3h3m            3h7m        WNC1
+AP Name    Status  Last Failure Phase  Last Join Failure        Last Disconnect Reason      Reboot Reason                 Last Join  Last Error  Controller
+TEST-AP01  Joined  Join                jf-dtls-alert-from-peer  DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h7m        WNC1
+TEST-AP02  Joined  Image-Download      None                     Image Download Success      ap-reboot-reason-img-upgrade  3h3m       3h9m        WNC1
+TEST-AP03  Joined  Join                jf-dtls-alert-from-peer  DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h7m        WNC1
 ```
 
 ### Use cases
@@ -128,7 +136,8 @@ wnc show ap-join -f json | jq -r '.[] | select(.status != "Joined") | "\(.ap_nam
 <details><summary>Case 2: Find the access points that joined but were never configured</summary><p>
 
 ```bash
-wnc show ap-join -f json | jq -r '.[] | select(.last_join_seconds and (.last_config_seconds | not)) | .ap_name'
+wnc show ap-join -f json --columns ap_name,last_join_seconds,last_config_seconds \
+  | jq -r '.[] | select(.last_join_seconds and (.last_config_seconds | not)) | .ap_name'
 ```
 
 </p></details>
@@ -137,6 +146,14 @@ wnc show ap-join -f json | jq -r '.[] | select(.last_join_seconds and (.last_con
 
 ```bash
 wnc show ap-join -b last_join_seconds
+```
+
+</p></details>
+
+<details><summary>Case 4: Print the addresses the default set leaves out</summary><p>
+
+```bash
+wnc show ap-join --columns ap_name,radio_mac,ethernet_mac,ip_address,status
 ```
 
 </p></details>
@@ -154,10 +171,10 @@ wnc show ap-tag
 ### Expected result
 
 ```text
-AP Name    AP MAC             Misconfigured  Misconfig Reason  Tag Source  Filter Name  Policy Tag      Site Tag        RF Tag        AP Profile         Flex Profile         Controller
-TEST-AP01  00:00:5e:00:53:01  No             -                 Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
-TEST-AP02  00:00:5e:00:53:02  No             -                 Static      -            test-wlan-flex  test-site-flex  test-outside  test-ap-profile01  test-flex-profile01  WNC1
-TEST-AP03  00:00:5e:00:53:03  No             -                 Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
+AP Name    Misconfigured  Misconfig Reason  Tag Source  Filter Name  Policy Tag      Site Tag        RF Tag        AP Profile         Flex Profile         Controller
+TEST-AP01  No             -                 Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
+TEST-AP02  No             -                 Static      -            test-wlan-flex  test-site-flex  test-outside  test-ap-profile01  test-flex-profile01  WNC1
+TEST-AP03  No             -                 Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
 ```
 
 ### Use cases
@@ -199,10 +216,10 @@ wnc show client
 ### Expected result
 
 ```text
-MAC                IPv4          IPv6          Device          Username   SSID          AP Name    Slot  Band  Protocol  Channel  State           RSSI    SNR   Rate     Streams  Assoc  Rx        Tx       Controller
-00:00:5e:00:53:a1  192.168.0.21  2001:db8::11  Example Vendor  -          test-essid01  TEST-AP03  0     2.4   11ax      6ch      Run             -21dBm  78dB  143Mbps  1ss      2h15m  17.0MiB   19.6MiB  WNC1
-00:00:5e:00:53:a2  192.168.0.22  -             Example Phone   test-user  test-essid02  TEST-AP01  1     5     11ac      64ch     Run             -43dBm  56dB  866Mbps  2ss      17m    107.9KiB  30.7KiB  WNC1
-00:00:5e:00:53:a3  192.168.0.23  -             Example Sensor  -          test-essid03  TEST-AP03  2     6     11be      5ch      Authenticating  -55dBm  40dB  -        -        42s    -         -        WNC1
+Device          SSID          AP Name    Band  Protocol  Channel  State           RSSI    SNR   Rate     Assoc  Rx        Tx       Controller
+Example Phone   test-essid02  TEST-AP01  5     11ac      64ch     Run             -43dBm  56dB  866Mbps  17m    107.9KiB  30.7KiB  WNC1
+Example Vendor  test-essid01  TEST-AP03  2.4   11ax      6ch      Run             -21dBm  78dB  143Mbps  2h15m  17.0MiB   19.6MiB  WNC1
+Example Sensor  test-essid03  TEST-AP03  6     11be      5ch      Authenticating  -55dBm  40dB  -        42s    -         -        WNC1
 ```
 
 ### Use cases
@@ -210,7 +227,8 @@ MAC                IPv4          IPv6          Device          Username   SSID  
 <details><summary>Case 1: List the clients with a weak signal</summary><p>
 
 ```bash
-wnc show client -f json | jq -r '.[] | select(.rssi_dbm != null and .rssi_dbm < -70) | "\(.mac) \(.ap_name) \(.rssi_dbm)"'
+wnc show client -f json --columns mac,ap_name,rssi_dbm \
+  | jq -r '.[] | select(.rssi_dbm != null and .rssi_dbm < -70) | "\(.mac) \(.ap_name) \(.rssi_dbm)"'
 ```
 
 </p></details>
@@ -218,7 +236,8 @@ wnc show client -f json | jq -r '.[] | select(.rssi_dbm != null and .rssi_dbm < 
 <details><summary>Case 2: Find the clients stuck short of the run state</summary><p>
 
 ```bash
-wnc show client -f json | jq -r '.[] | select(.state != "Run") | "\(.mac) \(.state) \(.assoc_seconds)s"'
+wnc show client -f json --columns mac,state,assoc_seconds \
+  | jq -r '.[] | select(.state != "Run") | "\(.mac) \(.state) \(.assoc_seconds)s"'
 ```
 
 </p></details>
@@ -252,10 +271,10 @@ wnc show wlan
 ### Expected result
 
 ```text
-ID  Profile              SSID          Status   Security            Bands  Broadcast  P2P Block  Policy Status  Switching  Interface      Session TO  DHCP Required  Policy Profile         Tags            Controller
-5   test-wlan-profile01  test-essid01  Enabled  WPA2 PSK            2.4    Enabled    Disabled   Active         Local      TEST-INTERNAL  43200       Yes            test-policy-profile01  test-wlan-flex  WNC1
-6   test-wlan-profile02  test-essid02  Enabled  WPA2 PSK            5      Enabled    Disabled   Active         Local      TEST-INTERNAL  43200       Yes            test-policy-profile01  test-wlan-flex  WNC1
-7   test-wlan-profile03  test-essid03  Enabled  WPA3 802.1X-SHA256  5/6    Enabled    Disabled   Active         Local      TEST-INTERNAL  43200       Yes            test-policy-profile01  test-wlan-flex  WNC1
+ID  Profile              SSID          Status   Security            Bands  Policy Status  Switching  Interface      Policy Profile         Controller
+5   test-wlan-profile01  test-essid01  Enabled  WPA2 PSK            2.4    Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
+6   test-wlan-profile02  test-essid02  Enabled  WPA2 PSK            5      Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
+7   test-wlan-profile03  test-essid03  Enabled  WPA3 802.1X-SHA256  5/6    Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
 ```
 
 ### Use cases
