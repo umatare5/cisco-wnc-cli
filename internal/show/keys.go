@@ -57,8 +57,8 @@ const (
 func OverviewKeys() []string {
 	return []string{
 		keyAPName, keyAPMAC, keySlot, keyMode, keyBand, keyAdmin, "oper",
-		keyChannel, "channel_width_mhz", "tx_power_dbm", "clients",
-		"ch_util_percent", "rf_profile", keyController,
+		keyChannel, "channel_width", "tx_power_dbm", "clients",
+		"channel_utilization", "rf_profile", keyController,
 	}
 }
 
@@ -124,8 +124,8 @@ func RFTagKeys() []string {
 func ClientKeys() []string {
 	return []string{
 		"mac", "ipv4", "ipv6", "device", "username", keySSID, keyAPName, keySlot,
-		keyBand, "protocol", keyChannel, keyState, "rssi_dbm", "snr_db",
-		"speed_mbps", "spatial_streams", "assoc_seconds", "rx_bytes", "tx_bytes", keyController,
+		keyBand, "protocol", keyChannel, keyState, "rssi", "snr",
+		"speed", "spatial_streams", "assoc_seconds", "rx_bytes", "tx_bytes", keyController,
 	}
 }
 
