@@ -31,8 +31,8 @@ type Column[T any] struct {
 	// correctly: an octet count printed as "1.0KiB" and an age printed as "3d4h" do not.
 	Sort func(T) any
 
-	// Hidden keeps an identifier, or a wide column few reads need, out of the default set.
-	// --columns still names it, and --sort-by orders by it either way.
+	// Hidden keeps an identifier, or a column few reads need, out of the default set. --columns
+	// still names it, and --sort-by orders by it either way.
 	Hidden bool
 }
 
@@ -57,8 +57,8 @@ func DefaultKeys[T any](cols []Column[T]) []string {
 	return out
 }
 
-// Select returns the columns the keys name, in the order given. config.Resolve checked every
-// key against this list, so none is missing.
+// Select returns the columns the keys name, in the order given. config.Resolve checked every key
+// against the view's key list, which an invariant test pins to these columns, so none is missing.
 func Select[T any](cols []Column[T], keys []string) []Column[T] {
 	out := make([]Column[T], 0, len(keys))
 	for _, k := range keys {

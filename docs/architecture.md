@@ -5,13 +5,14 @@ This document records the contracts every command keeps, and the tests an added 
 ## Output
 
 Every `show` command renders one row set through two writers, and both take the same selection of columns.
-A [`Column[T]`](../internal/render/column.go#L13) carries the sort key, the table cell, the JSON field and whether the default set holds it, so no column exists in one writer alone.
+A [`Column[T]`](../internal/render/column.go#L13) carries the sort key, the table cell and the JSON field together, so no column exists in one writer alone.
+Its [`Hidden`](../internal/render/column.go#L36) field decides whether the default set holds it.
 
 The table is borderless and space-aligned.
 It spends no column on rules and starts the first field at column zero, so `awk` and `cut` can read it.
 The [`--pretty`](../internal/render/table.go#L24) form borders it and glyphs the state columns instead, for a terminal rather than for a pipe.
 
-The JSON form is a flat array whose field names are the keys [`--columns`](../internal/render/json.go#L15) selects, out of those `--sort-keys` prints.
+The [JSON form](../internal/render/json.go#L14) is a flat array whose field names come from the keys `--sort-keys` prints.
 A number stays a number, an empty result is `[]`, and a unit belongs to the table alone.
 The table glues `dBm` to the number so a cell stays one field, while the JSON carries the bare value.
 
