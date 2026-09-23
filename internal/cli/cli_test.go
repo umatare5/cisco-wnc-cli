@@ -129,6 +129,11 @@ func TestExitCodes(t *testing.T) {
 			name: "a mistyped command under dry-run", args: []string{"shwo", "ap", "--dry-run"},
 			want: ExitUsage, mentions: `unknown command "shwo"`,
 		},
+		{
+			// The help word is a leftover too, so it is answered rather than validated.
+			name: "help word under dry-run", args: []string{"--dry-run", "help"},
+			want: ExitOK, wantStdout: true,
+		},
 	}
 
 	for _, tt := range tests {
