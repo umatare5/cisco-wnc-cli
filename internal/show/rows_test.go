@@ -382,14 +382,14 @@ func TestAPRowsAbsenceRules(t *testing.T) {
 	}
 
 	// A floor below ground is a reading, so its sign must not read as the absence glyph.
-	if first["height_meters"] != "3m" || first["floor"] != "-1" {
-		t.Errorf("placement = %q, %q", first["height_meters"], first["floor"])
+	if first["height"] != "3m" || first["floor"] != "-1" {
+		t.Errorf("placement = %q, %q", first["height"], first["floor"])
 	}
 
 	second := cellsOf(APColumns(), rows[1])
 	for _, key := range []string{
 		"slots", "country", "mode", "admin", "state", "lldp_neighbor",
-		"longitude", "latitude", "height_meters", "floor", "power_type", "uptime_seconds",
+		"longitude", "latitude", "height", "floor", "power_type", "uptime_seconds",
 	} {
 		if second[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, second[key], render.Absent)
@@ -403,7 +403,7 @@ func TestAPRowsAbsenceRules(t *testing.T) {
 		t.Fatalf("JSON: %v", err)
 	}
 
-	if !strings.Contains(buf.String(), `"longitude":-123.393333,"latitude":-48.876667,"height_meters":3,"floor":-1,`) {
+	if !strings.Contains(buf.String(), `"longitude":-123.393333,"latitude":-48.876667,"height":3,"floor":-1,`) {
 		t.Errorf("the JSON lost the position:\n%s", buf.String())
 	}
 

@@ -27,7 +27,7 @@ type APRow struct {
 	LLDPNeighbor *string  `json:"lldp_neighbor,omitzero"`
 	Longitude    *float64 `json:"longitude,omitzero"`
 	Latitude     *float64 `json:"latitude,omitzero"`
-	Height       *int16   `json:"height_meters,omitzero"`
+	Height       *int16   `json:"height,omitzero"`
 	Floor        *int     `json:"floor,omitzero"`
 	PowerType    *string  `json:"power_type,omitzero"`
 	PowerMode    *string  `json:"power_mode,omitzero"`
@@ -95,7 +95,7 @@ func APColumns() []render.Column[APRow] {
 			Sort: func(r APRow) any { return render.SortValue(r.Latitude) },
 		},
 		{
-			Key: "height_meters", Header: "Height", Hidden: true,
+			Key: "height", Header: "Height", Hidden: true,
 			Cell: func(r APRow) string { return render.UnitPtr(r.Height, "m") },
 			Sort: func(r APRow) any { return render.SortValue(r.Height) },
 		},

@@ -99,7 +99,7 @@ wnc show ap -b uptime_seconds
 <details><summary>Case 4: Print the identifiers and the placement the default set leaves out</summary><p>
 
 ```bash
-wnc show ap --columns ap_name,serial,ethernet_mac,radio_mac,ip_address,lldp_neighbor,longitude,latitude,height_meters,floor
+wnc show ap --columns ap_name,serial,ethernet_mac,radio_mac,ip_address,lldp_neighbor,longitude,latitude,height,floor
 ```
 
 </p></details>
