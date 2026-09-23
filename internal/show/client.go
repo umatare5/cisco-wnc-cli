@@ -52,15 +52,27 @@ type ClientRow struct {
 // and not a hostname: the leaf that does carry one sits on a list this SDK cannot reach.
 func ClientColumns() []render.Column[ClientRow] {
 	return []render.Column[ClientRow]{
-		{Key: DefaultSortMAC, Header: "MAC", Cell: func(r ClientRow) string { return render.StrPtr(r.MAC) }},
-		{Key: "ipv4", Header: "IPv4", Cell: func(r ClientRow) string { return render.StrPtr(r.IPv4) }},
-		{Key: "ipv6", Header: "IPv6", Cell: func(r ClientRow) string { return render.StrPtr(r.IPv6) }},
+		{
+			Key: "mac", Header: "MAC", Hidden: true,
+			Cell: func(r ClientRow) string { return render.StrPtr(r.MAC) },
+		},
+		{
+			Key: "ipv4", Header: "IPv4", Hidden: true,
+			Cell: func(r ClientRow) string { return render.StrPtr(r.IPv4) },
+		},
+		{
+			Key: "ipv6", Header: "IPv6", Hidden: true,
+			Cell: func(r ClientRow) string { return render.StrPtr(r.IPv6) },
+		},
 		{Key: "device", Header: "Device", Cell: func(r ClientRow) string { return render.StrPtr(r.Device) }},
-		{Key: "username", Header: "Username", Cell: func(r ClientRow) string { return render.StrPtr(r.Username) }},
+		{
+			Key: "username", Header: "Username", Hidden: true,
+			Cell: func(r ClientRow) string { return render.StrPtr(r.Username) },
+		},
 		{Key: keySSID, Header: "SSID", Cell: func(r ClientRow) string { return render.StrPtr(r.SSID) }},
 		{Key: keyAPName, Header: headAPName, Cell: func(r ClientRow) string { return render.StrPtr(r.APName) }},
 		{
-			Key: keySlot, Header: "Slot",
+			Key: keySlot, Header: "Slot", Hidden: true,
 			Cell: func(r ClientRow) string { return render.IntPtr(r.Slot) },
 			Sort: func(r ClientRow) any { return render.SortValue(r.Slot) },
 		},
@@ -88,7 +100,7 @@ func ClientColumns() []render.Column[ClientRow] {
 			Sort: func(r ClientRow) any { return render.SortValue(r.Speed) },
 		},
 		{
-			Key: "spatial_streams", Header: "Streams",
+			Key: "spatial_streams", Header: "Streams", Hidden: true,
 			Cell: func(r ClientRow) string { return render.UnitPtr(r.Streams, "ss") },
 			Sort: func(r ClientRow) any { return render.SortValue(r.Streams) },
 		},

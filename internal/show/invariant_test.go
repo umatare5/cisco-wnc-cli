@@ -154,7 +154,7 @@ func TestDefaultSortKeysExist(t *testing.T) {
 		{name: "ap", keys: APKeys(), defkey: DefaultSortAPName},
 		{name: "ap-join", keys: APJoinKeys(), defkey: DefaultSortAPName},
 		{name: "ap-tag", keys: APTagKeys(), defkey: DefaultSortAPName},
-		{name: "client", keys: ClientKeys(), defkey: DefaultSortMAC},
+		{name: "client", keys: ClientKeys(), defkey: DefaultSortAPName},
 		{name: "wlan", keys: WLANKeys(), defkey: DefaultSortWLANID},
 		{name: "policy-tag", keys: PolicyTagKeys(), defkey: DefaultSortPolicyTag},
 		{name: "site-tag", keys: SiteTagKeys(), defkey: DefaultSortSiteTag},
@@ -225,6 +225,50 @@ func TestEveryCommandCarriesTheController(t *testing.T) {
 		if !contains(keys, "controller") {
 			t.Errorf("%s has no controller column", name)
 		}
+	}
+}
+
+// The same holds for what a view prints by default, so no default set may leave it out.
+func TestEveryDefaultSetKeepsTheController(t *testing.T) {
+	t.Parallel()
+
+	for name, keys := range defaultSets() {
+		if !contains(keys, keyController) {
+			t.Errorf("the default set of %s leaves out the controller column", name)
+		}
+	}
+}
+
+// An address, a serial, a username or an LLDP neighbor identifies a device or a person, which is
+// why the default sets exist, so none of them may return to one.
+func TestNoDefaultSetCarriesAnIdentifier(t *testing.T) {
+	t.Parallel()
+
+	identifiers := []string{
+		keyAPMAC, keyRadioMAC, keyEthernetMAC, keyIPAddress, "mac",
+		"ipv4", "ipv6", "username", "serial", "lldp_neighbor",
+	}
+
+	for name, keys := range defaultSets() {
+		for _, k := range identifiers {
+			if contains(keys, k) {
+				t.Errorf("the default set of %s carries %s", name, k)
+			}
+		}
+	}
+}
+
+func defaultSets() map[string][]string {
+	return map[string][]string{
+		"overview":   render.DefaultKeys(OverviewColumns()),
+		"ap":         render.DefaultKeys(APColumns()),
+		"ap-join":    render.DefaultKeys(APJoinColumns()),
+		"ap-tag":     render.DefaultKeys(APTagColumns()),
+		"client":     render.DefaultKeys(ClientColumns()),
+		"wlan":       render.DefaultKeys(WLANColumns()),
+		"policy-tag": render.DefaultKeys(PolicyTagColumns()),
+		"site-tag":   render.DefaultKeys(SiteTagColumns()),
+		"rf-tag":     render.DefaultKeys(RFTagColumns()),
 	}
 }
 

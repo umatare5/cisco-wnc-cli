@@ -30,7 +30,10 @@ type APTagRow struct {
 func APTagColumns() []render.Column[APTagRow] {
 	return []render.Column[APTagRow]{
 		{Key: keyAPName, Header: headAPName, Cell: func(r APTagRow) string { return render.StrPtr(r.APName) }},
-		{Key: keyAPMAC, Header: "AP MAC", Cell: func(r APTagRow) string { return render.StrPtr(r.APMAC) }},
+		{
+			Key: keyAPMAC, Header: "AP MAC", Hidden: true,
+			Cell: func(r APTagRow) string { return render.StrPtr(r.APMAC) },
+		},
 		{
 			Key: "misconfigured", Header: "Misconfigured",
 			Cell: func(r APTagRow) string { return render.Bool(r.Misconfigured) },

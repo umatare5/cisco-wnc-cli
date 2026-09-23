@@ -285,7 +285,7 @@ Deauthenticate 00:00:5e:00:53:a1 on WNC3? It is dropped and reconnects on its ow
 <details><summary>Case 1: Drop a client stuck short of `Run`</summary><p>
 
 ```bash
-wnc show client -f json | jq -r '.[] | select(.state != "Run") | .mac'
+wnc show client -f json --columns mac,state | jq -r '.[] | select(.state != "Run") | .mac'
 wnc deauth --mac 00:00:5e:00:53:a1
 ```
 
@@ -294,7 +294,7 @@ wnc deauth --mac 00:00:5e:00:53:a1
 <details><summary>Case 2: Drop every session a user holds</summary><p>
 
 ```bash
-wnc show client -f json | jq -r '.[] | select(.username) | .username' | sort -u
+wnc show client -f json --columns username | jq -r '.[] | select(.username) | .username' | sort -u
 wnc deauth --username test-user
 ```
 
@@ -320,7 +320,7 @@ Expected result:
 
 ```bash
 wnc deauth --mac 00:00:5e:00:53:a1 --yes
-watch -n 5 'wnc show client -f json | jq -r ".[] | select(.mac==\"00:00:5e:00:53:a1\") | \"\(.state) assoc \(.assoc_seconds)s\""'
+watch -n 5 'wnc show client -f json --columns mac,state,assoc_seconds | jq -r ".[] | select(.mac==\"00:00:5e:00:53:a1\") | \"\(.state) assoc \(.assoc_seconds)s\""'
 ```
 
 </p></details>

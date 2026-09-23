@@ -105,7 +105,7 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 
 	// The JSON is built from the row fields, so no suffix can reach a consumer.
 	var buf bytes.Buffer
-	if err := render.JSON(&buf, reported); err != nil {
+	if err := render.JSON(&buf, reported, ClientKeys()); err != nil {
 		t.Fatalf("JSON: %v", err)
 	}
 

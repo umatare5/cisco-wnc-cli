@@ -121,11 +121,11 @@ func clientCommand() *cli.Command {
 		Name:    "client",
 		Aliases: []string{"c"},
 		Usage:   "Associated wireless clients",
-		Description: "One row per associated client, sorted by mac.\n" +
+		Description: "One row per associated client, sorted by ap_name.\n" +
 			absenceNote + "\n" +
 			"--radio, --ssid and --ap-name narrow the list. A client whose band the\n" +
 			"controller did not report is excluded by --radio, and the count is logged.",
-		Flags: append(sortFlags(show.DefaultSortMAC),
+		Flags: append(sortFlags(show.DefaultSortAPName),
 			radioFlag(),
 			&cli.StringFlag{
 				Name:    config.FlagSSID,
@@ -149,7 +149,7 @@ func clientCommand() *cli.Command {
 				APName: cmd.String(config.FlagAPName),
 			}
 
-			return runShow(ctx, cmd, show.ClientKeys(), show.DefaultSortMAC,
+			return runShow(ctx, cmd, show.ClientKeys(), show.DefaultSortAPName,
 				show.ClientColumns(), show.FetchClients(filter))
 		},
 	}
@@ -242,7 +242,7 @@ func runShow[R any](
 		return printSortKeys(cmd, st.Logger, sortKeys)
 	}
 
-	settings, err := config.Resolve(cmd, st.File, sortKeys, defaultSortBy)
+	settings, err := config.Resolve(cmd, st.File, sortKeys, defaultSortBy, render.DefaultKeys(cols))
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrUsage, err)
 	}
@@ -259,12 +259,30 @@ func runShow[R any](
 			config.FlagFormat + " " + config.FormatJSON + " output is unchanged")
 	}
 
+	// A dry run passes the same settings checks and warnings as a real run, and returns before
+	// show.Run builds a client.
+	if cmd.Bool(config.FlagDryRun) {
+		return printWouldRead(cmd, settings.Controllers)
+	}
+
 	return show.Run(ctx, show.Env{
 		Settings:  settings,
 		Logger:    st.Logger,
 		Out:       st.Streams.Out,
 		UserAgent: UserAgent(),
 	}, cols, fetch)
+}
+
+// printWouldRead answers --dry-run with the controllers the read would reach, which is all a
+// read can report before it is made.
+func printWouldRead(cmd *cli.Command, targets []config.Target) error {
+	for _, t := range targets {
+		if _, err := fmt.Fprintf(cmd.Root().Writer, "%s: would read %s\n", t.Name, cmd.Name); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // ignoredBySortKeys are the flags a listing parses and does not act on. Naming them
@@ -276,7 +294,7 @@ func runShow[R any](
 // every invocation of anyone who exports the token.
 var ignoredBySortKeys = []string{
 	config.FlagController, config.FlagInsecure,
-	config.FlagFormat, config.FlagTimeout, config.FlagPretty,
+	config.FlagFormat, config.FlagTimeout, config.FlagPretty, config.FlagColumns,
 	config.FlagSortBy, config.FlagSortOrder,
 	config.FlagRadio, config.FlagSSID, config.FlagAPName,
 }

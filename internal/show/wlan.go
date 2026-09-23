@@ -66,14 +66,17 @@ func WLANColumns() []render.Column[WLANRow] {
 		{Key: "security", Header: "Security", Cell: func(r WLANRow) string { return render.StrPtr(r.Security) }},
 		{Key: "bands", Header: "Bands", Cell: func(r WLANRow) string { return render.StrPtr(r.Bands) }},
 		{
-			Key: "broadcast", Header: "Broadcast",
+			Key: "broadcast", Header: "Broadcast", Hidden: true,
 			Cell: func(r WLANRow) string { return render.StrPtr(r.Broadcast) },
 			// A hidden SSID is a design choice rather than a fault, so it takes the square.
 			Pretty: func(r WLANRow) string {
 				return prettyState(r.Broadcast, dispEnabled, dispDisabled, glyphOff)
 			},
 		},
-		{Key: "p2p_block", Header: "P2P Block", Cell: func(r WLANRow) string { return render.StrPtr(r.P2PBlock) }},
+		{
+			Key: "p2p_block", Header: "P2P Block", Hidden: true,
+			Cell: func(r WLANRow) string { return render.StrPtr(r.P2PBlock) },
+		},
 		{
 			Key:    "policy_status",
 			Header: "Policy Status",
@@ -85,12 +88,12 @@ func WLANColumns() []render.Column[WLANRow] {
 		{Key: "switching", Header: "Switching", Cell: func(r WLANRow) string { return render.StrPtr(r.Switching) }},
 		{Key: "interface", Header: "Interface", Cell: func(r WLANRow) string { return render.StrPtr(r.Interface) }},
 		{
-			Key: "session_timeout_seconds", Header: "Session TO",
+			Key: "session_timeout_seconds", Header: "Session TO", Hidden: true,
 			Cell: func(r WLANRow) string { return render.IntPtr(r.SessionTimeout) },
 			Sort: func(r WLANRow) any { return render.SortValue(r.SessionTimeout) },
 		},
 		{
-			Key: "dhcp_required", Header: "DHCP Required",
+			Key: "dhcp_required", Header: "DHCP Required", Hidden: true,
 			Cell: func(r WLANRow) string { return render.Bool(r.DHCPRequired) },
 			Pretty: func(r WLANRow) string {
 				return prettyBool(r.DHCPRequired, glyphOK, glyphOff)
@@ -108,7 +111,10 @@ func WLANColumns() []render.Column[WLANRow] {
 			Header: headPolicyProfile,
 			Cell:   func(r WLANRow) string { return render.StrPtr(r.PolicyProfile) },
 		},
-		{Key: "tags", Header: "Tags", Cell: func(r WLANRow) string { return render.StrPtr(r.Tags) }},
+		{
+			Key: "tags", Header: "Tags", Hidden: true,
+			Cell: func(r WLANRow) string { return render.StrPtr(r.Tags) },
+		},
 		{Key: keyController, Header: headController, Cell: func(r WLANRow) string { return render.Str(r.Controller) }},
 	}
 }

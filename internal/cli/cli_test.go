@@ -2,6 +2,8 @@ package cli
 
 import (
 	"bytes"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"slices"
@@ -119,9 +121,20 @@ func TestExitCodes(t *testing.T) {
 			want: ExitUsage, mentions: "unknown command",
 		},
 		{
-			// --dry-run is Local to the root, so a subcommand does not inherit it.
-			name: "dry-run is not inherited", args: []string{"show", "ap", "--dry-run"},
-			want: ExitUsage, mentions: "not defined",
+			// --dry-run parses after the leaf too, so the run reaches the settings.
+			name: "dry-run after the leaf", args: []string{"show", "ap", "--dry-run"},
+			want: ExitUsage, mentions: "no controller given",
+		},
+		{
+			// A mistyped command leaves the root holding --dry-run, which must not validate the
+			// file in its place.
+			name: "a mistyped command under dry-run", args: []string{"shwo", "ap", "--dry-run"},
+			want: ExitUsage, mentions: `unknown command "shwo"`,
+		},
+		{
+			// The help word is a leftover too, so it is answered rather than validated.
+			name: "help word under dry-run", args: []string{"--dry-run", "help"},
+			want: ExitOK, wantStdout: true,
 		},
 	}
 
@@ -345,6 +358,7 @@ func TestFaultsNeverEchoACredential(t *testing.T) {
 		{"show", "ap", "-c", "h", "--access-token", fakeToken, "--sort-by", fakeToken},
 		{"show", "ap", "-c", "h", "--access-token", fakeToken, "--sort-order", fakeToken},
 		{"show", "ap", "-c", "h", "--access-token", fakeToken, "--format", fakeToken},
+		{"show", "ap", "-c", "h", "--access-token", fakeToken, "--columns", fakeToken},
 		{"--log-level", fakeToken, "show", "ap"},
 		{"show", "client", "-c", "h", "--access-token", fakeToken, "--radio", fakeToken},
 	}
@@ -446,6 +460,18 @@ func TestSettingsFaults(t *testing.T) {
 			name:     "unknown sort key",
 			args:     []string{"show", "ap-tag", "-c", "h", "--access-token", fakeToken, "-b", "bogus"},
 			mentions: "accepted keys",
+		},
+		{
+			name:     "unknown column",
+			args:     []string{"show", "ap-tag", "-c", "h", "--access-token", fakeToken, "--columns", "bogus"},
+			mentions: "--columns: accepted keys",
+		},
+		{
+			name: "repeated column",
+			args: []string{
+				"show", "ap-tag", "-c", "h", "--access-token", fakeToken, "--columns", "ap_name,ap_name",
+			},
+			mentions: "--columns: ap_name is given twice",
 		},
 		{
 			name:     "unknown sort order",
@@ -552,6 +578,80 @@ func TestConfigFile(t *testing.T) {
 	})
 }
 
+// A dry run of a show command names each controller and reads none, wherever the flag sits.
+// Nothing answers at 240.0.0.1 and -t bounds each request, so a run that tried to read would
+// fail at once rather than exit 0.
+func TestShowDryRunReadsNothing(t *testing.T) {
+	path := writeFile(t, `{"token":"`+fakeToken+`","controllers":[`+
+		`{"name":"WNC1","host":"240.0.0.1"},{"name":"WNC2","host":"240.0.0.1:8443"}]}`)
+
+	for _, tt := range []struct {
+		name string
+		args []string
+		want string
+	}{
+		{name: "before the command", args: []string{"--dry-run", "show", "ap"}, want: "ap"},
+		{name: "between the group and the leaf", args: []string{"show", "--dry-run", "ap"}, want: "ap"},
+		{name: "after the leaf", args: []string{"show", "client", "--dry-run"}, want: "client"},
+		{name: "after an alias", args: []string{"show", "a", "--dry-run"}, want: "ap"},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			got := runCLI(t, "", false, append(tt.args, "--config", path, "-t", "1ms")...)
+
+			if got.code != ExitOK {
+				t.Fatalf("exit = %d, want %d (stderr %q)", got.code, ExitOK, got.stderr)
+			}
+
+			want := "WNC1: would read " + tt.want + "\nWNC2: would read " + tt.want + "\n"
+			if got.stdout != want {
+				t.Errorf("stdout = %q, want %q", got.stdout, want)
+			}
+
+			if got.stderr != "" {
+				t.Errorf("stderr = %q, want empty", got.stderr)
+			}
+		})
+	}
+}
+
+// runShow hands the view's default set to the writers, so a hidden key stays out of the JSON until
+// --columns names it.
+func TestShowJSONCarriesTheDefaultSetUntilColumnsNamesMore(t *testing.T) {
+	srv := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/yang-data+json")
+		_, _ = w.Write([]byte(`{"Cisco-IOS-XE-wireless-access-point-oper:capwap-data":[` +
+			`{"wtp-mac":"` + docMAC + `","name":"` + testAPName + `"}]}`))
+	}))
+	srv.StartTLS()
+
+	addr := srv.Listener.Addr().String()
+
+	for _, tt := range []struct {
+		name  string
+		extra []string
+		want  string
+	}{
+		{name: "the default set", want: `[{"ap_name":"` + testAPName + `","controller":"` + addr + `"}]`},
+		{
+			name: "every key", extra: []string{"--columns", "all"},
+			want: `[{"ap_name":"` + testAPName + `","ap_mac":"` + docMAC + `","controller":"` + addr + `"}]`,
+		},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			args := []string{"show", "ap-tag", "-c", addr, "--access-token", fakeToken, "-k", "-f", "json"}
+
+			got := runCLI(t, "", false, append(args, tt.extra...)...)
+			if got.code != ExitOK {
+				t.Fatalf("exit = %d, want %d (stderr %q)", got.code, ExitOK, got.stderr)
+			}
+
+			if got.stdout != tt.want+"\n" {
+				t.Errorf("stdout = %q, want %q", got.stdout, tt.want+"\n")
+			}
+		})
+	}
+}
+
 // The hook is consulted on the running command alone, never on a parent, so a node
 // without one lets urfave print the whole help text and exit through its own path.
 func TestEveryCommandHasAUsageHook(t *testing.T) {
@@ -635,6 +735,7 @@ func TestSortKeysOutranksARejectedValue(t *testing.T) {
 		{"show", "ap", "--sort-keys", "-b", "bogus"},
 		{"show", "ap", "--sort-keys", "-t", "0"},
 		{"show", "ap", "--sort-keys", "-c", "192.0.2.1"},
+		{"show", "ap", "--sort-keys", "--columns", "bogus"},
 	} {
 		t.Run(strings.Join(args[2:], " "), func(t *testing.T) {
 			got := runCLI(t, "", false, args...)
@@ -650,8 +751,7 @@ func TestSortKeysOutranksARejectedValue(t *testing.T) {
 	}
 }
 
-// Both flags are declared per leaf because urfave's GLOBAL OPTIONS section lists the
-// root's flags only: declared on the show parent they would work and be invisible.
+// Both flags are declared per leaf because the default --sort-by takes differs per leaf.
 func TestEveryShowSubcommandCarriesTheSortFlags(t *testing.T) {
 	root := newRootCommand(Streams{Out: &bytes.Buffer{}, Err: &bytes.Buffer{}})
 

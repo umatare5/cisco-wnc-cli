@@ -11,8 +11,8 @@ const Absent = "-"
 // Column is one output column: its JSON field name, its table heading and the cell
 // it derives from a row.
 type Column[T any] struct {
-	// Key is the JSON field name and the value --sort-by accepts. An invariant test
-	// asserts it matches the row struct's json tag for the same position.
+	// Key is the JSON field name and the value --sort-by and --columns accept. An invariant
+	// test asserts it matches the row struct's json tag for the same position.
 	Key string
 
 	// Header is the table heading.
@@ -30,12 +30,40 @@ type Column[T any] struct {
 	// Sort yields the value to order by, and is nil where the rendered text already orders
 	// correctly: an octet count printed as "1.0KiB" and an age printed as "3d4h" do not.
 	Sort func(T) any
+
+	// Hidden keeps an identifier, or a column few reads need, out of the default set. --columns
+	// still names it, and --sort-by orders by it either way.
+	Hidden bool
 }
 
 func Keys[T any](cols []Column[T]) []string {
 	out := make([]string, 0, len(cols))
 	for _, c := range cols {
 		out = append(out, c.Key)
+	}
+
+	return out
+}
+
+// DefaultKeys are the keys a view prints when --columns is absent.
+func DefaultKeys[T any](cols []Column[T]) []string {
+	out := make([]string, 0, len(cols))
+	for _, c := range cols {
+		if !c.Hidden {
+			out = append(out, c.Key)
+		}
+	}
+
+	return out
+}
+
+// Select returns the columns the keys name, in the order given. config.Resolve checked every key
+// against the view's key list, which an invariant test pins to these columns, so none is missing.
+func Select[T any](cols []Column[T], keys []string) []Column[T] {
+	out := make([]Column[T], 0, len(keys))
+	for _, k := range keys {
+		c, _ := find(cols, k)
+		out = append(out, c)
 	}
 
 	return out

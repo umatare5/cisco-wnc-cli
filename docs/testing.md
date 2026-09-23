@@ -147,6 +147,8 @@ wnc show overview -c "<host>" --insecure
 `show wlan id <n>` and `show wireless client summary` do the same.
 The tag views compare against `show wireless tag {rf,site,policy} summary` and `detailed <name>`.
 
+Add `--columns all` to compare the columns the default set leaves out as well.
+
 Some headings differ from the device's on purpose, because these views follow the YANG leaf and the write flag.
 [`measurements.md`](measurements.md#device-heading-map) maps them in full.
 

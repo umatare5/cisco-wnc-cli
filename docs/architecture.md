@@ -4,19 +4,20 @@ This document records the contracts every command keeps, and the tests an added 
 
 ## Output
 
-Every `show` command renders one row set through two writers, and both take the same column list.
+Every `show` command renders one row set through two writers, and both take the same selection of columns.
 A [`Column[T]`](../internal/render/column.go#L13) carries the sort key, the table cell and the JSON field together, so no column exists in one writer alone.
+Its [`Hidden`](../internal/render/column.go#L36) field decides whether the default set holds it.
 
 The table is borderless and space-aligned.
 It spends no column on rules and starts the first field at column zero, so `awk` and `cut` can read it.
 The [`--pretty`](../internal/render/table.go#L24) form borders it and glyphs the state columns instead, for a terminal rather than for a pipe.
 
-The JSON form is a flat array whose field names are exactly the keys [`--sort-by`](../internal/render/sort.go#L12) accepts, and `--sort-keys` prints them.
+The [JSON form](../internal/render/json.go#L14) is a flat array whose field names come from the keys `--sort-keys` prints.
 A number stays a number, an empty result is `[]`, and a unit belongs to the table alone.
 The table glues `dBm` to the number so a cell stays one field, while the JSON carries the bare value.
 
 Sorting reads the typed value rather than the rendered text, so `--sort-by channel` puts 6 before 11.
-A pointer column sorts through [`SortValue`](../internal/render/column.go#L46), which keeps an absence out of the ordering rather than treating it as a zero.
+A pointer column sorts through [`SortValue`](../internal/render/column.go#L74), which keeps an absence out of the ordering rather than treating it as a zero.
 
 ## Absence
 
@@ -96,7 +97,7 @@ An RPC's input is a YANG `choice`, and this documentation calls each branch of i
 `reset ap` declares an `ap-name` arm and a `mac-addr` arm, and one invocation fills exactly one.
 
 [`--dry-run`](../internal/cli/exec.go#L87) resolves the target and posts nothing.
-It cannot report whether anything needed doing, and [Customization](customization.md#flags) states where the flag sits.
+It cannot report whether anything needed doing, and [Customization](customization.md#flags) states what it does on the root and on a `show` command.
 
 The prompt is the last gate, and [`--yes`](../internal/cli/exec.go#L93) answers it.
 With stdin piped and neither flag given the run is refused rather than assumed.

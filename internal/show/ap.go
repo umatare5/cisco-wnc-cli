@@ -39,20 +39,32 @@ func APColumns() []render.Column[APRow] {
 	return []render.Column[APRow]{
 		{Key: keyAPName, Header: headAPName, Cell: func(r APRow) string { return render.StrPtr(r.APName) }},
 		{Key: "model", Header: "Model", Cell: func(r APRow) string { return render.StrPtr(r.Model) }},
-		{Key: "serial", Header: "Serial", Cell: func(r APRow) string { return render.StrPtr(r.Serial) }},
 		{
-			Key: keyEthernetMAC, Header: headEthernetMAC,
+			Key: "serial", Header: "Serial", Hidden: true,
+			Cell: func(r APRow) string { return render.StrPtr(r.Serial) },
+		},
+		{
+			Key: keyEthernetMAC, Header: headEthernetMAC, Hidden: true,
 			Cell: func(r APRow) string { return render.StrPtr(r.EthernetMAC) },
 		},
-		{Key: keyRadioMAC, Header: headRadioMAC, Cell: func(r APRow) string { return render.StrPtr(r.RadioMAC) }},
-		{Key: keyIPAddress, Header: headIPAddress, Cell: func(r APRow) string { return render.StrPtr(r.IPAddress) }},
+		{
+			Key: keyRadioMAC, Header: headRadioMAC, Hidden: true,
+			Cell: func(r APRow) string { return render.StrPtr(r.RadioMAC) },
+		},
+		{
+			Key: keyIPAddress, Header: headIPAddress, Hidden: true,
+			Cell: func(r APRow) string { return render.StrPtr(r.IPAddress) },
+		},
 		{Key: "sw_version", Header: "SW Version", Cell: func(r APRow) string { return render.StrPtr(r.SWVersion) }},
 		{
-			Key: "slots", Header: "Slots",
+			Key: "slots", Header: "Slots", Hidden: true,
 			Cell: func(r APRow) string { return render.IntPtr(r.Slots) },
 			Sort: func(r APRow) any { return render.SortValue(r.Slots) },
 		},
-		{Key: "country", Header: "Country", Cell: func(r APRow) string { return render.StrPtr(r.Country) }},
+		{
+			Key: "country", Header: "Country", Hidden: true,
+			Cell: func(r APRow) string { return render.StrPtr(r.Country) },
+		},
 		{Key: keyMode, Header: "Mode", Cell: func(r APRow) string { return render.StrPtr(r.Mode) }},
 		{
 			Key: keyAdmin, Header: "Admin",
@@ -65,10 +77,13 @@ func APColumns() []render.Column[APRow] {
 			Pretty: func(r APRow) string { return prettyOtherwise(r.State, dispRegistered, glyphWarn) },
 		},
 		{
-			Key: "lldp_neighbor", Header: "LLDP Neighbor",
+			Key: "lldp_neighbor", Header: "LLDP Neighbor", Hidden: true,
 			Cell: func(r APRow) string { return render.StrPtr(r.LLDPNeighbor) },
 		},
-		{Key: "power_type", Header: "Power Type", Cell: func(r APRow) string { return render.StrPtr(r.PowerType) }},
+		{
+			Key: "power_type", Header: "Power Type", Hidden: true,
+			Cell: func(r APRow) string { return render.StrPtr(r.PowerType) },
+		},
 		{Key: "power_mode", Header: "Power Mode", Cell: func(r APRow) string { return render.StrPtr(r.PowerMode) }},
 		{
 			Key: "uptime_seconds", Header: "Uptime",

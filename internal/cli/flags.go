@@ -9,10 +9,9 @@ import (
 	"github.com/umatare5/cisco-wnc-cli/internal/log"
 )
 
-// rootFlags are the flags every command sees, except --dry-run: that one is Local
-// so "wnc show ap --dry-run" is rejected as an unknown flag rather than silently
-// validating nothing. Local governs parsing and not reading, so "wnc --dry-run reset
-// ap" still reaches the leaf, which stops an action running under it.
+// rootFlags are the flags every command parses, before or after its own name. --dry-run
+// stops an action before its RPC and a show command before its read, and generate-token,
+// which contacts no controller, has nothing for it to stop.
 func rootFlags() []cli.Flag {
 	return []cli.Flag{
 		&cli.StringFlag{
@@ -28,7 +27,6 @@ func rootFlags() []cli.Flag {
 		&cli.BoolFlag{
 			Name:  config.FlagDryRun,
 			Usage: "report what would happen and change nothing",
-			Local: true,
 		},
 	}
 }
@@ -85,6 +83,10 @@ func showFlags() []cli.Flag {
 			Name:  config.FlagSortOrder,
 			Usage: "sort direction (" + config.OrderAsc + "|" + config.OrderDesc + ")",
 			Value: config.DefaultSortOrder,
+		},
+		&cli.StringSliceFlag{
+			Name:  config.FlagColumns,
+			Usage: "comma-separated `keys` to print, or " + config.ColumnsAll + " (see --" + config.FlagSortKeys + ")",
 		},
 	}
 }
@@ -197,12 +199,8 @@ func descriptionFlag(kind string) cli.Flag {
 	}
 }
 
-// sortFlags builds the per-command sort pair. Neither can be declared once on the
-// parent. The default differs per command, and urfave's GLOBAL OPTIONS section lists
-// the root's persistent flags only.
-//
-// A flag the show parent declares would work from
-// a leaf while appearing in no leaf's help.
+// sortFlags builds the per-command sort pair. The default differs per command, so the pair is
+// declared on each leaf rather than once on the parent.
 func sortFlags(defaultKey string) []cli.Flag {
 	return []cli.Flag{
 		&cli.StringFlag{
@@ -213,7 +211,7 @@ func sortFlags(defaultKey string) []cli.Flag {
 		},
 		&cli.BoolFlag{
 			Name:  config.FlagSortKeys,
-			Usage: "print the keys --" + config.FlagSortBy + " accepts, then exit",
+			Usage: "print the keys --" + config.FlagSortBy + " and --" + config.FlagColumns + " accept, then exit",
 		},
 	}
 }
