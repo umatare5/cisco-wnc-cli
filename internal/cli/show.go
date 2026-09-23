@@ -259,8 +259,8 @@ func runShow[R any](
 			config.FlagFormat + " " + config.FormatJSON + " output is unchanged")
 	}
 
-	// After the settings checks and the warnings a real run prints, and before show.Run builds any
-	// client.
+	// A dry run passes the same settings checks and warnings as a real run, and returns before
+	// show.Run builds a client.
 	if cmd.Bool(config.FlagDryRun) {
 		return printWouldRead(cmd, settings.Controllers)
 	}
