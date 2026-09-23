@@ -149,14 +149,16 @@ func TestDeauthRefusesAnAddressTheControllerDoesNotHold(t *testing.T) {
 func TestDeauthReportsWithoutSendingWhenItMust(t *testing.T) {
 	tests := []struct {
 		name string
-		// root carries --dry-run, which is Local to the root and so must precede the command.
+		// root and tail carry --dry-run, which parses before or after the command alike.
 		root []string
+		tail []string
 		// target defaults to the address arm, so a row naming none exercises that one.
 		target []string
 		stdin  string
 		says   string
 	}{
 		{name: "dry run", root: []string{"--dry-run"}, says: "would deauthenticate"},
+		{name: "dry run after the command", tail: []string{"--dry-run"}, says: "would deauthenticate"},
 		{name: "declined prompt", stdin: "n\n", says: "canceled"},
 		{name: "an answer that is not yes", stdin: "later\n", says: "canceled"},
 		{
@@ -182,6 +184,7 @@ func TestDeauthReportsWithoutSendingWhenItMust(t *testing.T) {
 			args := append(slices.Clone(tt.root), "deauth")
 			args = append(args, target...)
 			args = append(args, "-c", stub.addr, "--access-token", fakeToken, "-k")
+			args = append(args, tt.tail...)
 
 			got := runCLI(t, tt.stdin, false, args...)
 

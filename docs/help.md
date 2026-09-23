@@ -65,6 +65,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 ```
 
 ## wnc delete
@@ -91,6 +92,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 ```
 
 ## wnc delete policy-tag
@@ -115,6 +117,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -145,6 +148,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -175,6 +179,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -206,6 +211,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 ```
 
 ## wnc disable ap
@@ -231,6 +237,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -263,6 +270,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -294,6 +302,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 ```
 
 ## wnc enable ap
@@ -319,6 +328,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -351,6 +361,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -376,6 +387,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 ```
 
 ## wnc reset
@@ -401,6 +413,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 ```
 
 ## wnc reset ap
@@ -425,6 +438,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -456,6 +470,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -492,6 +507,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 ```
 
 ## wnc set
@@ -518,6 +534,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 ```
 
 ## wnc set policy-tag
@@ -546,6 +563,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -581,6 +599,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -616,6 +635,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port] [$WNC_CONTROLLER]
@@ -657,6 +677,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 ```
 
 ## wnc show overview
@@ -683,6 +704,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port], repeatable [$WNC_CONTROLLER]
@@ -717,6 +739,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port], repeatable [$WNC_CONTROLLER]
@@ -751,6 +774,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port], repeatable [$WNC_CONTROLLER]
@@ -785,6 +809,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port], repeatable [$WNC_CONTROLLER]
@@ -822,6 +847,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port], repeatable [$WNC_CONTROLLER]
@@ -856,6 +882,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port], repeatable [$WNC_CONTROLLER]
@@ -890,6 +917,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port], repeatable [$WNC_CONTROLLER]
@@ -924,6 +952,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port], repeatable [$WNC_CONTROLLER]
@@ -958,6 +987,7 @@ OPTIONS:
 GLOBAL OPTIONS:
    --config string     path to the JSON configuration file [$WNC_CONFIG]
    --log-level string  log verbosity (error|warning|debug) (default: "warning")
+   --dry-run           report what would happen and change nothing
 
 INHERITED OPTIONS:
    --controller string, -c string [ --controller string, -c string ]  controller host[:port], repeatable [$WNC_CONTROLLER]

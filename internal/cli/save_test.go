@@ -77,12 +77,14 @@ func TestSaveConfigRefusesBeforeContactingAnything(t *testing.T) {
 func TestSaveConfigReportsWithoutSendingWhenItMust(t *testing.T) {
 	tests := []struct {
 		name string
-		// root carries --dry-run, which is Local to the root and so must precede the command.
+		// root and tail carry --dry-run, which parses before or after the command alike.
 		root  []string
+		tail  []string
 		stdin string
 		says  string
 	}{
 		{name: "dry run", root: []string{"--dry-run"}, says: "would save the running configuration"},
+		{name: "dry run after the command", tail: []string{"--dry-run"}, says: "would save the running configuration"},
 		{name: "declined prompt", stdin: "n\n", says: "canceled"},
 		{name: "an answer that is not yes", stdin: "later\n", says: "canceled"},
 	}
@@ -93,6 +95,7 @@ func TestSaveConfigReportsWithoutSendingWhenItMust(t *testing.T) {
 
 			args := append(slices.Clone(tt.root),
 				"save-config", "-c", stub.addr, "--access-token", fakeToken, "-k")
+			args = append(args, tt.tail...)
 
 			got := runCLI(t, tt.stdin, false, args...)
 

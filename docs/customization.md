@@ -9,13 +9,13 @@ The flags a command takes follow from what that command does:
 
 | Set                     | Flags                                                              |
 | :---------------------- | :----------------------------------------------------------------- |
-| Every command           | `--config`, `--log-level`                                          |
+| Every command           | `--config`, `--log-level`, `--dry-run`                             |
 | Contacting a controller | `--controller`, `--access-token`, `--insecure`, `--timeout`        |
 | Reading, so `show` only | `--format`, `--pretty`, `--sort-by`, `--sort-keys`, `--sort-order` |
 | Acting, so asking first | `--yes`                                                            |
 
-`--dry-run` is a root flag rather than a per-command one, so it precedes the subcommand.
-On the root it validates the configuration and contacts nothing, and on a command that acts it stops before the request.
+Without a command, `--dry-run` validates the configuration and contacts nothing.
+With one, a `show` command names the controllers it would read, and an action stops before its request.
 
 `--insecure` drops certificate verification, so it accepts an interception as readily as a private CA.
 Trust the issuer instead, which [Troubleshooting](troubleshooting.md#tls) sets out.

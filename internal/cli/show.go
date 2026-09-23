@@ -259,12 +259,29 @@ func runShow[R any](
 			config.FlagFormat + " " + config.FormatJSON + " output is unchanged")
 	}
 
+	// Past every check a real run makes, and short of show.Run, which opens the connections.
+	if cmd.Bool(config.FlagDryRun) {
+		return printWouldRead(cmd, settings.Controllers)
+	}
+
 	return show.Run(ctx, show.Env{
 		Settings:  settings,
 		Logger:    st.Logger,
 		Out:       st.Streams.Out,
 		UserAgent: UserAgent(),
 	}, cols, fetch)
+}
+
+// printWouldRead answers --dry-run with the controllers the read would reach, which is all a
+// read can report before it is made.
+func printWouldRead(cmd *cli.Command, targets []config.Target) error {
+	for _, t := range targets {
+		if _, err := fmt.Fprintf(cmd.Root().Writer, "%s: would read %s\n", t.Name, cmd.Name); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // ignoredBySortKeys are the flags a listing parses and does not act on. Naming them

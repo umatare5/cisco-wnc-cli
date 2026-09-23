@@ -119,9 +119,9 @@ func TestExitCodes(t *testing.T) {
 			want: ExitUsage, mentions: "unknown command",
 		},
 		{
-			// --dry-run is Local to the root, so a subcommand does not inherit it.
-			name: "dry-run is not inherited", args: []string{"show", "ap", "--dry-run"},
-			want: ExitUsage, mentions: "not defined",
+			// --dry-run parses after the leaf too, so the run reaches the settings.
+			name: "dry-run after the leaf", args: []string{"show", "ap", "--dry-run"},
+			want: ExitUsage, mentions: "no controller given",
 		},
 	}
 
@@ -550,6 +550,42 @@ func TestConfigFile(t *testing.T) {
 			t.Errorf("the flag did not reach validation: exit %d, stderr %q", got.code, got.stderr)
 		}
 	})
+}
+
+// A dry run of a show command names each controller and reads none, wherever the flag sits.
+// Nothing answers at 240.0.0.1 and -t bounds each request, so a run that tried to read would
+// fail at once rather than exit 0.
+func TestShowDryRunReadsNothing(t *testing.T) {
+	path := writeFile(t, `{"token":"`+fakeToken+`","controllers":[`+
+		`{"name":"WNC1","host":"240.0.0.1"},{"name":"WNC2","host":"240.0.0.1:8443"}]}`)
+
+	for _, tt := range []struct {
+		name string
+		args []string
+		want string
+	}{
+		{name: "before the command", args: []string{"--dry-run", "show", "ap"}, want: "ap"},
+		{name: "between the group and the leaf", args: []string{"show", "--dry-run", "ap"}, want: "ap"},
+		{name: "after the leaf", args: []string{"show", "client", "--dry-run"}, want: "client"},
+		{name: "after an alias", args: []string{"show", "a", "--dry-run"}, want: "ap"},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			got := runCLI(t, "", false, append(tt.args, "--config", path, "-t", "1ms")...)
+
+			if got.code != ExitOK {
+				t.Fatalf("exit = %d, want %d (stderr %q)", got.code, ExitOK, got.stderr)
+			}
+
+			want := "WNC1: would read " + tt.want + "\nWNC2: would read " + tt.want + "\n"
+			if got.stdout != want {
+				t.Errorf("stdout = %q, want %q", got.stdout, want)
+			}
+
+			if got.stderr != "" {
+				t.Errorf("stderr = %q, want empty", got.stderr)
+			}
+		})
+	}
 }
 
 // The hook is consulted on the running command alone, never on a parent, so a node
