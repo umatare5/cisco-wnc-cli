@@ -24,12 +24,12 @@
 
 ## Overview
 
-This CLI manages wireless LANs across multiple [Catalyst 9800 Wireless LAN Controllers](https://www.cisco.com/site/us/en/products/networking/wireless/wireless-lan-controllers/catalyst-9800-series/index.html).
+This CLI manages wireless LANs across multiple [Catalyst 9800 Wireless Network Controllers](https://www.cisco.com/site/us/en/products/networking/wireless/wireless-lan-controllers/catalyst-9800-series/index.html).
 
-- 📤 **Shell Friendly** – A borderless table `awk` and `cut` read, and a JSON array keyed by the sort names
-- 🌐 **Multi Controller** – Reads concurrently and labels per WLC, so offline hosts drop rows and not the run
-- 🔭 **Joined Views** – `show overview`, `show ap`, `show client` and `show wlan` join what the device splits
-- 🖥️ **Terminal or Pipe** – `--pretty` borders and glyphs the table, and `--format json` feeds machines
+- 📤 **Shell Friendly**: A borderless table `awk` and `cut` read, and a JSON array keyed by the sort names
+- 🌐 **Multi Controller**: Reads concurrently and labels per WLC, so offline hosts drop rows and not the run
+- 🔭 **Joined Views**: `show overview`, `show ap`, `show client` and `show wlan` join what the device splits
+- 🖥️ **Terminal or Pipe**: `--pretty` borders and glyphs the table, and `--format json` feeds machines
 
 ## Supported Environment
 
@@ -46,7 +46,7 @@ Cisco Catalyst 9800 Wireless Network Controller running on:
 
 ## Installation
 
-This CLI needs to enable RESTCONF and HTTPS on the Catalyst 9800 Wireless Controller first.
+This CLI supports container images and OS-specific binaries.
 
 ```bash
 docker pull ghcr.io/umatare5/wnc
@@ -129,11 +129,11 @@ These commands stand outside both groups for specific reasons. See [Other comman
 
 ### Help
 
-`--help` lists commands and flags. See [Help](docs/help.md) for all transcripts but `completion`.
+`--help` lists commands and flags. See [Help](docs/help.md) for all transcripts except `completion`.
 
 ## Customization
 
-This CLI reads its settings from flags, environment variables and a configuration file.See [Customization](docs/customization.md) for the details.
+This CLI reads its settings from flags, environment variables and a configuration file. See [Customization](docs/customization.md) for the details.
 
 ## Troubleshooting
 

@@ -67,7 +67,7 @@ Note the following as well.
 
 Every fact has one page that owns it, and the other pages link to it rather than restating it.
 
-- **Headings are pinned** – [`cli2.jsonc`](.markdownlint-cli2.jsonc) enforces the order via `MD043`.
+- **Headings are pinned** – [`.markdownlint-cli2.jsonc`](.markdownlint-cli2.jsonc) sets the order via `MD043`.
 - **Contracts travel** – a heading change ships with its contract in the same pull request.
 - **Verbatim transcript** – [`help.md`](docs/help.md) carries `--help`; usage changes update it.
 - **Version reads `dev`** – `make build` stamps it, so the transcript comes from `go build`.
