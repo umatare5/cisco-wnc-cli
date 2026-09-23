@@ -47,7 +47,6 @@ const (
 // column of each the controller cannot omit.
 const (
 	DefaultSortAPName    = keyAPName
-	DefaultSortMAC       = "mac"
 	DefaultSortWLANID    = "wlan_id"
 	DefaultSortPolicyTag = keyPolicyTag
 	DefaultSortSiteTag   = keySiteTag
@@ -124,7 +123,7 @@ func RFTagKeys() []string {
 // ClientKeys are the columns of show client, one row per associated client.
 func ClientKeys() []string {
 	return []string{
-		DefaultSortMAC, "ipv4", "ipv6", "device", "username", keySSID, keyAPName, keySlot,
+		"mac", "ipv4", "ipv6", "device", "username", keySSID, keyAPName, keySlot,
 		keyBand, "protocol", keyChannel, keyState, "rssi_dbm", "snr_db",
 		"speed_mbps", "spatial_streams", "assoc_seconds", "rx_bytes", "tx_bytes", keyController,
 	}

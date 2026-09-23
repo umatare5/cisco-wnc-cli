@@ -836,13 +836,13 @@ USAGE:
    wnc show client [options]
 
 DESCRIPTION:
-   One row per associated client, sorted by mac.
+   One row per associated client, sorted by ap_name.
    A cell reading "-" is a value the controller did not send.
    --radio, --ssid and --ap-name narrow the list. A client whose band the
    controller did not report is excluded by --radio, and the count is logged.
 
 OPTIONS:
-   --sort-by key, -b key      sort key (see --sort-keys) (default: "mac")
+   --sort-by key, -b key      sort key (see --sort-keys) (default: "ap_name")
    --sort-keys                print the keys --sort-by and --columns accept, then exit
    --radio string, -r string  band filter (2.4|5|6)
    --ssid string, -s string   keep only clients on this SSID

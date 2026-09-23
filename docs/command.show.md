@@ -209,8 +209,8 @@ wnc show client
 
 ```text
 Device          SSID          AP Name    Band  Protocol  Channel  State           RSSI    SNR   Rate     Assoc  Rx        Tx       Controller
-Example Vendor  test-essid01  TEST-AP03  2.4   11ax      6ch      Run             -21dBm  78dB  143Mbps  2h15m  17.0MiB   19.6MiB  WNC1
 Example Phone   test-essid02  TEST-AP01  5     11ac      64ch     Run             -43dBm  56dB  866Mbps  17m    107.9KiB  30.7KiB  WNC1
+Example Vendor  test-essid01  TEST-AP03  2.4   11ax      6ch      Run             -21dBm  78dB  143Mbps  2h15m  17.0MiB   19.6MiB  WNC1
 Example Sensor  test-essid03  TEST-AP03  6     11be      5ch      Authenticating  -55dBm  40dB  -        42s    -         -        WNC1
 ```
 

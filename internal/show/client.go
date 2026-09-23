@@ -53,7 +53,7 @@ type ClientRow struct {
 func ClientColumns() []render.Column[ClientRow] {
 	return []render.Column[ClientRow]{
 		{
-			Key: DefaultSortMAC, Header: "MAC", Hidden: true,
+			Key: "mac", Header: "MAC", Hidden: true,
 			Cell: func(r ClientRow) string { return render.StrPtr(r.MAC) },
 		},
 		{

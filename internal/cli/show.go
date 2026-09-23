@@ -121,11 +121,11 @@ func clientCommand() *cli.Command {
 		Name:    "client",
 		Aliases: []string{"c"},
 		Usage:   "Associated wireless clients",
-		Description: "One row per associated client, sorted by mac.\n" +
+		Description: "One row per associated client, sorted by ap_name.\n" +
 			absenceNote + "\n" +
 			"--radio, --ssid and --ap-name narrow the list. A client whose band the\n" +
 			"controller did not report is excluded by --radio, and the count is logged.",
-		Flags: append(sortFlags(show.DefaultSortMAC),
+		Flags: append(sortFlags(show.DefaultSortAPName),
 			radioFlag(),
 			&cli.StringFlag{
 				Name:    config.FlagSSID,
@@ -149,7 +149,7 @@ func clientCommand() *cli.Command {
 				APName: cmd.String(config.FlagAPName),
 			}
 
-			return runShow(ctx, cmd, show.ClientKeys(), show.DefaultSortMAC,
+			return runShow(ctx, cmd, show.ClientKeys(), show.DefaultSortAPName,
 				show.ClientColumns(), show.FetchClients(filter))
 		},
 	}

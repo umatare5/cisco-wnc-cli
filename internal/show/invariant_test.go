@@ -154,7 +154,7 @@ func TestDefaultSortKeysExist(t *testing.T) {
 		{name: "ap", keys: APKeys(), defkey: DefaultSortAPName},
 		{name: "ap-join", keys: APJoinKeys(), defkey: DefaultSortAPName},
 		{name: "ap-tag", keys: APTagKeys(), defkey: DefaultSortAPName},
-		{name: "client", keys: ClientKeys(), defkey: DefaultSortMAC},
+		{name: "client", keys: ClientKeys(), defkey: DefaultSortAPName},
 		{name: "wlan", keys: WLANKeys(), defkey: DefaultSortWLANID},
 		{name: "policy-tag", keys: PolicyTagKeys(), defkey: DefaultSortPolicyTag},
 		{name: "site-tag", keys: SiteTagKeys(), defkey: DefaultSortSiteTag},
@@ -245,7 +245,7 @@ func TestNoDefaultSetCarriesAnIdentifier(t *testing.T) {
 	t.Parallel()
 
 	identifiers := []string{
-		keyAPMAC, keyRadioMAC, keyEthernetMAC, keyIPAddress, DefaultSortMAC,
+		keyAPMAC, keyRadioMAC, keyEthernetMAC, keyIPAddress, "mac",
 		"ipv4", "ipv6", "username", "serial", "lldp_neighbor",
 	}
 
