@@ -4,20 +4,10 @@ Output wnc_show_overview_demo.gif
 
 Set TypingSpeed 75ms
 Set FontSize 14
-Set Width 1400
+Set Width 1000
 Set Height 550
 
 # Start of the tape
-
-Type "ping -c 3 wnc1.example.internal"
-
-Sleep 1s
-
-Enter
-
-Sleep 4s
-
-Enter
 
 Type "ping -c 3 wnc2.example.internal"
 
@@ -29,7 +19,7 @@ Sleep 4s
 
 Enter
 
-Type "WNC_ACCESS_TOKEN=$(wnc generate-token --username wnc --password password)"
+Type "export WNC_CONTROLLER=wnc2.example.internal"
 
 Sleep 1s
 
@@ -39,7 +29,17 @@ Sleep 2s
 
 Enter
 
-Type "wnc show overview --controller wnc1.example.internal --controller wnc2.example.internal --pretty --insecure"
+Type "export WNC_ACCESS_TOKEN=$(wnc generate-token --username wnc --password password)"
+
+Sleep 1s
+
+Enter
+
+Sleep 2s
+
+Enter
+
+Type "wnc show overview --columns ap_name,slot,admin,oper,band,channel,clients --pretty --insecure"
 
 Enter
 

@@ -31,6 +31,10 @@ This CLI manages wireless LANs across multiple [Catalyst 9800 Wireless Network C
 - 📤 **Shell Friendly**: Provides borderless tables for `grep`, `awk`, `sed` and `cut`, and structured JSON for `jq`
 - 🎨 **Flexible Output**: Supports `--pretty` format for humans, and `--format json` for machines and AIs
 
+<div align="center">
+  <img alt="wnc show overview" src="./docs/demo/wnc_show_overview_demo.gif"  width="800px" />
+</div>
+
 ## Supported Environment
 
 Cisco Catalyst 9800 Wireless Network Controller running on:
