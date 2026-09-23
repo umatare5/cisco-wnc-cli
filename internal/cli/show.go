@@ -238,8 +238,8 @@ func runShow[R any](
 
 	// Answered before anything is resolved: listing a command's own vocabulary needs
 	// no controller and no token, so it must not fail on their absence.
-	if cmd.Bool(config.FlagSortKeys) {
-		return printSortKeys(cmd, st.Logger, sortKeys)
+	if cmd.Bool(config.FlagListKeys) {
+		return printListKeys(cmd, st.Logger, sortKeys)
 	}
 
 	settings, err := config.Resolve(cmd, st.File, sortKeys, defaultSortBy, render.DefaultKeys(cols))
@@ -285,26 +285,26 @@ func printWouldRead(cmd *cli.Command, targets []config.Target) error {
 	return nil
 }
 
-// ignoredBySortKeys are the flags a listing parses and does not act on. Naming them
-// is cheaper than the alternative: --sort-keys short-circuits before the settings are
+// ignoredByListKeys are the flags a listing parses and does not act on. Naming them
+// is cheaper than the alternative: --list-keys short-circuits before the settings are
 // resolved, so a value that would have been rejected there passes unremarked.
 //
 // --access-token is deliberately absent: it is the one flag here with an environment
 // source, and IsSet is true for an exported variable. Listing it would warn on
 // every invocation of anyone who exports the token.
-var ignoredBySortKeys = []string{
+var ignoredByListKeys = []string{
 	config.FlagController, config.FlagInsecure,
 	config.FlagFormat, config.FlagTimeout, config.FlagPretty, config.FlagColumns,
 	config.FlagSortBy, config.FlagSortOrder,
 	config.FlagRadio, config.FlagSSID, config.FlagAPName,
 }
 
-// printSortKeys answers --sort-keys with one key per line. The slice is the same one --sort-by is
+// printListKeys answers --list-keys with one key per line. The slice is the same one --sort-by is
 // validated against, so the listing and the accepted set are one source.
-func printSortKeys(cmd *cli.Command, logger *logrus.Logger, keys []string) error {
-	for _, name := range ignoredBySortKeys {
+func printListKeys(cmd *cli.Command, logger *logrus.Logger, keys []string) error {
+	for _, name := range ignoredByListKeys {
 		if cmd.IsSet(name) {
-			logger.Warnf("--%s does not affect --%s", name, config.FlagSortKeys)
+			logger.Warnf("--%s does not affect --%s", name, config.FlagListKeys)
 		}
 	}
 
