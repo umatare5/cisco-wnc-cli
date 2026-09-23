@@ -376,14 +376,14 @@ func TestAPRowsAbsenceRules(t *testing.T) {
 		t.Errorf("neighbors = %q", first["lldp_neighbor"])
 	}
 
-	if first["longitude_degrees"] != "-123.393333" || first["latitude_degrees"] != "-48.876667" {
-		t.Errorf("position = %q, %q", first["longitude_degrees"], first["latitude_degrees"])
+	if first["longitude"] != "-123.393333" || first["latitude"] != "-48.876667" {
+		t.Errorf("position = %q, %q", first["longitude"], first["latitude"])
 	}
 
 	second := cellsOf(APColumns(), rows[1])
 	for _, key := range []string{
 		"slots", "country", "mode", "admin", "state", "lldp_neighbor",
-		"longitude_degrees", "latitude_degrees", "power_type", "uptime_seconds",
+		"longitude", "latitude", "power_type", "uptime_seconds",
 	} {
 		if second[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, second[key], render.Absent)
@@ -397,11 +397,11 @@ func TestAPRowsAbsenceRules(t *testing.T) {
 		t.Fatalf("JSON: %v", err)
 	}
 
-	if !strings.Contains(buf.String(), `"longitude_degrees":-123.393333,"latitude_degrees":-48.876667,`) {
+	if !strings.Contains(buf.String(), `"longitude":-123.393333,"latitude":-48.876667,`) {
 		t.Errorf("the JSON lost the position:\n%s", buf.String())
 	}
 
-	if strings.Count(buf.String(), `"longitude_degrees"`) != 1 {
+	if strings.Count(buf.String(), `"longitude"`) != 1 {
 		t.Errorf("an unreported position reached the JSON:\n%s", buf.String())
 	}
 }

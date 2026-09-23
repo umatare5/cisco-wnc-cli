@@ -25,8 +25,8 @@ type APRow struct {
 	Admin        *string  `json:"admin,omitzero"`
 	State        *string  `json:"state,omitzero"`
 	LLDPNeighbor *string  `json:"lldp_neighbor,omitzero"`
-	Longitude    *float64 `json:"longitude_degrees,omitzero"`
-	Latitude     *float64 `json:"latitude_degrees,omitzero"`
+	Longitude    *float64 `json:"longitude,omitzero"`
+	Latitude     *float64 `json:"latitude,omitzero"`
 	PowerType    *string  `json:"power_type,omitzero"`
 	PowerMode    *string  `json:"power_mode,omitzero"`
 	Uptime       *int64   `json:"uptime_seconds,omitzero"`
@@ -83,12 +83,12 @@ func APColumns() []render.Column[APRow] {
 			Cell: func(r APRow) string { return render.StrPtr(r.LLDPNeighbor) },
 		},
 		{
-			Key: "longitude_degrees", Header: "Longitude", Hidden: true,
+			Key: "longitude", Header: "Longitude", Hidden: true,
 			Cell: func(r APRow) string { return render.FloatPtr(r.Longitude) },
 			Sort: func(r APRow) any { return render.SortValue(r.Longitude) },
 		},
 		{
-			Key: "latitude_degrees", Header: "Latitude", Hidden: true,
+			Key: "latitude", Header: "Latitude", Hidden: true,
 			Cell: func(r APRow) string { return render.FloatPtr(r.Latitude) },
 			Sort: func(r APRow) any { return render.SortValue(r.Latitude) },
 		},

@@ -246,7 +246,7 @@ func TestNoDefaultSetCarriesAnIdentifier(t *testing.T) {
 
 	identifiers := []string{
 		keyAPMAC, keyRadioMAC, keyEthernetMAC, keyIPAddress, "mac",
-		"ipv4", "ipv6", "username", "serial", "lldp_neighbor", "longitude_degrees", "latitude_degrees",
+		"ipv4", "ipv6", "username", "serial", "lldp_neighbor", "longitude", "latitude",
 	}
 
 	for name, keys := range defaultSets() {
