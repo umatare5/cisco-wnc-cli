@@ -1,0 +1,8 @@
+# Fingerprints of findings that survive only in history. Format is
+# <commit>:<file>:<rule>:<line>, so an entry is pinned to one commit and cannot silence the
+# same value in a later one. A value still live in the tree is exempted in .gitleaks.toml
+# instead, and .gitleaks.toml holds the README quick-start token -- see the note there first.
+#
+# A comment has to stand on its own line:
+# gitleaks reads the whole line as the fingerprint, so a trailing "# ..." breaks the match and
+# the finding comes back.

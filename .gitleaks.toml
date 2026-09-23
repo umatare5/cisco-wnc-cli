@@ -1,13 +1,18 @@
+# Without this the default ruleset is replaced rather than extended, and nothing is detected.
 [extend]
 useDefault = true
 
-# The one fixture token the tests assert never reaches a diagnostic. It authenticates against
-# nothing and is committed on purpose, and condition = "AND" below is mandatory — OR-ed, the path
-# alone would exempt every secret in every test file.
 [[rules]]
 id = "generic-api-key"
-[rules.allowlist]
+
+[[rules.allowlists]]
 description = "the deliberate fixture token in the test suite"
 condition = "AND"
 paths = ['''_test\.go$''']
 regexes = ['''TestToken0123456789ABCDEF==''']
+
+[[rules.allowlists]]
+description = "admin:your-password, the README quick-start example"
+condition = "AND"
+paths = ['''^README\.md$''']
+regexes = ['''^YWRtaW46eW91ci1wYXNzd29yZA==$''']

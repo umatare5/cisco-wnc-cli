@@ -7,5 +7,4 @@ exclude_all_private = true
 exclude = [
   "^https://www\\.cisco\\.com/",
   "^https://github\\.com/umatare5/cisco-wnc-cli/releases/tag/",
-  "^https://github\\.com/umatare5/cisco-wnc-cli/compare/",
 ]

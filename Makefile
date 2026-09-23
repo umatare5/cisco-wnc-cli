@@ -15,12 +15,12 @@ BUILD_FLAGS := -trimpath -ldflags "$(LDFLAGS)"
 help:
 	@echo "Available targets:"
 	@echo "  build                - Build the binary into $(BINARY_PATH)"
-	@echo "  lint                 - Run golangci-lint and go mod tidy"
+	@echo "  lint                 - Verify the lint config, run golangci-lint and go mod tidy"
 	@echo "  test-unit            - Run unit tests with coverage"
 	@echo "  test-unit-coverage   - Generate the HTML coverage report"
 	@echo "  snapshot             - Build a goreleaser snapshot"
 	@echo "  image                - Build the Docker image"
-	@echo "  clean                - Remove build artifacts"
+	@echo "  clean                - Remove the build and coverage artifacts"
 	@echo "  pre-commit-install   - Install the pre-commit hooks"
 	@echo "  pre-commit-test      - Run every hook across the whole tree"
 	@echo "  pre-commit-uninstall - Remove the pre-commit hooks"
@@ -66,7 +66,7 @@ clean:
 	rm -rf $(BUILD_DIR) $(COVERAGE_DIR)
 	find . -name "*.bak*" -type f -delete 2>/dev/null || true
 
-# Assembles the same context goreleaser hands docker — see the Dockerfile header. The
+# Assembles the same context goreleaser hands docker – see the Dockerfile header. The
 # linux/$(GOARCH) subdirectory is what makes the shared COPY line resolve in both.
 image:
 	mkdir -p $(IMAGE_DIR)/linux/$(GOARCH)

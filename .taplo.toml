@@ -1,3 +1,1 @@
 # Read only by the VS Code extension "Even Better TOML"; no CI gate consults this file.
-
-exclude = [".air.toml"]
