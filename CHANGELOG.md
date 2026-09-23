@@ -14,7 +14,7 @@ This release shrinks the default column set (#100), renames --sort-keys to --lis
 - [#100](https://github.com/umatare5/cisco-wnc-cli/pull/100) – Add --columns to show and hide identifiers by default
 - [#101](https://github.com/umatare5/cisco-wnc-cli/pull/101) – Add access point coordinates, height and floor to wnc show ap
 - [#102](https://github.com/umatare5/cisco-wnc-cli/pull/102) – Rename --sort-keys to --list-keys and drop unit suffixes from keys
-- [#103](https://github.com/umatare5/cisco-wnc-cli/pull/103) – Rename tx_power_dbm to txpower
+- [#103](https://github.com/umatare5/cisco-wnc-cli/pull/103) – Rename tx_power_dbm to txpower and the ChUtil heading to Utilization
 
 ## [v0.2.1]
 
