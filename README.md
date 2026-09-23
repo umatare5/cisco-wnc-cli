@@ -24,7 +24,7 @@
 
 ## Overview
 
-This CLI manages wireless LANs across multiple [Catalyst 9800 Wireless Network Controllers](https://www.cisco.com/site/us/en/products/networking/wireless/wireless-lan-controllers/catalyst-9800-series/index.html).
+This CLI manages wireless LANs across multiple [Cisco Catalyst 9800 Wireless Network Controllers](https://www.cisco.com/site/us/en/products/networking/wireless/wireless-lan-controllers/catalyst-9800-series/index.html).
 
 - 🌐 **Unified Views**: Reads multiple WLCs at once, so load-balanced APs share one table
 - 🔭 **Joined Rows**: Combines several RESTCONF models into one row per radio, AP or client
