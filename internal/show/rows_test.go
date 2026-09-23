@@ -345,6 +345,8 @@ func TestAPRowsAbsenceRules(t *testing.T) {
 			PowerType: "pwr-src-poe-lgcy", PowerMode: "dot11-default-high-pwr",
 			BootTime: boot, JoinTime: join,
 			Neighbors: []string{"test-sw-1:Gi0/2", "test-sw-2:Gi0/3"},
+			Longitude: ptr(-123.393333), Latitude: ptr(-48.876667),
+			Height: ptr(int16(3)), Floor: ptr(-1),
 		},
 		{Name: "TEST-AP02"},
 	}
@@ -375,11 +377,38 @@ func TestAPRowsAbsenceRules(t *testing.T) {
 		t.Errorf("neighbors = %q", first["lldp_neighbor"])
 	}
 
+	if first["longitude"] != "-123.393333" || first["latitude"] != "-48.876667" {
+		t.Errorf("position = %q, %q", first["longitude"], first["latitude"])
+	}
+
+	// A floor below ground is a reading, so its sign must not read as the absence glyph.
+	if first["height"] != "3m" || first["floor"] != "-1" {
+		t.Errorf("placement = %q, %q", first["height"], first["floor"])
+	}
+
 	second := cellsOf(APColumns(), rows[1])
-	for _, key := range []string{"slots", "country", "mode", "admin", "state", "lldp_neighbor", "power_type", "uptime_seconds"} {
+	for _, key := range []string{
+		"slots", "country", "mode", "admin", "state", "lldp_neighbor",
+		"longitude", "latitude", "height", "floor", "power_type", "uptime_seconds",
+	} {
 		if second[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, second[key], render.Absent)
 		}
+	}
+
+	// The JSON carries the degrees and the placement as bare numbers in the key order, and leaves
+	// an unreported position out rather than writing a zero that would name a place.
+	var buf bytes.Buffer
+	if err := render.JSON(&buf, rows, APKeys()); err != nil {
+		t.Fatalf("JSON: %v", err)
+	}
+
+	if !strings.Contains(buf.String(), `"longitude":-123.393333,"latitude":-48.876667,"height":3,"floor":-1,`) {
+		t.Errorf("the JSON lost the position:\n%s", buf.String())
+	}
+
+	if strings.Count(buf.String(), `"longitude"`) != 1 {
+		t.Errorf("an unreported position reached the JSON:\n%s", buf.String())
 	}
 }
 

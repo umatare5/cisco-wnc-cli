@@ -3,6 +3,7 @@ package wnc
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/umatare5/cisco-ios-xe-wireless-go"
@@ -11,13 +12,15 @@ import (
 // The fields expression names the nodes this view renders and no others. It keeps the
 // certificate leaves, the external-module serial numbers and proxy-info on the controller, and
 // an unpruned read returns proxy-info's username and password. The serial number survives
-// under device-detail because the Serial column renders it.
+// under device-detail because the Serial column renders it. ap-location is cut to the floor id,
+// because its location leaf is free text the operator typed.
 const apViewFields = "name;wtp-mac;ip-addr;num-radio-slots;country-code;" +
-	"device-detail;ap-mode-data;ap-state;ap-time-info"
+	"device-detail;ap-mode-data;ap-state;ap-time-info;ap-location/floor-id"
 
-// AP is one access point's identity, state, power and uplink neighbor. BootTime is the instant the
-// access point itself came up, and JoinTime the instant the current CAPWAP association began. A
-// view carrying only one of them reads a controller switchover as a reboot of every access point.
+// AP is one access point's identity, state, power, uplink neighbor and position. BootTime is the
+// instant the access point itself came up, and JoinTime the instant the current CAPWAP
+// association began. A view carrying only one of them reads a controller switchover as a reboot
+// of every access point.
 //
 // A zero value means the controller reported no instant.
 type AP struct {
@@ -39,17 +42,25 @@ type AP struct {
 	PowerType   string
 	PowerMode   string
 	Neighbors   []string
+
+	// Longitude and Latitude are WGS 84 degrees, both set or both nil. Height is meters above
+	// ground level. Floor is the floor id, which every access point read at 17.15.6 carried.
+	Longitude *float64
+	Latitude  *float64
+	Height    *int16
+	Floor     *int
 }
 
 // APReads reports which secondary read failed.
 type APReads struct {
-	Power error
-	LLDP  error
+	Power       error
+	LLDP        error
+	Geolocation error
 }
 
-// APs reads the access point view. The CAPWAP collection drives the rows, so its
-// failure is returned as the error and costs the controller its rows. The power pair
-// and the LLDP neighbors are secondary and their failures cost only those cells.
+// APs reads the access point view. The CAPWAP collection drives the rows, so its failure is
+// returned as the error and costs the controller its rows. The power pair, the LLDP neighbors
+// and the position are secondary, and their failures cost only those cells.
 func (c *Client) APs(ctx context.Context) ([]AP, APReads, error) {
 	resp, err := c.sdk.AP().ListCAPWAPData(ctx, sdk.WithFields(apViewFields))
 	if err != nil {
@@ -62,7 +73,8 @@ func (c *Client) APs(ctx context.Context) ([]AP, APReads, error) {
 
 	power, powerErr := c.apPower(ctx)
 	neighbors, lldpErr := c.apNeighbors(ctx)
-	reads := APReads{Power: powerErr, LLDP: lldpErr}
+	positions, geoErr := c.apPositions(ctx)
+	reads := APReads{Power: powerErr, LLDP: lldpErr, Geolocation: geoErr}
 
 	aps := make([]AP, 0, len(resp.CAPWAPData))
 
@@ -85,11 +97,15 @@ func (c *Client) APs(ctx context.Context) ([]AP, APReads, error) {
 			BootTime:    parseInstant(ap.ApTimeInfo.BootTime),
 			JoinTime:    parseInstant(ap.ApTimeInfo.JoinTime),
 			Neighbors:   neighbors[ap.WtpMAC],
+			Floor:       ptrTo(ap.ApLocation.FloorID),
 		}
 
 		if p, ok := power[ap.WtpMAC]; ok {
 			row.PowerType, row.PowerMode = p.kind, p.mode
 		}
+
+		pos := positions[ap.WtpMAC]
+		row.Longitude, row.Latitude, row.Height = pos.longitude, pos.latitude, pos.height
 
 		aps = append(aps, row)
 	}
@@ -151,6 +167,75 @@ func (c *Client) apNeighbors(ctx context.Context) (map[string][]string, error) {
 	}
 
 	return out, nil
+}
+
+// Bounds of a WGS 84 position in degrees. Both leaves are decimal64 with no range statement, so a
+// value past these is well formed on the wire.
+const (
+	longitudeBound = 180
+	latitudeBound  = 90
+)
+
+type position struct {
+	longitude *float64
+	latitude  *float64
+	height    *int16
+}
+
+// apPositions indexes the position by access point. Measured on 17.15.6, ap-mac is the base radio
+// address capwap-data keys on, and not the Ethernet address. A pair is kept only when both halves
+// parse within their bounds, because one half alone names no place. The invalid case of the
+// location choice carries no ellipse, so the nil chain covers it. The height is read apart from
+// the pair, because an invalid location still carries one, and the sea-level case of the
+// elevation choice is left out, because a height above the sea is not one above the ground.
+func (c *Client) apPositions(ctx context.Context) (map[string]position, error) {
+	resp, err := c.sdk.Geolocation().ListAPGeolocationData(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("reading ap-geo-loc-data: %w", err)
+	}
+
+	if resp == nil {
+		return nil, nil
+	}
+
+	out := make(map[string]position, len(resp.ApGeoLocData))
+
+	for _, g := range resp.ApGeoLocData {
+		var pos position
+
+		if elev := g.Elevation; elev != nil && elev.AGLData != nil {
+			pos.height = elev.AGLData.Height
+		}
+
+		if loc := g.Loc; loc != nil && loc.Ellipse != nil && loc.Ellipse.Center != nil {
+			lon, lonOK := parseDegrees(loc.Ellipse.Center.Longitude, longitudeBound)
+			lat, latOK := parseDegrees(loc.Ellipse.Center.Latitude, latitudeBound)
+
+			if lonOK && latOK {
+				pos.longitude, pos.latitude = ptrTo(lon), ptrTo(lat)
+			}
+		}
+
+		out[g.ApMAC] = pos
+	}
+
+	return out, nil
+}
+
+// parseDegrees reads one coordinate, which RFC 7951 writes as a JSON string because it is a
+// decimal64. The range test is affirmative: ParseFloat accepts "NaN" and "Inf", and json/v2 fails
+// the whole output on either.
+func parseDegrees(leaf *string, bound float64) (float64, bool) {
+	if leaf == nil {
+		return 0, false
+	}
+
+	v, err := strconv.ParseFloat(*leaf, 64)
+	if err == nil && v >= -bound && v <= bound {
+		return v, true
+	}
+
+	return 0, false
 }
 
 // neighborLabel names one neighbor. The port is appended because a system name alone does not say

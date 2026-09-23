@@ -46,20 +46,21 @@ Its last octet carries the role:
 
 The rest have no standard to draw on, so this CLI defines them:
 
-| Kind                 | Value                          |
-| :------------------- | :----------------------------- |
-| Controller name      | `WNC1` – `WNC4`                |
-| Controller host      | `192.168.0.1` – `192.168.0.4`  |
-| Access point name    | `TEST-AP01` – `TEST-AP99`      |
-| Access point serial  | `TST0000AP01` – `TST0000AP99`  |
-| Access point address | `192.168.0.11` onward          |
-| Client address       | `192.168.0.21` onward          |
-| Access token         | `TestToken0123456789ABCDEF==`  |
-| Password             | `test-token-123`               |
-| Client username      | `test-user` onward             |
-| SSID                 | `test-essid01` onward          |
-| Profile              | `test-<kind>-profile01` onward |
-| Tag                  | a `test-` prefix               |
+| Kind                     | Value                          |
+| :----------------------- | :----------------------------- |
+| Controller name          | `WNC1` – `WNC4`                |
+| Controller host          | `192.168.0.1` – `192.168.0.4`  |
+| Access point name        | `TEST-AP01` – `TEST-AP99`      |
+| Access point serial      | `TST0000AP01` – `TST0000AP99`  |
+| Access point address     | `192.168.0.11` onward          |
+| Access point coordinates | `-123.393333`, `-48.876667`    |
+| Client address           | `192.168.0.21` onward          |
+| Access token             | `TestToken0123456789ABCDEF==`  |
+| Password                 | `test-token-123`               |
+| Client username          | `test-user` onward             |
+| SSID                     | `test-essid01` onward          |
+| Profile                  | `test-<kind>-profile01` onward |
+| Tag                      | a `test-` prefix               |
 
 Some of those values carry a rule the table has no room for:
 
@@ -67,6 +68,7 @@ Some of those values carry a rule the table has no room for:
 - **Profile kind** – `<kind>` is `wlan`, `policy`, `rf`, `ap` or `flex`, so the value names its own kind
 - **Controller name** – every prompt, report and `Controller` column shows it, not the host
 - **Serial** – no `test-` prefix fits `[A-Z]{3}[0-9]{4}[A-Z0-9]{4}`, and no real serial has week 00 of year 00
+- **Coordinates** – longitude then latitude of Point Nemo, the ocean point farthest from land, so no site sits there
 
 ### Exceptions
 
@@ -79,7 +81,7 @@ So a test whose host may be reached takes `192.0.2.0/24` from [RFC 5737][rfc5737
 Where the assertion is that nothing answers, it takes `240.0.0.1` from [RFC 5735][rfc5735].
 
 > [!IMPORTANT]
-> Never paste a captured MAC address, serial number, hostname, username, SSID or tag name into a fixture or a sample transcript.
+> Never paste a captured MAC address, serial number, coordinate, hostname, username, SSID or tag name into a fixture or a sample transcript.
 > Nothing in this CLI redacts one, so a value pasted by hand reaches the tree unchanged.
 
 ## RESTCONF Layer
@@ -148,6 +150,8 @@ wnc show overview -c "<host>" --insecure
 The tag views compare against `show wireless tag {rf,site,policy} summary` and `detailed <name>`.
 
 Add `--columns all` to compare the columns the default set leaves out as well.
+`show ap geolocation summary` covers the coordinates and the height among them.
+The floor has no `show` of its own, so compare it with the `ap name <name> floor` given.
 
 Some headings differ from the device's on purpose, because these views follow the YANG leaf and the write flag.
 [`measurements.md`](measurements.md#device-heading-map) maps them in full.

@@ -32,6 +32,10 @@ The access-point collections and the RPCs that name one.
 | Fact                                                                | Release           | Condition                                          |
 | :------------------------------------------------------------------ | :---------------- | :------------------------------------------------- |
 | `ap-name-mac-map=<name>` returns name, base radio and Ethernet MAC  | All               | `404` for an unheld name, a rowless `200` alike    |
+| `ap-geo-loc-data` keys on the base radio MAC, not the Ethernet MAC  | 17.15.6           | 2 of 2 records, both set by hand                   |
+| An invalid location still carries its above-ground height           | 17.15.6           | 1 record, its coordinates deleted by hand          |
+| `ap-location/floor-id` holds the floor set by hand, `floor` reads 0 | 17.15.6           | 2 of 2 records, `floor` 0 on both                  |
+| `fields=ap-location/floor-id` prunes to that one leaf               | 17.15.6           | `ap-location(floor-id)` read the same              |
 | The keyed read `404`s a long, spaced, slashed or multi-byte name    | 17.18.4a          | Four spellings probed, one 256 characters long     |
 | `reset ap`: out of `capwap-data` in 16s, rejoin by 285s             | 17.12.8, 17.18.4a | AIR-AP1815I, clients down throughout               |
 | `Not Joined` with `Wtp reset config cmd sent`, then reboot-cmd      | 17.12.8           | Through a `reset ap`, in `wnc show ap-join` alone  |
@@ -139,15 +143,17 @@ What a write reaches, what a save persists, and the dial timeout the SDK pins.
 
 Known gaps, each with its reason and what an operator carries for it.
 
-| Gap                                      | Why                                          | Consequence                                         |
-| :--------------------------------------- | :------------------------------------------- | :-------------------------------------------------- |
-| Deleting a tag an AP resolves to         | It would delete a tag in use in the lab      | The controller keeps a dangling reference           |
-| A dedicated 6 GHz radio on any slot      | The lab holds no AP carrying one             | Band 4 rests on the clause, never on a write        |
-| A username on more than one session      | No lab controller holds two under one name   | The prompt's count is the only warning given        |
-| The 17.12.8 `deauth` `400` in this CLI   | Every client there carries an empty username | Pinned on fixtures under `internal/wnc` instead     |
-| Client impact of a `reset capwap`        | The lab AP carried no clients at the time    | A control teardown is not a radio reset             |
-| The `reset capwap` name arm on the wire  | No write through it recorded                 | So neither arm settles anything about the other     |
-| Whether the `ip-addr` arm drops a client | This CLI posts through no such arm           | `--mac` already selects a client by address         |
-| Site-tag leaves this CLI never renders   | None verified: fabric pair, ARP, DHCP, load  | The view renders the profiles and the local flag    |
-| An independent source for AP admin state | `show running-config all` by name finds none | Read it back with `wnc show ap` and `show overview` |
-| The age of the channel-utilization read  | No module declares a timestamp for it        | RRM's cycle is invisible, so stale looks fresh      |
+| Gap                                          | Why                                          | Consequence                                         |
+| :------------------------------------------- | :------------------------------------------- | :-------------------------------------------------- |
+| Deleting a tag an AP resolves to             | It would delete a tag in use in the lab      | The controller keeps a dangling reference           |
+| A sea-level elevation on any access point    | The lab records above-ground heights only    | The height column reads the above-ground case alone |
+| The floor of an access point never given one | Both lab access points carry a floor id      | `floor` prints what the leaf holds, 0 included      |
+| A dedicated 6 GHz radio on any slot          | The lab holds no AP carrying one             | Band 4 rests on the clause, never on a write        |
+| A username on more than one session          | No lab controller holds two under one name   | The prompt's count is the only warning given        |
+| The 17.12.8 `deauth` `400` in this CLI       | Every client there carries an empty username | Pinned on fixtures under `internal/wnc` instead     |
+| Client impact of a `reset capwap`            | The lab AP carried no clients at the time    | A control teardown is not a radio reset             |
+| The `reset capwap` name arm on the wire      | No write through it recorded                 | So neither arm settles anything about the other     |
+| Whether the `ip-addr` arm drops a client     | This CLI posts through no such arm           | `--mac` already selects a client by address         |
+| Site-tag leaves this CLI never renders       | None verified: fabric pair, ARP, DHCP, load  | The view renders the profiles and the local flag    |
+| An independent source for AP admin state     | `show running-config all` by name finds none | Read it back with `wnc show ap` and `show overview` |
+| The age of the channel-utilization read      | No module declares a timestamp for it        | RRM's cycle is invisible, so stale looks fresh      |

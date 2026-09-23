@@ -20,6 +20,7 @@ The advisory goes out once the fix ships, carries a CVE request, and credits the
 
 - The access token, from a log line, a command's output or a configuration file
 - A device serial number, from an access point or from the controller
+- An access point's coordinates, which locate its site
 - A client-derived hostname, username or IPv6 address
 
 Then include the following.
