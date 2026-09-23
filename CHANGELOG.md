@@ -4,6 +4,18 @@ Each section covers one release and lists the pull requests it carries.
 
 ## [Unreleased]
 
+## [v0.3.0]
+
+This release shrinks the default column set (#100), renames --sort-keys to --list-keys (#102) and renames six keys (#102, #103), so check a script that reads the JSON or names a key before upgrading.
+
+- [#97](https://github.com/umatare5/cisco-wnc-cli/pull/97) – Bump umatare5/common to v0.21.1 to fix the CodeQL workflow
+- [#98](https://github.com/umatare5/cisco-wnc-cli/pull/98) – Restructure the documentation set and rewrite the prose it carries
+- [#99](https://github.com/umatare5/cisco-wnc-cli/pull/99) – Accept --dry-run after the subcommand and honor it on show
+- [#100](https://github.com/umatare5/cisco-wnc-cli/pull/100) – Add --columns to show and hide identifiers by default
+- [#101](https://github.com/umatare5/cisco-wnc-cli/pull/101) – Add access point coordinates, height and floor to wnc show ap
+- [#102](https://github.com/umatare5/cisco-wnc-cli/pull/102) – Rename --sort-keys to --list-keys and drop unit suffixes from keys
+- [#103](https://github.com/umatare5/cisco-wnc-cli/pull/103) – Rename tx_power_dbm to txpower
+
 ## [v0.2.1]
 
 - [#85](https://github.com/umatare5/cisco-wnc-cli/pull/85) – Update dependency golangci/golangci-lint to v2.13.2
@@ -24,5 +36,6 @@ Each section covers one release and lists the pull requests it carries.
 - [#82](https://github.com/umatare5/cisco-wnc-cli/pull/82) – Pin the documentation skeletons and ship the license notices
 - [#83](https://github.com/umatare5/cisco-wnc-cli/pull/83) – Restructure the documentation set and pin its heading skeletons
 
+[v0.3.0]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.3.0
 [v0.2.1]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.2.0
