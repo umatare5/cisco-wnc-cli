@@ -10,7 +10,7 @@
     {
       "name": "WNC1",
       "host": "192.168.0.1",
-      "note": "name labels every row this controller produced; host is what is dialled"
+      "note": "name labels every row this controller produced, and host is the address dialed"
     },
     {
       "name": "WNC2",
