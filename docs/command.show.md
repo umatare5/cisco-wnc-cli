@@ -53,7 +53,7 @@ wnc show overview -b clients --sort-order desc
 
 ## wnc show ap
 
-One row per access point: what it is, how it is powered, what it is plugged into and how long it has been up.
+One row per access point: what it is, its state and power mode, and how long it has been up.
 
 ### Format
 
@@ -146,6 +146,14 @@ wnc show ap-join -f json --columns ap_name,last_join_seconds,last_config_seconds
 
 ```bash
 wnc show ap-join -b last_join_seconds
+```
+
+</p></details>
+
+<details><summary>Case 4: Print the addresses the default set leaves out</summary><p>
+
+```bash
+wnc show ap-join --columns ap_name,radio_mac,ethernet_mac,ip_address,status
 ```
 
 </p></details>
