@@ -69,9 +69,11 @@ func Select[T any](cols []Column[T], keys []string) []Column[T] {
 	return out
 }
 
-// SortValue converts an optional integer into the float64 a comparator takes, or nil for an
+// SortValue converts an optional number into the float64 a comparator takes, or nil for an
 // unreported cell. A column's Sort yields one of nil, a string, a float64 or a bool.
-func SortValue[T ~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64](p *T) any {
+func SortValue[T ~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~float64](
+	p *T,
+) any {
 	if p == nil {
 		return nil
 	}

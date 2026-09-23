@@ -3,6 +3,7 @@ package wnc
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/umatare5/cisco-ios-xe-wireless-go"
@@ -15,9 +16,10 @@ import (
 const apViewFields = "name;wtp-mac;ip-addr;num-radio-slots;country-code;" +
 	"device-detail;ap-mode-data;ap-state;ap-time-info"
 
-// AP is one access point's identity, state, power and uplink neighbor. BootTime is the instant the
-// access point itself came up, and JoinTime the instant the current CAPWAP association began. A
-// view carrying only one of them reads a controller switchover as a reboot of every access point.
+// AP is one access point's identity, state, power, uplink neighbor and position. BootTime is the
+// instant the access point itself came up, and JoinTime the instant the current CAPWAP
+// association began. A view carrying only one of them reads a controller switchover as a reboot
+// of every access point.
 //
 // A zero value means the controller reported no instant.
 type AP struct {
@@ -39,17 +41,22 @@ type AP struct {
 	PowerType   string
 	PowerMode   string
 	Neighbors   []string
+
+	// Longitude and Latitude are WGS 84 degrees, both set or both nil.
+	Longitude *float64
+	Latitude  *float64
 }
 
 // APReads reports which secondary read failed.
 type APReads struct {
-	Power error
-	LLDP  error
+	Power       error
+	LLDP        error
+	Geolocation error
 }
 
-// APs reads the access point view. The CAPWAP collection drives the rows, so its
-// failure is returned as the error and costs the controller its rows. The power pair
-// and the LLDP neighbors are secondary and their failures cost only those cells.
+// APs reads the access point view. The CAPWAP collection drives the rows, so its failure is
+// returned as the error and costs the controller its rows. The power pair, the LLDP neighbors
+// and the position are secondary, and their failures cost only those cells.
 func (c *Client) APs(ctx context.Context) ([]AP, APReads, error) {
 	resp, err := c.sdk.AP().ListCAPWAPData(ctx, sdk.WithFields(apViewFields))
 	if err != nil {
@@ -62,7 +69,8 @@ func (c *Client) APs(ctx context.Context) ([]AP, APReads, error) {
 
 	power, powerErr := c.apPower(ctx)
 	neighbors, lldpErr := c.apNeighbors(ctx)
-	reads := APReads{Power: powerErr, LLDP: lldpErr}
+	positions, geoErr := c.apPositions(ctx)
+	reads := APReads{Power: powerErr, LLDP: lldpErr, Geolocation: geoErr}
 
 	aps := make([]AP, 0, len(resp.CAPWAPData))
 
@@ -89,6 +97,10 @@ func (c *Client) APs(ctx context.Context) ([]AP, APReads, error) {
 
 		if p, ok := power[ap.WtpMAC]; ok {
 			row.PowerType, row.PowerMode = p.kind, p.mode
+		}
+
+		if pos, ok := positions[ap.WtpMAC]; ok {
+			row.Longitude, row.Latitude = ptrTo(pos.longitude), ptrTo(pos.latitude)
 		}
 
 		aps = append(aps, row)
@@ -151,6 +163,66 @@ func (c *Client) apNeighbors(ctx context.Context) (map[string][]string, error) {
 	}
 
 	return out, nil
+}
+
+// Bounds of a WGS 84 position in degrees. Both leaves are decimal64 with no range statement, so a
+// value past these is well formed on the wire.
+const (
+	longitudeBound = 180
+	latitudeBound  = 90
+)
+
+type position struct {
+	longitude float64
+	latitude  float64
+}
+
+// apPositions indexes the position by access point. Measured on 17.15.6, ap-mac is the base radio
+// address capwap-data keys on, and not the Ethernet address. A record yields a position only when
+// both halves parse within their bounds, because one half alone names no place. The invalid case
+// of the location choice carries no ellipse, so the nil chain covers it.
+func (c *Client) apPositions(ctx context.Context) (map[string]position, error) {
+	resp, err := c.sdk.Geolocation().ListAPGeolocationData(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("reading ap-geo-loc-data: %w", err)
+	}
+
+	if resp == nil {
+		return nil, nil
+	}
+
+	out := make(map[string]position, len(resp.ApGeoLocData))
+
+	for _, g := range resp.ApGeoLocData {
+		if g.Loc == nil || g.Loc.Ellipse == nil || g.Loc.Ellipse.Center == nil {
+			continue
+		}
+
+		lon, lonOK := parseDegrees(g.Loc.Ellipse.Center.Longitude, longitudeBound)
+		lat, latOK := parseDegrees(g.Loc.Ellipse.Center.Latitude, latitudeBound)
+
+		if lonOK && latOK {
+			out[g.ApMAC] = position{longitude: lon, latitude: lat}
+		}
+	}
+
+	return out, nil
+}
+
+// parseDegrees reads one coordinate, which RFC 7951 writes as a JSON string because it is a
+// decimal64. The range test is affirmative: ParseFloat accepts "NaN" and "Inf", and json/v2 fails
+// the whole output on either.
+func parseDegrees(leaf *string, bound float64) (float64, bool) {
+	if leaf == nil {
+		return 0, false
+	}
+
+	v, err := strconv.ParseFloat(*leaf, 64)
+	if err == nil && v >= -bound && v <= bound {
+		return v, true
+	}
+
+	return 0, false
 }
 
 // neighborLabel names one neighbor. The port is appended because a system name alone does not say

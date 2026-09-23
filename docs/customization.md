@@ -19,7 +19,7 @@ Without a command, `--dry-run` validates the configuration and contacts nothing.
 With one, a `show` command names the controllers it would read and contacts none, while [Architecture](architecture.md#acting-on-a-controller) sets out where an action stops.
 
 `--columns` selects the keys the table and the JSON carry, in the order given, rather than the view's default set.
-That set leaves out client and access point addresses, serial numbers, usernames and LLDP neighbors, because each identifies a device or a person.
+That set leaves out client and access point addresses, serial numbers, coordinates, usernames and LLDP neighbors, because each identifies a device, a person or a site.
 It also leaves out a fixed set of other columns on `show ap`, `show ap-join`, `show client` and `show wlan`, so the default table stays narrow.
 
 The `Expected result` of each view in [Show commands](command.show.md) shows the set that remains, and `--sort-keys` lists every key whether the default set prints it or not.

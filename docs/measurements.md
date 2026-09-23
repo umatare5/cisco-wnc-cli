@@ -32,6 +32,7 @@ The access-point collections and the RPCs that name one.
 | Fact                                                                | Release           | Condition                                          |
 | :------------------------------------------------------------------ | :---------------- | :------------------------------------------------- |
 | `ap-name-mac-map=<name>` returns name, base radio and Ethernet MAC  | All               | `404` for an unheld name, a rowless `200` alike    |
+| `ap-geo-loc-data` keys on the base radio MAC, not the Ethernet MAC  | 17.15.6           | 2 of 2 records, both set by hand                   |
 | The keyed read `404`s a long, spaced, slashed or multi-byte name    | 17.18.4a          | Four spellings probed, one 256 characters long     |
 | `reset ap`: out of `capwap-data` in 16s, rejoin by 285s             | 17.12.8, 17.18.4a | AIR-AP1815I, clients down throughout               |
 | `Not Joined` with `Wtp reset config cmd sent`, then reboot-cmd      | 17.12.8           | Through a `reset ap`, in `wnc show ap-join` alone  |

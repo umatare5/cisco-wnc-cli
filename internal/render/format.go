@@ -51,6 +51,15 @@ func IntPtr[T ~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16
 	return Int(*p)
 }
 
+// FloatPtr renders an optional decimal in the fewest digits that read back as the same value.
+func FloatPtr(p *float64) string {
+	if p == nil {
+		return Absent
+	}
+
+	return strconv.FormatFloat(*p, 'f', -1, 64)
+}
+
 // UnitPtr renders an optional integer with its unit glued to the number, so the cell stays one
 // whitespace-delimited field. An unreported value is Absent with no unit, because "-dBm" would
 // read as a measurement rather than the lack of one.

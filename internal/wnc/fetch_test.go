@@ -128,6 +128,7 @@ func TestAPs(t *testing.T) {
 		  {"wtp-mac":"` + macAP1 + `","neigh-mac":"` + macCl1 + `","system-name":"test-sw-1","port-id":"Gi0/2"},
 		  {"wtp-mac":"` + macAP1 + `","neigh-mac":"` + macCl2 + `","system-name":"test-sw-2","port-id":"Gi0/3"}
 		]}`},
+		"ap-geo-loc-data": {},
 	})
 
 	aps, reads, err := c.APs(t.Context())
@@ -135,8 +136,8 @@ func TestAPs(t *testing.T) {
 		t.Fatalf("driving read failed: %v", err)
 	}
 
-	if reads.Power != nil || reads.LLDP != nil {
-		t.Fatalf("secondary errors: %v / %v", reads.Power, reads.LLDP)
+	if reads.Power != nil || reads.LLDP != nil || reads.Geolocation != nil {
+		t.Fatalf("secondary errors: %v / %v / %v", reads.Power, reads.LLDP, reads.Geolocation)
 	}
 
 	if len(aps) != 2 {
@@ -192,8 +193,9 @@ func TestAPsPrunesTheRequestToTheRenderedNodes(t *testing.T) {
 		   "device-detail":{"static-info":{"board-data":{"wtp-serial-num":"TST0000AP01"}}},
 		   "ap-state":{"ap-admin-state":"adminstate-enabled"}}
 		]}`},
-		"oper-data":  {},
-		"lldp-neigh": {},
+		"oper-data":       {},
+		"lldp-neigh":      {},
+		"ap-geo-loc-data": {},
 	})
 
 	aps, _, err := c.APs(t.Context())
@@ -237,7 +239,7 @@ func TestAPsReturnsTheDrivingReadFailureAsTheError(t *testing.T) {
 		t.Fatal("the driving read failed and APs returned no error")
 	}
 
-	if reads.Power != nil || reads.LLDP != nil {
+	if reads.Power != nil || reads.LLDP != nil || reads.Geolocation != nil {
 		t.Errorf("the driving read's failure leaked into a secondary slot: %+v", reads)
 	}
 
@@ -246,7 +248,7 @@ func TestAPsReturnsTheDrivingReadFailureAsTheError(t *testing.T) {
 	}
 }
 
-// A failure in either secondary read costs its own cells and never the rows.
+// A failure in any secondary read costs its own cells and never the rows.
 func TestAPsKeepsRowsWhenASecondaryFails(t *testing.T) {
 	t.Parallel()
 
@@ -254,8 +256,9 @@ func TestAPsKeepsRowsWhenASecondaryFails(t *testing.T) {
 		"capwap-data": {
 			body: `{"Cisco-IOS-XE-wireless-access-point-oper:capwap-data":[{"wtp-mac":"` + macAP1 + `","name":"TEST-AP01"}]}`,
 		},
-		"oper-data":  {status: http.StatusInternalServerError},
-		"lldp-neigh": {status: http.StatusInternalServerError},
+		"oper-data":       {status: http.StatusInternalServerError},
+		"lldp-neigh":      {status: http.StatusInternalServerError},
+		"ap-geo-loc-data": {status: http.StatusInternalServerError},
 	})
 
 	aps, reads, err := c.APs(t.Context())
@@ -263,7 +266,7 @@ func TestAPsKeepsRowsWhenASecondaryFails(t *testing.T) {
 		t.Fatalf("a secondary failure cost the rows: %v", err)
 	}
 
-	if reads.Power == nil || reads.LLDP == nil {
+	if reads.Power == nil || reads.LLDP == nil || reads.Geolocation == nil {
 		t.Fatal("a failed secondary read was not reported")
 	}
 
@@ -271,8 +274,82 @@ func TestAPsKeepsRowsWhenASecondaryFails(t *testing.T) {
 		t.Fatalf("got %d rows, want the row to survive", len(aps))
 	}
 
-	if aps[0].PowerType != "" || len(aps[0].Neighbors) != 0 {
+	if aps[0].PowerType != "" || len(aps[0].Neighbors) != 0 || aps[0].Longitude != nil || aps[0].Latitude != nil {
 		t.Errorf("a failed read produced values: %+v", aps[0])
+	}
+}
+
+// The position joins on the base radio address, so the record keyed on TEST-AP01's Ethernet
+// address attaches to nothing. A record whose halves do not both parse within their bounds yields
+// no position at all: TEST-AP03 sends a longitude alone, TEST-AP04 a NaN, TEST-AP05 the choice's
+// invalid case, and TEST-AP06 the fixture pair swapped, whose latitude falls past 90 degrees.
+func TestAPsJoinsThePositionOnTheRadioAddress(t *testing.T) {
+	t.Parallel()
+
+	const nemo = `"longitude":"-123.393333","latitude":"-48.876667"`
+
+	c := newClient(t, routes{
+		"capwap-data": {body: `{"Cisco-IOS-XE-wireless-access-point-oper:capwap-data":[
+		  {"wtp-mac":"00:00:5e:00:53:01","name":"TEST-AP01",
+		   "device-detail":{"static-info":{"board-data":{"wtp-enet-mac":"00:00:5e:00:53:11"}}}},
+		  {"wtp-mac":"00:00:5e:00:53:02","name":"TEST-AP02"},
+		  {"wtp-mac":"00:00:5e:00:53:03","name":"TEST-AP03"},
+		  {"wtp-mac":"00:00:5e:00:53:04","name":"TEST-AP04"},
+		  {"wtp-mac":"00:00:5e:00:53:05","name":"TEST-AP05"},
+		  {"wtp-mac":"00:00:5e:00:53:06","name":"TEST-AP06"}
+		]}`},
+		"oper-data":  {},
+		"lldp-neigh": {},
+		"ap-geo-loc-data": {body: `{"Cisco-IOS-XE-wireless-geolocation-oper:ap-geo-loc-data":[
+		  {"ap-mac":"00:00:5e:00:53:11","loc":{"ellipse":{"center":{` + nemo + `}}}},
+		  {"ap-mac":"00:00:5e:00:53:02","loc":{"ellipse":{"center":{` + nemo + `}}}},
+		  {"ap-mac":"00:00:5e:00:53:03","loc":{"ellipse":{"center":{"longitude":"-123.393333"}}}},
+		  {"ap-mac":"00:00:5e:00:53:04","loc":{"ellipse":{"center":{"longitude":"-123.393333","latitude":"NaN"}}}},
+		  {"ap-mac":"00:00:5e:00:53:05","loc":{"invalid":true}},
+		  {"ap-mac":"00:00:5e:00:53:06","loc":{"ellipse":{"center":{"longitude":"-48.876667","latitude":"-123.393333"}}}}
+		]}`},
+	})
+
+	aps, reads, err := c.APs(t.Context())
+	if err != nil || reads.Geolocation != nil {
+		t.Fatalf("APs: %v, position read: %v", err, reads.Geolocation)
+	}
+
+	for _, ap := range aps {
+		placed := ap.Longitude != nil && ap.Latitude != nil
+
+		switch {
+		case ap.Name == "TEST-AP02" && !placed:
+			t.Errorf("%s lost its position", ap.Name)
+		case ap.Name == "TEST-AP02" && (*ap.Longitude != -123.393333 || *ap.Latitude != -48.876667):
+			t.Errorf("%s = %v, %v, want the fixture pair", ap.Name, *ap.Longitude, *ap.Latitude)
+		case ap.Name != "TEST-AP02" && (ap.Longitude != nil || ap.Latitude != nil):
+			t.Errorf("%s carries a position: %v, %v", ap.Name, ap.Longitude, ap.Latitude)
+		}
+	}
+}
+
+// A 204 is a successful read of nothing, so the rows carry no position and the read is not
+// reported as failed.
+func TestAPsTreatANoContentPositionListAsNone(t *testing.T) {
+	t.Parallel()
+
+	c := newClient(t, routes{
+		"capwap-data": {
+			body: `{"Cisco-IOS-XE-wireless-access-point-oper:capwap-data":[{"wtp-mac":"` + macAP1 + `","name":"TEST-AP01"}]}`,
+		},
+		"oper-data":       {},
+		"lldp-neigh":      {},
+		"ap-geo-loc-data": {status: http.StatusNoContent},
+	})
+
+	aps, reads, err := c.APs(t.Context())
+	if err != nil || reads.Geolocation != nil {
+		t.Fatalf("APs: %v, position read: %v", err, reads.Geolocation)
+	}
+
+	if len(aps) != 1 || aps[0].Longitude != nil || aps[0].Latitude != nil {
+		t.Errorf("rows = %+v, want one row with no position", aps)
 	}
 }
 
@@ -809,6 +886,42 @@ func TestParseCounter(t *testing.T) {
 	got := parseCounter("18446744073709551615")
 	if got == nil || *got != 18446744073709551615 {
 		t.Errorf("parseCounter = %v, want the full 64-bit value", got)
+	}
+}
+
+// The range test is affirmative because ParseFloat returns a nil error for NaN and the infinities,
+// which json/v2 then refuses to marshal. The bounds are grammar cases rather than identities.
+func TestParseDegrees(t *testing.T) {
+	t.Parallel()
+
+	str := func(s string) *string { return &s }
+
+	tests := []struct {
+		name string
+		in   *string
+		want float64
+		ok   bool
+	}{
+		{name: "the fixture latitude", in: str("-48.876667"), want: -48.876667, ok: true},
+		{name: "the bound itself", in: str("-90.000000"), want: -90, ok: true},
+		{name: "past the bound", in: str("90.000001")},
+		{name: "omitted", in: nil},
+		{name: "empty", in: str("")},
+		{name: "not a number", in: str("north")},
+		{name: "NaN", in: str("NaN")},
+		{name: "Inf", in: str("Inf")},
+		{name: "-Infinity", in: str("-Infinity")},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got, ok := parseDegrees(tt.in, latitudeBound)
+			if ok != tt.ok || got != tt.want {
+				t.Errorf("parseDegrees = %v, %v, want %v, %v", got, ok, tt.want, tt.ok)
+			}
+		})
 	}
 }
 

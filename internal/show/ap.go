@@ -12,24 +12,26 @@ import (
 
 // APRow is one row of show ap.
 type APRow struct {
-	APName       *string `json:"ap_name,omitzero"`
-	Model        *string `json:"model,omitzero"`
-	Serial       *string `json:"serial,omitzero"`
-	EthernetMAC  *string `json:"ethernet_mac,omitzero"`
-	RadioMAC     *string `json:"radio_mac,omitzero"`
-	IPAddress    *string `json:"ip_address,omitzero"`
-	SWVersion    *string `json:"sw_version,omitzero"`
-	Slots        *uint8  `json:"slots,omitzero"`
-	Country      *string `json:"country,omitzero"`
-	Mode         *string `json:"mode,omitzero"`
-	Admin        *string `json:"admin,omitzero"`
-	State        *string `json:"state,omitzero"`
-	LLDPNeighbor *string `json:"lldp_neighbor,omitzero"`
-	PowerType    *string `json:"power_type,omitzero"`
-	PowerMode    *string `json:"power_mode,omitzero"`
-	Uptime       *int64  `json:"uptime_seconds,omitzero"`
-	AssocUptime  *int64  `json:"assoc_uptime_seconds,omitzero"`
-	Controller   string  `json:"controller"`
+	APName       *string  `json:"ap_name,omitzero"`
+	Model        *string  `json:"model,omitzero"`
+	Serial       *string  `json:"serial,omitzero"`
+	EthernetMAC  *string  `json:"ethernet_mac,omitzero"`
+	RadioMAC     *string  `json:"radio_mac,omitzero"`
+	IPAddress    *string  `json:"ip_address,omitzero"`
+	SWVersion    *string  `json:"sw_version,omitzero"`
+	Slots        *uint8   `json:"slots,omitzero"`
+	Country      *string  `json:"country,omitzero"`
+	Mode         *string  `json:"mode,omitzero"`
+	Admin        *string  `json:"admin,omitzero"`
+	State        *string  `json:"state,omitzero"`
+	LLDPNeighbor *string  `json:"lldp_neighbor,omitzero"`
+	Longitude    *float64 `json:"longitude_degrees,omitzero"`
+	Latitude     *float64 `json:"latitude_degrees,omitzero"`
+	PowerType    *string  `json:"power_type,omitzero"`
+	PowerMode    *string  `json:"power_mode,omitzero"`
+	Uptime       *int64   `json:"uptime_seconds,omitzero"`
+	AssocUptime  *int64   `json:"assoc_uptime_seconds,omitzero"`
+	Controller   string   `json:"controller"`
 }
 
 // APColumns describes the access point view. Uptime is the access point's own age from
@@ -81,6 +83,16 @@ func APColumns() []render.Column[APRow] {
 			Cell: func(r APRow) string { return render.StrPtr(r.LLDPNeighbor) },
 		},
 		{
+			Key: "longitude_degrees", Header: "Longitude", Hidden: true,
+			Cell: func(r APRow) string { return render.FloatPtr(r.Longitude) },
+			Sort: func(r APRow) any { return render.SortValue(r.Longitude) },
+		},
+		{
+			Key: "latitude_degrees", Header: "Latitude", Hidden: true,
+			Cell: func(r APRow) string { return render.FloatPtr(r.Latitude) },
+			Sort: func(r APRow) any { return render.SortValue(r.Latitude) },
+		},
+		{
 			Key: "power_type", Header: "Power Type", Hidden: true,
 			Cell: func(r APRow) string { return render.StrPtr(r.PowerType) },
 		},
@@ -107,6 +119,7 @@ func FetchAPs(ctx context.Context, c *wnc.Client, t config.Target, rep *Reporter
 
 	rep.Degraded("oper-data", reads.Power)
 	rep.Degraded("lldp-neigh", reads.LLDP)
+	rep.Degraded("ap-geo-loc-data", reads.Geolocation)
 
 	return apRows(aps, t), nil
 }
@@ -135,6 +148,8 @@ func apRows(aps []wnc.AP, t config.Target) []APRow {
 			Admin:        optional(showAPAdmin(ap.AdminState)),
 			State:        optional(showAPState(ap.OperState)),
 			LLDPNeighbor: optional(strings.Join(ap.Neighbors, ", ")),
+			Longitude:    ap.Longitude,
+			Latitude:     ap.Latitude,
 			PowerType:    optional(showPowerType(ap.PowerType)),
 			PowerMode:    optional(showPowerMode(ap.PowerMode)),
 			Uptime:       render.SecondsSince(now, ap.BootTime),

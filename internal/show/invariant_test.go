@@ -239,14 +239,14 @@ func TestEveryDefaultSetKeepsTheController(t *testing.T) {
 	}
 }
 
-// An address, a serial, a username or an LLDP neighbor identifies a device or a person, which is
-// why the default sets exist, so none of them may return to one.
+// An address, a serial, a username, an LLDP neighbor or a coordinate identifies a device, a person
+// or a site, which is why the default sets exist, so none of them may return to one.
 func TestNoDefaultSetCarriesAnIdentifier(t *testing.T) {
 	t.Parallel()
 
 	identifiers := []string{
 		keyAPMAC, keyRadioMAC, keyEthernetMAC, keyIPAddress, "mac",
-		"ipv4", "ipv6", "username", "serial", "lldp_neighbor",
+		"ipv4", "ipv6", "username", "serial", "lldp_neighbor", "longitude_degrees", "latitude_degrees",
 	}
 
 	for name, keys := range defaultSets() {
