@@ -250,7 +250,7 @@ func TestOverviewRows(t *testing.T) {
 	}
 
 	first := cellsOf(OverviewColumns(), rows[0])
-	if first["mode"] != "FlexConnect" || first["band"] != "2.4" || first["oper"] != "Up" {
+	if first["mode"] != "FlexConnect" || first["band"] != "2.4" || first["oper_state"] != "Up" {
 		t.Errorf("first row = %#v", first)
 	}
 
@@ -272,7 +272,7 @@ func TestOverviewRows(t *testing.T) {
 	second := cellsOf(OverviewColumns(), rows[1])
 	// An absent oper state must not be folded into Down: that would report an outage
 	// the controller never described.
-	for _, key := range []string{"mode", "band", "admin", "oper", "channel", "channel_width", "txpower", "clients", "channel_utilization", "rf_profile"} {
+	for _, key := range []string{"mode", "band", "admin_state", "oper_state", "channel", "channel_width", "txpower", "clients", "channel_utilization", "rf_profile"} {
 		if second[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, second[key], render.Absent)
 		}
@@ -388,7 +388,7 @@ func TestAPRowsAbsenceRules(t *testing.T) {
 
 	second := cellsOf(APColumns(), rows[1])
 	for _, key := range []string{
-		"slots", "country", "mode", "admin", "state", "lldp_neighbor",
+		"slots", "country", "mode", "admin_state", "state", "lldp_neighbor",
 		"longitude", "latitude", "height", "floor", "power_type", "uptime_seconds",
 	} {
 		if second[key] != render.Absent {
@@ -937,7 +937,7 @@ func TestSortIgnoresThePrettyRendering(t *testing.T) {
 	var declaresPretty bool
 
 	for _, c := range cols {
-		if c.Key == "oper" && c.Pretty != nil {
+		if c.Key == "oper_state" && c.Pretty != nil {
 			declaresPretty = true
 		}
 	}
@@ -946,7 +946,7 @@ func TestSortIgnoresThePrettyRendering(t *testing.T) {
 		t.Fatal("the oper column declares no Pretty rendering")
 	}
 
-	if err := render.Sort(rows, cols, "oper", false); err != nil {
+	if err := render.Sort(rows, cols, "oper_state", false); err != nil {
 		t.Fatalf("Sort: %v", err)
 	}
 

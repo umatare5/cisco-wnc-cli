@@ -17,8 +17,8 @@ type OverviewRow struct {
 	Slot       *int    `json:"slot,omitzero"`
 	Mode       *string `json:"mode,omitzero"`
 	Band       *string `json:"band,omitzero"`
-	Admin      *string `json:"admin,omitzero"`
-	Oper       *string `json:"oper,omitzero"`
+	Admin      *string `json:"admin_state,omitzero"`
+	Oper       *string `json:"oper_state,omitzero"`
 	Channel    *int    `json:"channel,omitzero"`
 	Width      *int    `json:"channel_width,omitzero"`
 	TxPower    *int8   `json:"txpower,omitzero"`
@@ -49,12 +49,12 @@ func OverviewColumns() []render.Column[OverviewRow] {
 		{Key: keyMode, Header: "Mode", Cell: func(r OverviewRow) string { return render.StrPtr(r.Mode) }},
 		{Key: keyBand, Header: "Band", Cell: func(r OverviewRow) string { return render.StrPtr(r.Band) }},
 		{
-			Key: keyAdmin, Header: "Admin",
+			Key: keyAdmin, Header: headAdminState,
 			Cell:   func(r OverviewRow) string { return render.StrPtr(r.Admin) },
 			Pretty: func(r OverviewRow) string { return prettyState(r.Admin, dispEnabled, dispDisabled, glyphNo) },
 		},
 		{
-			Key: "oper", Header: "Oper",
+			Key: "oper_state", Header: "Oper State",
 			Cell:   func(r OverviewRow) string { return render.StrPtr(r.Oper) },
 			Pretty: func(r OverviewRow) string { return prettyState(r.Oper, dispUp, dispDown, glyphBad) },
 		},

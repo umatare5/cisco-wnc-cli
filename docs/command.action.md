@@ -150,8 +150,8 @@ slot 1 (5 GHz) of TEST-AP01 on WNC1: would disable
 
 ```bash
 wnc enable ap --ap-name TEST-AP01 --yes
-wnc show ap -f json | jq -r '.[] | select(.ap_name=="TEST-AP01") | .admin'
-wnc show overview -f json | jq -r '.[] | select(.ap_name=="TEST-AP01") | "\(.slot) \(.admin)/\(.oper)"'
+wnc show ap -f json | jq -r '.[] | select(.ap_name=="TEST-AP01") | .admin_state'
+wnc show overview -f json | jq -r '.[] | select(.ap_name=="TEST-AP01") | "\(.slot) \(.admin_state)/\(.oper_state)"'
 ```
 
 </p></details>

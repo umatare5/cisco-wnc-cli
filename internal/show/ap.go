@@ -22,7 +22,7 @@ type APRow struct {
 	Slots        *uint8   `json:"slots,omitzero"`
 	Country      *string  `json:"country,omitzero"`
 	Mode         *string  `json:"mode,omitzero"`
-	Admin        *string  `json:"admin,omitzero"`
+	Admin        *string  `json:"admin_state,omitzero"`
 	State        *string  `json:"state,omitzero"`
 	LLDPNeighbor *string  `json:"lldp_neighbor,omitzero"`
 	Longitude    *float64 `json:"longitude,omitzero"`
@@ -72,7 +72,7 @@ func APColumns() []render.Column[APRow] {
 		},
 		{Key: keyMode, Header: "Mode", Cell: func(r APRow) string { return render.StrPtr(r.Mode) }},
 		{
-			Key: keyAdmin, Header: "Admin",
+			Key: keyAdmin, Header: headAdminState,
 			Cell:   func(r APRow) string { return render.StrPtr(r.Admin) },
 			Pretty: func(r APRow) string { return prettyState(r.Admin, dispEnabled, dispDisabled, glyphNo) },
 		},

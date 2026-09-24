@@ -45,8 +45,8 @@ func overviewCommand() *cli.Command {
 		Usage:   "Per-radio RF summary across 2.4, 5 and 6 GHz",
 		Description: "One row per access point radio, sorted by ap_name.\n" +
 			absenceNote + "\n" +
-			"Admin is the radio's own state: an access-point-level disable leaves it\n" +
-			"Enabled with Oper reading Down, so read wnc show ap for that state.",
+			"Admin State is the radio's own state: an access-point-level disable leaves\n" +
+			"it Enabled with Oper State reading Down, so read wnc show ap for that state.",
 		Flags: append(sortFlags(show.DefaultSortAPName),
 			radioFlag(),
 		),
@@ -69,8 +69,8 @@ func apCommand() *cli.Command {
 		Usage:   "Associated access points",
 		Description: "One row per access point in capwap-data, sorted by ap_name.\n" +
 			absenceNote + "\n" +
-			"Admin is the access point's own state, which an access-point-level disable\n" +
-			"changes and the Admin column of wnc show overview does not.",
+			"Admin State is the access point's own state, which an access-point-level\n" +
+			"disable changes and the Admin State column of wnc show overview does not.",
 		Flags: sortFlags(show.DefaultSortAPName),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return runShow(ctx, cmd, show.APKeys(), show.DefaultSortAPName,

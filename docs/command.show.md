@@ -15,14 +15,14 @@ wnc show overview
 ### Expected result
 
 ```text
-AP Name    Slot  Mode         Band  Admin    Oper  Channel  Width  TxPower  Clients    Utilization  RF Profile         Controller
-TEST-AP01  0     FlexConnect  2.4   Enabled  Up    11ch     20MHz  20dBm    1clients   23%          test-rf-profile01  WNC1
-TEST-AP01  1     FlexConnect  5     Enabled  Up    64ch     40MHz  18dBm    1clients   1%           test-rf-profile03  WNC1
-TEST-AP02  0     FlexConnect  2.4   Enabled  Up    1ch      20MHz  19dBm    2clients   16%          test-rf-profile01  WNC1
-TEST-AP02  1     FlexConnect  5     Enabled  Up    48ch     40MHz  17dBm    0clients   1%           test-rf-profile04  WNC1
-TEST-AP03  0     FlexConnect  2.4   Enabled  Up    6ch      20MHz  22dBm    14clients  10%          test-rf-profile01  WNC1
-TEST-AP03  1     FlexConnect  5     Enabled  Up    116ch    40MHz  22dBm    2clients   2%           test-rf-profile03  WNC1
-TEST-AP03  2     FlexConnect  6     Enabled  Up    5ch      40MHz  18dBm    1clients   2%           test-rf-profile05  WNC1
+AP Name    Slot  Mode         Band  Admin State  Oper State  Channel  Width  TxPower  Clients    Utilization  RF Profile         Controller
+TEST-AP01  0     FlexConnect  2.4   Enabled      Up          11ch     20MHz  20dBm    1clients   23%          test-rf-profile01  WNC1
+TEST-AP01  1     FlexConnect  5     Enabled      Up          64ch     40MHz  18dBm    1clients   1%           test-rf-profile03  WNC1
+TEST-AP02  0     FlexConnect  2.4   Enabled      Up          1ch      20MHz  19dBm    2clients   16%          test-rf-profile01  WNC1
+TEST-AP02  1     FlexConnect  5     Enabled      Up          48ch     40MHz  17dBm    0clients   1%           test-rf-profile04  WNC1
+TEST-AP03  0     FlexConnect  2.4   Enabled      Up          6ch      20MHz  22dBm    14clients  10%          test-rf-profile01  WNC1
+TEST-AP03  1     FlexConnect  5     Enabled      Up          116ch    40MHz  22dBm    2clients   2%           test-rf-profile03  WNC1
+TEST-AP03  2     FlexConnect  6     Enabled      Up          5ch      40MHz  18dBm    1clients   2%           test-rf-profile05  WNC1
 ```
 
 ### Use cases
@@ -64,10 +64,10 @@ wnc show ap
 ### Expected result
 
 ```text
-AP Name    Model             Version     Mode         Admin    State       Power Mode  Uptime  Assoc Uptime  Controller
-TEST-AP01  AIR-AP1815I-Q-K9  17.12.7.13  FlexConnect  Enabled  Registered  Full Power  1d14h   1d14h         WNC1
-TEST-AP02  AIR-AP2802I-Q-K9  17.12.7.13  FlexConnect  Enabled  Registered  Full Power  1d1h    1d1h          WNC1
-TEST-AP03  CW9166I-Q         17.12.7.13  FlexConnect  Enabled  Registered  Full Power  5d20h   5d20h         WNC1
+AP Name    Model             Version     Mode         Admin State  State       Power Mode  Uptime  Assoc Uptime  Controller
+TEST-AP01  AIR-AP1815I-Q-K9  17.12.7.13  FlexConnect  Enabled      Registered  Full Power  1d14h   1d14h         WNC1
+TEST-AP02  AIR-AP2802I-Q-K9  17.12.7.13  FlexConnect  Enabled      Registered  Full Power  1d1h    1d1h          WNC1
+TEST-AP03  CW9166I-Q         17.12.7.13  FlexConnect  Enabled      Registered  Full Power  5d20h   5d20h         WNC1
 ```
 
 ### Use cases

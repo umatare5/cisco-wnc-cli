@@ -693,8 +693,8 @@ USAGE:
 DESCRIPTION:
    One row per access point radio, sorted by ap_name.
    A cell reading "-" is a value the controller did not send.
-   Admin is the radio's own state: an access-point-level disable leaves it
-   Enabled with Oper reading Down, so read wnc show ap for that state.
+   Admin State is the radio's own state: an access-point-level disable leaves
+   it Enabled with Oper State reading Down, so read wnc show ap for that state.
 
 OPTIONS:
    --sort-by key, -b key      sort key (see --list-keys) (default: "ap_name")
@@ -730,8 +730,8 @@ USAGE:
 DESCRIPTION:
    One row per access point in capwap-data, sorted by ap_name.
    A cell reading "-" is a value the controller did not send.
-   Admin is the access point's own state, which an access-point-level disable
-   changes and the Admin column of wnc show overview does not.
+   Admin State is the access point's own state, which an access-point-level
+   disable changes and the Admin State column of wnc show overview does not.
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --list-keys) (default: "ap_name")
