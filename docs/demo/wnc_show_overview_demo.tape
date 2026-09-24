@@ -39,7 +39,7 @@ Sleep 2s
 
 Enter
 
-Type "wnc show overview --columns ap_name,slot,admin_state,oper_state,band,channel,clients --pretty --insecure"
+Type "wnc show overview --columns ap_name,slot,oper_state,band,channel,clients --pretty --insecure"
 
 Enter
 
