@@ -34,7 +34,7 @@ func TestPolicyTagRowsExpandOverTheBindings(t *testing.T) {
 	}
 
 	first := cellsOf(PolicyTagColumns(), rows[0])
-	if first["policy_tag"] != "test-wlan-flex" || first["wlan"] != "test-wlan-profile01" {
+	if first["policy_tag"] != "test-wlan-flex" || first["wlan_profile"] != "test-wlan-profile01" {
 		t.Errorf("first row = %+v", first)
 	}
 
@@ -53,7 +53,7 @@ func TestPolicyTagRowsExpandOverTheBindings(t *testing.T) {
 		t.Errorf("the unbound tag lost its row: %+v", unbound)
 	}
 
-	for _, key := range []string{"description", "wlan", "policy_profile"} {
+	for _, key := range []string{"description", "wlan_profile", "policy_profile"} {
 		if unbound[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, unbound[key], render.Absent)
 		}
@@ -207,7 +207,7 @@ func TestTagRowsOmitEveryAbsentColumnFromTheJSON(t *testing.T) {
 			name: "policy-tag, everything omitted",
 			rows: policyTagRows([]wnc.PolicyTag{{Name: "default-policy-tag"}}, target),
 			keep: []string{"policy_tag", "controller"},
-			drop: []string{"description", "wlan", "policy_profile"},
+			drop: []string{"description", "wlan_profile", "policy_profile"},
 		},
 		{
 			name: "policy-tag, everything reported empty",
@@ -216,7 +216,7 @@ func TestTagRowsOmitEveryAbsentColumnFromTheJSON(t *testing.T) {
 				Bindings: []wnc.PolicyBinding{{}},
 			}}, target),
 			keep: []string{"policy_tag", "controller"},
-			drop: []string{"description", "wlan", "policy_profile"},
+			drop: []string{"description", "wlan_profile", "policy_profile"},
 		},
 		{
 			name: "site-tag, everything omitted",
@@ -284,7 +284,7 @@ func TestTagRowsKeepEveryReportedColumnInTheJSON(t *testing.T) {
 	rf := rfTagRows([]wnc.RFTag{{Name: "test-inside", Profile5GHz: ptr("test-rf-profile02")}}, target)
 
 	tests := map[string][]string{
-		mustMarshal(t, policy): {`"wlan":"test-wlan-profile01"`, `"policy_profile":"test-policy-profile01"`},
+		mustMarshal(t, policy): {`"wlan_profile":"test-wlan-profile01"`, `"policy_profile":"test-policy-profile01"`},
 		mustMarshal(t, site): {
 			`"ap_join_profile":"test-ap-profile01"`,
 			`"flex_profile":"test-flex-profile01"`,

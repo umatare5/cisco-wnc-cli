@@ -634,7 +634,7 @@ func TestShowJSONCarriesTheDefaultSetUntilColumnsNamesMore(t *testing.T) {
 		{name: "the default set", want: `[{"ap_name":"` + testAPName + `","controller":"` + addr + `"}]`},
 		{
 			name: "every key", extra: []string{"--columns", "all"},
-			want: `[{"ap_name":"` + testAPName + `","ap_mac":"` + docMAC + `","controller":"` + addr + `"}]`,
+			want: `[{"ap_name":"` + testAPName + `","radio_mac":"` + docMAC + `","controller":"` + addr + `"}]`,
 		},
 	} {
 		t.Run(tt.name, func(t *testing.T) {

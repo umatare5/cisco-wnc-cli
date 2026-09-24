@@ -18,30 +18,24 @@ const (
 	securityOSEN = "OSEN"
 )
 
-// Policy profile status display strings, named so the Pretty mapping and the cell cannot drift.
-const (
-	policyActive   = "Active"
-	policyShutdown = "Shutdown"
-)
-
 // WLANRow is one row of show wlan: one WLAN paired with one policy profile it is bound to, so the
 // same WLAN bound under two tags to two profiles is two rows.
 type WLANRow struct {
 	WLANID         *int    `json:"wlan_id,omitzero"`
-	Profile        *string `json:"profile,omitzero"`
+	Profile        *string `json:"wlan_profile,omitzero"`
 	SSID           *string `json:"ssid,omitzero"`
 	Status         *string `json:"status,omitzero"`
 	Security       *string `json:"security,omitzero"`
 	Bands          *string `json:"bands,omitzero"`
-	Broadcast      *string `json:"broadcast,omitzero"`
-	P2PBlock       *string `json:"p2p_block,omitzero"`
+	Broadcast      *string `json:"broadcast_ssid,omitzero"`
+	P2PBlock       *string `json:"p2p_blocking,omitzero"`
 	PolicyStatus   *string `json:"policy_status,omitzero"`
 	Switching      *string `json:"switching,omitzero"`
-	Interface      *string `json:"interface,omitzero"`
+	Interface      *string `json:"vlan,omitzero"`
 	SessionTimeout *int    `json:"session_timeout_seconds,omitzero"`
 	DHCPRequired   *bool   `json:"dhcp_required,omitzero"`
 	PolicyProfile  *string `json:"policy_profile,omitzero"`
-	Tags           *string `json:"tags,omitzero"`
+	Tags           *string `json:"policy_tags,omitzero"`
 	Controller     string  `json:"controller"`
 }
 
@@ -54,7 +48,11 @@ func WLANColumns() []render.Column[WLANRow] {
 			Cell: func(r WLANRow) string { return render.IntPtr(r.WLANID) },
 			Sort: func(r WLANRow) any { return render.SortValue(r.WLANID) },
 		},
-		{Key: "profile", Header: "Profile", Cell: func(r WLANRow) string { return render.StrPtr(r.Profile) }},
+		{
+			Key:    keyWLANProfile,
+			Header: headWLANProfile,
+			Cell:   func(r WLANRow) string { return render.StrPtr(r.Profile) },
+		},
 		{Key: keySSID, Header: "SSID", Cell: func(r WLANRow) string { return render.StrPtr(r.SSID) }},
 		{
 			Key: keyStatus, Header: "Status",
@@ -66,7 +64,7 @@ func WLANColumns() []render.Column[WLANRow] {
 		{Key: "security", Header: "Security", Cell: func(r WLANRow) string { return render.StrPtr(r.Security) }},
 		{Key: "bands", Header: "Bands", Cell: func(r WLANRow) string { return render.StrPtr(r.Bands) }},
 		{
-			Key: "broadcast", Header: "Broadcast", Hidden: true,
+			Key: "broadcast_ssid", Header: "Broadcast SSID", Hidden: true,
 			Cell: func(r WLANRow) string { return render.StrPtr(r.Broadcast) },
 			// A hidden SSID is a design choice rather than a fault, so it takes the square.
 			Pretty: func(r WLANRow) string {
@@ -74,7 +72,7 @@ func WLANColumns() []render.Column[WLANRow] {
 			},
 		},
 		{
-			Key: "p2p_block", Header: "P2P Block", Hidden: true,
+			Key: "p2p_blocking", Header: "P2P Blocking", Hidden: true,
 			Cell: func(r WLANRow) string { return render.StrPtr(r.P2PBlock) },
 		},
 		{
@@ -82,13 +80,13 @@ func WLANColumns() []render.Column[WLANRow] {
 			Header: "Policy Status",
 			Cell:   func(r WLANRow) string { return render.StrPtr(r.PolicyStatus) },
 			Pretty: func(r WLANRow) string {
-				return prettyState(r.PolicyStatus, policyActive, policyShutdown, glyphBad)
+				return prettyState(r.PolicyStatus, dispEnabled, dispDisabled, glyphBad)
 			},
 		},
 		{Key: "switching", Header: "Switching", Cell: func(r WLANRow) string { return render.StrPtr(r.Switching) }},
-		{Key: "interface", Header: "Interface", Cell: func(r WLANRow) string { return render.StrPtr(r.Interface) }},
+		{Key: "vlan", Header: "VLAN", Cell: func(r WLANRow) string { return render.StrPtr(r.Interface) }},
 		{
-			Key: "session_timeout_seconds", Header: "Session TO", Hidden: true,
+			Key: "session_timeout_seconds", Header: "Session Timeout", Hidden: true,
 			Cell: func(r WLANRow) string { return render.IntPtr(r.SessionTimeout) },
 			Sort: func(r WLANRow) any { return render.SortValue(r.SessionTimeout) },
 		},
@@ -112,7 +110,7 @@ func WLANColumns() []render.Column[WLANRow] {
 			Cell:   func(r WLANRow) string { return render.StrPtr(r.PolicyProfile) },
 		},
 		{
-			Key: "tags", Header: "Tags", Hidden: true,
+			Key: "policy_tags", Header: "Policy Tags", Hidden: true,
 			Cell: func(r WLANRow) string { return render.StrPtr(r.Tags) },
 		},
 		{Key: keyController, Header: headController, Cell: func(r WLANRow) string { return render.Str(r.Controller) }},
@@ -226,7 +224,7 @@ func wlanRow(
 	}
 
 	if known {
-		row.PolicyStatus = ptr(map[bool]string{true: policyShutdown, false: policyActive}[p.Shutdown])
+		row.PolicyStatus = enabledDisabled(ptr(!p.Shutdown))
 		row.Interface = optional(p.InterfaceName)
 		row.SessionTimeout = p.SessionTimeout
 		row.DHCPRequired = p.DHCPRequired

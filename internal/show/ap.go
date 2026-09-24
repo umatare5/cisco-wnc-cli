@@ -18,11 +18,11 @@ type APRow struct {
 	EthernetMAC  *string  `json:"ethernet_mac,omitzero"`
 	RadioMAC     *string  `json:"radio_mac,omitzero"`
 	IPAddress    *string  `json:"ip_address,omitzero"`
-	SWVersion    *string  `json:"sw_version,omitzero"`
+	SWVersion    *string  `json:"version,omitzero"`
 	Slots        *uint8   `json:"slots,omitzero"`
 	Country      *string  `json:"country,omitzero"`
 	Mode         *string  `json:"mode,omitzero"`
-	Admin        *string  `json:"admin,omitzero"`
+	Admin        *string  `json:"admin_state,omitzero"`
 	State        *string  `json:"state,omitzero"`
 	LLDPNeighbor *string  `json:"lldp_neighbor,omitzero"`
 	Longitude    *float64 `json:"longitude,omitzero"`
@@ -36,9 +36,10 @@ type APRow struct {
 	Controller   string   `json:"controller"`
 }
 
-// APColumns describes the access point view. Uptime is the access point's own age from
-// boot-time and Assoc is the age of the current CAPWAP association from join-time. A controller
-// switchover renews only the second, so one column for both would report it as a reboot of every access point.
+// APColumns describes the access point view. Uptime is the access point's own age from boot-time
+// and Assoc Uptime is the age of the current CAPWAP association from join-time. A controller
+// switchover renews only the second, so one column for both would report it as a reboot of
+// every access point.
 func APColumns() []render.Column[APRow] {
 	return []render.Column[APRow]{
 		{Key: keyAPName, Header: headAPName, Cell: func(r APRow) string { return render.StrPtr(r.APName) }},
@@ -59,7 +60,7 @@ func APColumns() []render.Column[APRow] {
 			Key: keyIPAddress, Header: headIPAddress, Hidden: true,
 			Cell: func(r APRow) string { return render.StrPtr(r.IPAddress) },
 		},
-		{Key: "sw_version", Header: "SW Version", Cell: func(r APRow) string { return render.StrPtr(r.SWVersion) }},
+		{Key: "version", Header: "Version", Cell: func(r APRow) string { return render.StrPtr(r.SWVersion) }},
 		{
 			Key: "slots", Header: "Slots", Hidden: true,
 			Cell: func(r APRow) string { return render.IntPtr(r.Slots) },
@@ -71,7 +72,7 @@ func APColumns() []render.Column[APRow] {
 		},
 		{Key: keyMode, Header: "Mode", Cell: func(r APRow) string { return render.StrPtr(r.Mode) }},
 		{
-			Key: keyAdmin, Header: "Admin",
+			Key: keyAdminState, Header: headAdminState,
 			Cell:   func(r APRow) string { return render.StrPtr(r.Admin) },
 			Pretty: func(r APRow) string { return prettyState(r.Admin, dispEnabled, dispDisabled, glyphNo) },
 		},
@@ -115,7 +116,7 @@ func APColumns() []render.Column[APRow] {
 			Sort: func(r APRow) any { return render.SortValue(r.Uptime) },
 		},
 		{
-			Key: "assoc_uptime_seconds", Header: "Assoc",
+			Key: "assoc_uptime_seconds", Header: "Assoc Uptime",
 			Cell: func(r APRow) string { return render.Duration(r.AssocUptime) },
 			Sort: func(r APRow) any { return render.SortValue(r.AssocUptime) },
 		},

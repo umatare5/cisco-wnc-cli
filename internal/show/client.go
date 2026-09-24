@@ -40,9 +40,9 @@ type ClientRow struct {
 	State      *string `json:"state,omitzero"`
 	RSSI       *int    `json:"rssi,omitzero"`
 	SNR        *int    `json:"snr,omitzero"`
-	Speed      *int    `json:"speed,omitzero"`
+	Speed      *int    `json:"rate,omitzero"`
 	Streams    *int    `json:"spatial_streams,omitzero"`
-	Assoc      *int64  `json:"assoc_seconds,omitzero"`
+	Assoc      *int64  `json:"connected_seconds,omitzero"`
 	RxBytes    *uint64 `json:"rx_bytes,omitzero"`
 	TxBytes    *uint64 `json:"tx_bytes,omitzero"`
 	Controller string  `json:"controller"`
@@ -95,7 +95,7 @@ func ClientColumns() []render.Column[ClientRow] {
 			Sort: func(r ClientRow) any { return render.SortValue(r.SNR) },
 		},
 		{
-			Key: "speed", Header: "Rate",
+			Key: "rate", Header: "Rate",
 			Cell: func(r ClientRow) string { return render.UnitPtr(r.Speed, "Mbps") },
 			Sort: func(r ClientRow) any { return render.SortValue(r.Speed) },
 		},
@@ -105,17 +105,17 @@ func ClientColumns() []render.Column[ClientRow] {
 			Sort: func(r ClientRow) any { return render.SortValue(r.Streams) },
 		},
 		{
-			Key: "assoc_seconds", Header: "Assoc",
+			Key: "connected_seconds", Header: "Connected",
 			Cell: func(r ClientRow) string { return render.Duration(r.Assoc) },
 			Sort: func(r ClientRow) any { return render.SortValue(r.Assoc) },
 		},
 		{
-			Key: "rx_bytes", Header: "Rx",
+			Key: "rx_bytes", Header: "Rx Bytes",
 			Cell: func(r ClientRow) string { return render.IEC(r.RxBytes) },
 			Sort: func(r ClientRow) any { return render.SortValue(r.RxBytes) },
 		},
 		{
-			Key: "tx_bytes", Header: "Tx",
+			Key: "tx_bytes", Header: "Tx Bytes",
 			Cell: func(r ClientRow) string { return render.IEC(r.TxBytes) },
 			Sort: func(r ClientRow) any { return render.SortValue(r.TxBytes) },
 		},

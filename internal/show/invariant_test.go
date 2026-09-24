@@ -245,7 +245,7 @@ func TestAPDefaultSetIsTheDocumentedTable(t *testing.T) {
 	t.Parallel()
 
 	want := []string{
-		keyAPName, "model", "sw_version", keyMode, keyAdmin, keyState,
+		keyAPName, "model", "version", keyMode, keyAdminState, keyState,
 		"power_mode", "uptime_seconds", "assoc_uptime_seconds", keyController,
 	}
 
@@ -260,7 +260,7 @@ func TestNoDefaultSetCarriesAnIdentifier(t *testing.T) {
 	t.Parallel()
 
 	identifiers := []string{
-		keyAPMAC, keyRadioMAC, keyEthernetMAC, keyIPAddress, "mac",
+		keyRadioMAC, keyEthernetMAC, keyIPAddress, "mac",
 		"ipv4", "ipv6", "username", "serial", "lldp_neighbor", "longitude", "latitude",
 	}
 

@@ -150,8 +150,8 @@ slot 1 (5 GHz) of TEST-AP01 on WNC1: would disable
 
 ```bash
 wnc enable ap --ap-name TEST-AP01 --yes
-wnc show ap -f json | jq -r '.[] | select(.ap_name=="TEST-AP01") | .admin'
-wnc show overview -f json | jq -r '.[] | select(.ap_name=="TEST-AP01") | "\(.slot) \(.admin)/\(.oper)"'
+wnc show ap -f json | jq -r '.[] | select(.ap_name=="TEST-AP01") | .admin_state'
+wnc show overview -f json | jq -r '.[] | select(.ap_name=="TEST-AP01") | "\(.slot) \(.admin_state)/\(.oper_state)"'
 ```
 
 </p></details>
@@ -320,7 +320,7 @@ Expected result:
 
 ```bash
 wnc deauth --mac 00:00:5e:00:53:a1 --yes
-watch -n 5 'wnc show client -f json --columns mac,state,assoc_seconds | jq -r ".[] | select(.mac==\"00:00:5e:00:53:a1\") | \"\(.state) assoc \(.assoc_seconds)s\""'
+watch -n 5 'wnc show client -f json --columns mac,state,connected_seconds | jq -r ".[] | select(.mac==\"00:00:5e:00:53:a1\") | \"\(.state) connected \(.connected_seconds)s\""'
 ```
 
 </p></details>

@@ -16,13 +16,12 @@ import (
 type PolicyTagRow struct {
 	PolicyTag     *string `json:"policy_tag,omitzero"`
 	Description   *string `json:"description,omitzero"`
-	WLAN          *string `json:"wlan,omitzero"`
+	WLAN          *string `json:"wlan_profile,omitzero"`
 	PolicyProfile *string `json:"policy_profile,omitzero"`
 	Controller    string  `json:"controller"`
 }
 
-// PolicyTagColumns describes the policy tag view. WLAN is the WLAN profile name the binding keys
-// on rather than the SSID, and the two differ on any WLAN not named after its SSID.
+// PolicyTagColumns describes the policy tag view.
 func PolicyTagColumns() []render.Column[PolicyTagRow] {
 	return []render.Column[PolicyTagRow]{
 		{
@@ -33,7 +32,11 @@ func PolicyTagColumns() []render.Column[PolicyTagRow] {
 			Key: keyDescription, Header: headDescription,
 			Cell: func(r PolicyTagRow) string { return render.StrPtr(r.Description) },
 		},
-		{Key: "wlan", Header: "WLAN", Cell: func(r PolicyTagRow) string { return render.StrPtr(r.WLAN) }},
+		{
+			Key:    keyWLANProfile,
+			Header: headWLANProfile,
+			Cell:   func(r PolicyTagRow) string { return render.StrPtr(r.WLAN) },
+		},
 		{
 			Key: keyPolicyProfile, Header: headPolicyProfile,
 			Cell: func(r PolicyTagRow) string { return render.StrPtr(r.PolicyProfile) },
@@ -68,7 +71,7 @@ func SiteTagColumns() []render.Column[SiteTagRow] {
 			Cell: func(r SiteTagRow) string { return render.StrPtr(r.Description) },
 		},
 		{
-			Key: "ap_join_profile", Header: "AP Join Profile",
+			Key: keyAPJoinProfile, Header: headAPJoinProfile,
 			Cell: func(r SiteTagRow) string { return render.StrPtr(r.APJoinProfile) },
 		},
 		{

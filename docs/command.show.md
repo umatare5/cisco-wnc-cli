@@ -15,14 +15,14 @@ wnc show overview
 ### Expected result
 
 ```text
-AP Name    Slot  Mode         Band  Admin    Oper  Channel  Width  TxPower  Clients    Utilization  RF Profile         Controller
-TEST-AP01  0     FlexConnect  2.4   Enabled  Up    11ch     20MHz  20dBm    1clients   23%          test-rf-profile01  WNC1
-TEST-AP01  1     FlexConnect  5     Enabled  Up    64ch     40MHz  18dBm    1clients   1%           test-rf-profile03  WNC1
-TEST-AP02  0     FlexConnect  2.4   Enabled  Up    1ch      20MHz  19dBm    2clients   16%          test-rf-profile01  WNC1
-TEST-AP02  1     FlexConnect  5     Enabled  Up    48ch     40MHz  17dBm    0clients   1%           test-rf-profile04  WNC1
-TEST-AP03  0     FlexConnect  2.4   Enabled  Up    6ch      20MHz  22dBm    14clients  10%          test-rf-profile01  WNC1
-TEST-AP03  1     FlexConnect  5     Enabled  Up    116ch    40MHz  22dBm    2clients   2%           test-rf-profile03  WNC1
-TEST-AP03  2     FlexConnect  6     Enabled  Up    5ch      40MHz  18dBm    1clients   2%           test-rf-profile05  WNC1
+AP Name    Slot  Mode         Band  Admin State  Oper State  Channel  Width  Tx Power  Clients    Utilization  RF Profile         Controller
+TEST-AP01  0     FlexConnect  2.4   Enabled      Up          11ch     20MHz  20dBm     1clients   23%          test-rf-profile01  WNC1
+TEST-AP01  1     FlexConnect  5     Enabled      Up          64ch     40MHz  18dBm     1clients   1%           test-rf-profile03  WNC1
+TEST-AP02  0     FlexConnect  2.4   Enabled      Up          1ch      20MHz  19dBm     2clients   16%          test-rf-profile01  WNC1
+TEST-AP02  1     FlexConnect  5     Enabled      Up          48ch     40MHz  17dBm     0clients   1%           test-rf-profile04  WNC1
+TEST-AP03  0     FlexConnect  2.4   Enabled      Up          6ch      20MHz  22dBm     14clients  10%          test-rf-profile01  WNC1
+TEST-AP03  1     FlexConnect  5     Enabled      Up          116ch    40MHz  22dBm     2clients   2%           test-rf-profile03  WNC1
+TEST-AP03  2     FlexConnect  6     Enabled      Up          5ch      40MHz  18dBm     1clients   2%           test-rf-profile05  WNC1
 ```
 
 ### Use cases
@@ -64,10 +64,10 @@ wnc show ap
 ### Expected result
 
 ```text
-AP Name    Model             SW Version  Mode         Admin    State       Power Mode  Uptime  Assoc  Controller
-TEST-AP01  AIR-AP1815I-Q-K9  17.12.7.13  FlexConnect  Enabled  Registered  Full Power  1d14h   1d14h  WNC1
-TEST-AP02  AIR-AP2802I-Q-K9  17.12.7.13  FlexConnect  Enabled  Registered  Full Power  1d1h    1d1h   WNC1
-TEST-AP03  CW9166I-Q         17.12.7.13  FlexConnect  Enabled  Registered  Full Power  5d20h   5d20h  WNC1
+AP Name    Model             Version     Mode         Admin State  State       Power Mode  Uptime  Assoc Uptime  Controller
+TEST-AP01  AIR-AP1815I-Q-K9  17.12.7.13  FlexConnect  Enabled      Registered  Full Power  1d14h   1d14h         WNC1
+TEST-AP02  AIR-AP2802I-Q-K9  17.12.7.13  FlexConnect  Enabled      Registered  Full Power  1d1h    1d1h          WNC1
+TEST-AP03  CW9166I-Q         17.12.7.13  FlexConnect  Enabled      Registered  Full Power  5d20h   5d20h         WNC1
 ```
 
 ### Use cases
@@ -117,7 +117,7 @@ wnc show ap-join
 ### Expected result
 
 ```text
-AP Name    Status  Last Failure Phase  Last Join Failure        Last Disconnect Reason      Reboot Reason                 Last Join  Last Error  Controller
+AP Name    Status  Last Failure Phase  Last Join Failure        Last Disconnect Reason      Last Reboot Reason            Last Join  Last Error  Controller
 TEST-AP01  Joined  Join                jf-dtls-alert-from-peer  DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h7m        WNC1
 TEST-AP02  Joined  Image-Download      None                     Image Download Success      ap-reboot-reason-img-upgrade  3h3m       3h9m        WNC1
 TEST-AP03  Joined  Join                jf-dtls-alert-from-peer  DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h7m        WNC1
@@ -128,7 +128,7 @@ TEST-AP03  Joined  Join                jf-dtls-alert-from-peer  DTLS close alert
 <details><summary>Case 1: List the access points the controller remembers but is not serving</summary><p>
 
 ```bash
-wnc show ap-join -f json | jq -r '.[] | select(.status != "Joined") | "\(.ap_name) \(.disconnect_reason)"'
+wnc show ap-join -f json | jq -r '.[] | select(.status != "Joined") | "\(.ap_name) \(.last_disconnect_reason)"'
 ```
 
 </p></details>
@@ -171,10 +171,10 @@ wnc show ap-tag
 ### Expected result
 
 ```text
-AP Name    Misconfigured  Misconfig Reason  Tag Source  Filter Name  Policy Tag      Site Tag        RF Tag        AP Profile         Flex Profile         Controller
-TEST-AP01  No             -                 Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
-TEST-AP02  No             -                 Static      -            test-wlan-flex  test-site-flex  test-outside  test-ap-profile01  test-flex-profile01  WNC1
-TEST-AP03  No             -                 Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
+AP Name    Misconfigured  Misconfiguration Reason  Tag Source  Filter Name  Policy Tag      Site Tag        RF Tag        AP Join Profile    Flex Profile         Controller
+TEST-AP01  No             -                        Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
+TEST-AP02  No             -                        Static      -            test-wlan-flex  test-site-flex  test-outside  test-ap-profile01  test-flex-profile01  WNC1
+TEST-AP03  No             -                        Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
 ```
 
 ### Use cases
@@ -216,10 +216,10 @@ wnc show client
 ### Expected result
 
 ```text
-Device          SSID          AP Name    Band  Protocol  Channel  State           RSSI    SNR   Rate     Assoc  Rx        Tx       Controller
-Example Phone   test-essid02  TEST-AP01  5     11ac      64ch     Run             -43dBm  56dB  866Mbps  17m    107.9KiB  30.7KiB  WNC1
-Example Vendor  test-essid01  TEST-AP03  2.4   11ax      6ch      Run             -21dBm  78dB  143Mbps  2h15m  17.0MiB   19.6MiB  WNC1
-Example Sensor  test-essid03  TEST-AP03  6     11be      5ch      Authenticating  -55dBm  40dB  -        42s    -         -        WNC1
+Device          SSID          AP Name    Band  Protocol  Channel  State           RSSI    SNR   Rate     Connected  Rx Bytes  Tx Bytes  Controller
+Example Phone   test-essid02  TEST-AP01  5     11ac      64ch     Run             -43dBm  56dB  866Mbps  17m        107.9KiB  30.7KiB   WNC1
+Example Vendor  test-essid01  TEST-AP03  2.4   11ax      6ch      Run             -21dBm  78dB  143Mbps  2h15m      17.0MiB   19.6MiB   WNC1
+Example Sensor  test-essid03  TEST-AP03  6     11be      5ch      Authenticating  -55dBm  40dB  -        42s        -         -         WNC1
 ```
 
 ### Use cases
@@ -236,8 +236,8 @@ wnc show client -f json --columns mac,ap_name,rssi \
 <details><summary>Case 2: Find the clients stuck short of the run state</summary><p>
 
 ```bash
-wnc show client -f json --columns mac,state,assoc_seconds \
-  | jq -r '.[] | select(.state != "Run") | "\(.mac) \(.state) \(.assoc_seconds)s"'
+wnc show client -f json --columns mac,state,connected_seconds \
+  | jq -r '.[] | select(.state != "Run") | "\(.mac) \(.state) \(.connected_seconds)s"'
 ```
 
 </p></details>
@@ -271,10 +271,10 @@ wnc show wlan
 ### Expected result
 
 ```text
-ID  Profile              SSID          Status   Security            Bands  Policy Status  Switching  Interface      Policy Profile         Controller
-5   test-wlan-profile01  test-essid01  Enabled  WPA2 PSK            2.4    Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
-6   test-wlan-profile02  test-essid02  Enabled  WPA2 PSK            5      Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
-7   test-wlan-profile03  test-essid03  Enabled  WPA3 802.1X-SHA256  5/6    Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
+ID  WLAN Profile         SSID          Status   Security            Bands  Policy Status  Switching  VLAN           Policy Profile         Controller
+5   test-wlan-profile01  test-essid01  Enabled  WPA2 PSK            2.4    Enabled        Local      TEST-INTERNAL  test-policy-profile01  WNC1
+6   test-wlan-profile02  test-essid02  Enabled  WPA2 PSK            5      Enabled        Local      TEST-INTERNAL  test-policy-profile01  WNC1
+7   test-wlan-profile03  test-essid03  Enabled  WPA3 802.1X-SHA256  5/6    Enabled        Local      TEST-INTERNAL  test-policy-profile01  WNC1
 ```
 
 ### Use cases
@@ -282,7 +282,7 @@ ID  Profile              SSID          Status   Security            Bands  Polic
 <details><summary>Case 1: Find the enabled WLANs whose policy profile is shut, so they are off air</summary><p>
 
 ```bash
-wnc show wlan -f json | jq -r '.[] | select(.status == "Enabled" and .policy_status == "Shutdown") | .profile'
+wnc show wlan -f json | jq -r '.[] | select(.status == "Enabled" and .policy_status == "Disabled") | .wlan_profile'
 ```
 
 </p></details>
@@ -316,7 +316,7 @@ wnc show policy-tag
 ### Expected result
 
 ```text
-Policy Tag          Description                       WLAN                 Policy Profile         Controller
+Policy Tag          Description                       WLAN Profile         Policy Profile         Controller
 default-policy-tag  Preconfigured default policy-tag  -                    -                      WNC3
 test-wlan-flex      -                                 test-wlan-profile01  test-policy-profile01  WNC3
 test-wlan-flex      -                                 test-wlan-profile02  test-policy-profile01  WNC3
@@ -336,7 +336,7 @@ wnc show policy-tag --controller 192.168.0.1
 <details><summary>Case 2: Find the tags that bind nothing, the usual target of a delete</summary><p>
 
 ```bash
-wnc show policy-tag --format json | jq -r '.[] | select(.wlan == null) | .policy_tag'
+wnc show policy-tag --format json | jq -r '.[] | select(.wlan_profile == null) | .policy_tag'
 ```
 
 </p></details>
@@ -352,7 +352,7 @@ wnc show policy-tag --sort-by policy_profile
 <details><summary>Case 4: Find which tags bind one WLAN profile</summary><p>
 
 ```bash
-wnc show policy-tag --format json | jq -r '.[] | select(.wlan == "test-wlan-profile01") | .policy_tag'
+wnc show policy-tag --format json | jq -r '.[] | select(.wlan_profile == "test-wlan-profile01") | .policy_tag'
 ```
 
 </p></details>

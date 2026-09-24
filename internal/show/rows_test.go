@@ -53,7 +53,7 @@ func TestClientRowsAbsenceRules(t *testing.T) {
 
 	cells := cellsOf(ClientColumns(), rows[0])
 
-	for _, key := range []string{"username", "ipv4", "channel", "speed", "spatial_streams", "rssi"} {
+	for _, key := range []string{"username", "ipv4", "channel", "rate", "spatial_streams", "rssi"} {
 		if cells[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, cells[key], render.Absent)
 		}
@@ -86,7 +86,7 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 	cells := cellsOf(cols, reported[0])
 	for key, want := range map[string]string{
 		"channel": "6ch", "rssi": "-21dBm", "snr": "78dB",
-		"speed": "143Mbps", "spatial_streams": "1ss",
+		"rate": "143Mbps", "spatial_streams": "1ss",
 	} {
 		if cells[key] != want {
 			t.Errorf("%s = %q, want %q", key, cells[key], want)
@@ -97,7 +97,7 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 	// snr is in this list because 0 dB is a real margin: it is the one cell here whose
 	// value cannot be told from its absence without the pointer the fetch layer sets.
 	absent := clientRows([]wnc.WirelessClient{{MAC: "00:00:5e:00:53:a2"}}, ClientFilter{}, target, &Reporter{})
-	for _, key := range []string{"channel", "rssi", "snr", "speed", "spatial_streams"} {
+	for _, key := range []string{"channel", "rssi", "snr", "rate", "spatial_streams"} {
 		if got := cellsOf(cols, absent[0])[key]; got != render.Absent {
 			t.Errorf("%s = %q, want %q", key, got, render.Absent)
 		}
@@ -115,7 +115,7 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 		}
 	}
 
-	for _, bare := range []string{`"channel":6`, `"rssi":-21`, `"snr":78`, `"speed":143`} {
+	for _, bare := range []string{`"channel":6`, `"rssi":-21`, `"snr":78`, `"rate":143`} {
 		if !strings.Contains(buf.String(), bare) {
 			t.Errorf("the JSON lost %s:\n%s", bare, buf.String())
 		}
@@ -250,7 +250,7 @@ func TestOverviewRows(t *testing.T) {
 	}
 
 	first := cellsOf(OverviewColumns(), rows[0])
-	if first["mode"] != "FlexConnect" || first["band"] != "2.4" || first["oper"] != "Up" {
+	if first["mode"] != "FlexConnect" || first["band"] != "2.4" || first["oper_state"] != "Up" {
 		t.Errorf("first row = %#v", first)
 	}
 
@@ -272,7 +272,7 @@ func TestOverviewRows(t *testing.T) {
 	second := cellsOf(OverviewColumns(), rows[1])
 	// An absent oper state must not be folded into Down: that would report an outage
 	// the controller never described.
-	for _, key := range []string{"mode", "band", "admin", "oper", "channel", "channel_width", "txpower", "clients", "channel_utilization", "rf_profile"} {
+	for _, key := range []string{"mode", "band", "admin_state", "oper_state", "channel", "channel_width", "txpower", "clients", "channel_utilization", "rf_profile"} {
 		if second[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, second[key], render.Absent)
 		}
@@ -301,7 +301,7 @@ func TestOverviewAdminGlyphs(t *testing.T) {
 
 	for _, tc := range tests {
 		rows := overviewRows([]wnc.Radio{{APMAC: "a", AdminState: tc.admin}}, "", target, &Reporter{})
-		if got := prettyOf(cols, rows[0])[keyAdmin]; got != tc.want {
+		if got := prettyOf(cols, rows[0])[keyAdminState]; got != tc.want {
 			t.Errorf("admin %q rendered %q, want %q", tc.admin, got, tc.want)
 		}
 	}
@@ -388,7 +388,7 @@ func TestAPRowsAbsenceRules(t *testing.T) {
 
 	second := cellsOf(APColumns(), rows[1])
 	for _, key := range []string{
-		"slots", "country", "mode", "admin", "state", "lldp_neighbor",
+		"slots", "country", "mode", "admin_state", "state", "lldp_neighbor",
 		"longitude", "latitude", "height", "floor", "power_type", "uptime_seconds",
 	} {
 		if second[key] != render.Absent {
@@ -440,8 +440,8 @@ func TestAPTagRowsAbsenceRules(t *testing.T) {
 	}
 
 	for _, key := range []string{
-		"tag_source", "misconfig_reason", "filter_name",
-		"policy_tag", "site_tag", "rf_tag", "ap_profile", "flex_profile",
+		"tag_source", "misconfiguration_reason", "filter_name",
+		"policy_tag", "site_tag", "rf_tag", "ap_join_profile", "flex_profile",
 	} {
 		if second[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, second[key], render.Absent)
@@ -469,8 +469,8 @@ func TestAPTagMisconfigReasonKeepsItsNoneApartFromAbsence(t *testing.T) {
 	rows := apTagRows(tags, target)
 
 	for i, want := range []string{"None", "Country", future, render.Absent} {
-		if got := cellsOf(APTagColumns(), rows[i])["misconfig_reason"]; got != want {
-			t.Errorf("row %d misconfig_reason = %q, want %q", i, got, want)
+		if got := cellsOf(APTagColumns(), rows[i])["misconfiguration_reason"]; got != want {
+			t.Errorf("row %d misconfiguration_reason = %q, want %q", i, got, want)
 		}
 	}
 
@@ -739,7 +739,7 @@ func TestAPJoinRows(t *testing.T) {
 
 	// The free text is the device's own and is never mapped.
 	if got := render.StrPtr(first.DisconnectReason); got != "DTLS close alert from peer" {
-		t.Errorf("disconnect_reason = %q, want the free text verbatim", got)
+		t.Errorf("last_disconnect_reason = %q, want the free text verbatim", got)
 	}
 
 	if got := render.Duration(first.LastJoin); got != "2h" {
@@ -886,8 +886,8 @@ func TestAPAdminAndStateGlyphs(t *testing.T) {
 			rows := apRows([]wnc.AP{{AdminState: tc.admin, OperState: tc.operState}}, target)
 			cells := prettyOf(cols, rows[0])
 
-			if cells[keyAdmin] != tc.wantAdmin {
-				t.Errorf("admin = %q, want %q", cells[keyAdmin], tc.wantAdmin)
+			if cells[keyAdminState] != tc.wantAdmin {
+				t.Errorf("admin_state = %q, want %q", cells[keyAdminState], tc.wantAdmin)
 			}
 
 			if cells[keyState] != tc.wantState {
@@ -937,16 +937,16 @@ func TestSortIgnoresThePrettyRendering(t *testing.T) {
 	var declaresPretty bool
 
 	for _, c := range cols {
-		if c.Key == "oper" && c.Pretty != nil {
+		if c.Key == "oper_state" && c.Pretty != nil {
 			declaresPretty = true
 		}
 	}
 
 	if !declaresPretty {
-		t.Fatal("the oper column declares no Pretty rendering")
+		t.Fatal("the oper_state column declares no Pretty rendering")
 	}
 
-	if err := render.Sort(rows, cols, "oper", false); err != nil {
+	if err := render.Sort(rows, cols, "oper_state", false); err != nil {
 		t.Fatalf("Sort: %v", err)
 	}
 

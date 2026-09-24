@@ -8,11 +8,10 @@ package show
 // which must stay literal.
 const (
 	keyAPName        = "ap_name"
-	keyAPMAC         = "ap_mac"
 	keySlot          = "slot"
 	keyBand          = "band"
 	keyMode          = "mode"
-	keyAdmin         = "admin"
+	keyAdminState    = "admin_state"
 	keyChannel       = "channel"
 	keySSID          = "ssid"
 	keyStatus        = "status"
@@ -27,10 +26,13 @@ const (
 	keyRFTag         = "rf_tag"
 	keyFlexProfile   = "flex_profile"
 	keyPolicyProfile = "policy_profile"
+	keyAPJoinProfile = "ap_join_profile"
+	keyWLANProfile   = "wlan_profile"
 )
 
 const (
 	headAPName        = "AP Name"
+	headAdminState    = "Admin State"
 	headRadioMAC      = "Radio MAC"
 	headEthernetMAC   = "Ethernet MAC"
 	headIPAddress     = "IP Address"
@@ -41,6 +43,8 @@ const (
 	headRFTag         = "RF Tag"
 	headFlexProfile   = "Flex Profile"
 	headPolicyProfile = "Policy Profile"
+	headAPJoinProfile = "AP Join Profile"
+	headWLANProfile   = "WLAN Profile"
 )
 
 // Default sort keys, one per command. The three tag views sort by their own key leaf, the one
@@ -56,7 +60,7 @@ const (
 // OverviewKeys are the columns of show overview, one row per access point radio.
 func OverviewKeys() []string {
 	return []string{
-		keyAPName, keyAPMAC, keySlot, keyMode, keyBand, keyAdmin, "oper",
+		keyAPName, keyRadioMAC, keySlot, keyMode, keyBand, keyAdminState, "oper_state",
 		keyChannel, "channel_width", "txpower", "clients",
 		"channel_utilization", "rf_profile", keyController,
 	}
@@ -66,7 +70,7 @@ func OverviewKeys() []string {
 func APKeys() []string {
 	return []string{
 		keyAPName, "model", "serial", keyEthernetMAC, keyRadioMAC, keyIPAddress,
-		"sw_version", "slots", "country", keyMode, keyAdmin, keyState,
+		"version", "slots", "country", keyMode, keyAdminState, keyState,
 		"lldp_neighbor", "longitude", "latitude", "height", "floor", "power_type", "power_mode",
 		"uptime_seconds", "assoc_uptime_seconds", keyController,
 	}
@@ -78,19 +82,18 @@ func APKeys() []string {
 func APJoinKeys() []string {
 	return []string{
 		keyAPName, keyRadioMAC, keyEthernetMAC, keyIPAddress, keyStatus,
-		"last_failure_phase", "last_join_failure", "last_config_failure", "last_disc_failure",
-		"disconnect_reason", "reboot_reason",
+		"last_failure_phase", "last_join_failure", "last_config_failure", "last_discovery_failure",
+		"last_disconnect_reason", "last_reboot_reason",
 		"last_join_seconds", "last_config_seconds", "last_discovery_seconds", "last_error_seconds",
 		keyController,
 	}
 }
 
-// APTagKeys are the columns of show ap-tag, one row per access point. The MAC is named as "show ap
-// tag summary" names it, where show ap keeps "radio_mac" beside the Ethernet MAC.
+// APTagKeys are the columns of show ap-tag, one row per access point.
 func APTagKeys() []string {
 	return []string{
-		keyAPName, keyAPMAC, "misconfigured", "misconfig_reason", "tag_source", "filter_name",
-		keyPolicyTag, keySiteTag, keyRFTag, "ap_profile", keyFlexProfile, keyController,
+		keyAPName, keyRadioMAC, "misconfigured", "misconfiguration_reason", "tag_source", "filter_name",
+		keyPolicyTag, keySiteTag, keyRFTag, keyAPJoinProfile, keyFlexProfile, keyController,
 	}
 }
 
@@ -98,15 +101,15 @@ func APTagKeys() []string {
 // one row for a tag that carries none.
 func PolicyTagKeys() []string {
 	return []string{
-		DefaultSortPolicyTag, keyDescription, "wlan", keyPolicyProfile, keyController,
+		DefaultSortPolicyTag, keyDescription, keyWLANProfile, keyPolicyProfile, keyController,
 	}
 }
 
 // SiteTagKeys are the columns of show site-tag, one row per site tag. ap_join_profile is spelled as
-// the leaf and the --ap-join-profile flag spell it, where show ap-tag calls it ap_profile.
+// the leaf and the --ap-join-profile flag spell it.
 func SiteTagKeys() []string {
 	return []string{
-		DefaultSortSiteTag, keyDescription, "ap_join_profile", keyFlexProfile,
+		DefaultSortSiteTag, keyDescription, keyAPJoinProfile, keyFlexProfile,
 		"local_site", keyController,
 	}
 }
@@ -125,16 +128,16 @@ func ClientKeys() []string {
 	return []string{
 		"mac", "ipv4", "ipv6", "device", "username", keySSID, keyAPName, keySlot,
 		keyBand, "protocol", keyChannel, keyState, "rssi", "snr",
-		"speed", "spatial_streams", "assoc_seconds", "rx_bytes", "tx_bytes", keyController,
+		"rate", "spatial_streams", "connected_seconds", "rx_bytes", "tx_bytes", keyController,
 	}
 }
 
-// WLANKeys are the columns of show wlan, one row per WLAN and bound policy profile. interface is
-// the policy profile's interface name, which is not a VLAN id.
+// WLANKeys are the columns of show wlan, one row per WLAN and bound policy profile. vlan is the
+// policy profile's interface-name leaf, which holds a VLAN name, a VLAN id or a VLAN group name.
 func WLANKeys() []string {
 	return []string{
-		DefaultSortWLANID, "profile", keySSID, keyStatus, "security", "bands", "broadcast",
-		"p2p_block", "policy_status", "switching", "interface", "session_timeout_seconds",
-		"dhcp_required", "policy_profile", "tags", keyController,
+		DefaultSortWLANID, keyWLANProfile, keySSID, keyStatus, "security", "bands", "broadcast_ssid",
+		"p2p_blocking", "policy_status", "switching", "vlan", "session_timeout_seconds",
+		"dhcp_required", "policy_profile", "policy_tags", keyController,
 	}
 }

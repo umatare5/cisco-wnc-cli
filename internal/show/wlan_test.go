@@ -170,7 +170,7 @@ func TestWLANRowsPairsEachWLANWithItsProfiles(t *testing.T) {
 		t.Errorf("second row profile = %q", got)
 	}
 
-	if got := deref(rows[1].PolicyStatus); got != "Shutdown" {
+	if got := deref(rows[1].PolicyStatus); got != "Disabled" {
 		t.Errorf("a shut profile rendered %q", got)
 	}
 
