@@ -133,7 +133,7 @@ func ClientKeys() []string {
 }
 
 // WLANKeys are the columns of show wlan, one row per WLAN and bound policy profile. vlan is the
-// policy profile's interface-name leaf, which holds a VLAN name or a VLAN id.
+// policy profile's interface-name leaf, which holds a VLAN name, a VLAN id or a VLAN group name.
 func WLANKeys() []string {
 	return []string{
 		DefaultSortWLANID, keyWLANProfile, keySSID, keyStatus, "security", "bands", "broadcast_ssid",
