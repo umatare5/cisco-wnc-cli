@@ -49,7 +49,7 @@ func OverviewColumns() []render.Column[OverviewRow] {
 		{Key: keyMode, Header: "Mode", Cell: func(r OverviewRow) string { return render.StrPtr(r.Mode) }},
 		{Key: keyBand, Header: "Band", Cell: func(r OverviewRow) string { return render.StrPtr(r.Band) }},
 		{
-			Key: keyAdmin, Header: headAdminState,
+			Key: keyAdminState, Header: headAdminState,
 			Cell:   func(r OverviewRow) string { return render.StrPtr(r.Admin) },
 			Pretty: func(r OverviewRow) string { return prettyState(r.Admin, dispEnabled, dispDisabled, glyphNo) },
 		},

@@ -72,7 +72,7 @@ func APColumns() []render.Column[APRow] {
 		},
 		{Key: keyMode, Header: "Mode", Cell: func(r APRow) string { return render.StrPtr(r.Mode) }},
 		{
-			Key: keyAdmin, Header: headAdminState,
+			Key: keyAdminState, Header: headAdminState,
 			Cell:   func(r APRow) string { return render.StrPtr(r.Admin) },
 			Pretty: func(r APRow) string { return prettyState(r.Admin, dispEnabled, dispDisabled, glyphNo) },
 		},

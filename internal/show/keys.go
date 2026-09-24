@@ -11,7 +11,7 @@ const (
 	keySlot          = "slot"
 	keyBand          = "band"
 	keyMode          = "mode"
-	keyAdmin         = "admin_state"
+	keyAdminState    = "admin_state"
 	keyChannel       = "channel"
 	keySSID          = "ssid"
 	keyStatus        = "status"
@@ -60,7 +60,7 @@ const (
 // OverviewKeys are the columns of show overview, one row per access point radio.
 func OverviewKeys() []string {
 	return []string{
-		keyAPName, keyRadioMAC, keySlot, keyMode, keyBand, keyAdmin, "oper_state",
+		keyAPName, keyRadioMAC, keySlot, keyMode, keyBand, keyAdminState, "oper_state",
 		keyChannel, "channel_width", "txpower", "clients",
 		"channel_utilization", "rf_profile", keyController,
 	}
@@ -70,7 +70,7 @@ func OverviewKeys() []string {
 func APKeys() []string {
 	return []string{
 		keyAPName, "model", "serial", keyEthernetMAC, keyRadioMAC, keyIPAddress,
-		"version", "slots", "country", keyMode, keyAdmin, keyState,
+		"version", "slots", "country", keyMode, keyAdminState, keyState,
 		"lldp_neighbor", "longitude", "latitude", "height", "floor", "power_type", "power_mode",
 		"uptime_seconds", "assoc_uptime_seconds", keyController,
 	}

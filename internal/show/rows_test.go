@@ -301,7 +301,7 @@ func TestOverviewAdminGlyphs(t *testing.T) {
 
 	for _, tc := range tests {
 		rows := overviewRows([]wnc.Radio{{APMAC: "a", AdminState: tc.admin}}, "", target, &Reporter{})
-		if got := prettyOf(cols, rows[0])[keyAdmin]; got != tc.want {
+		if got := prettyOf(cols, rows[0])[keyAdminState]; got != tc.want {
 			t.Errorf("admin %q rendered %q, want %q", tc.admin, got, tc.want)
 		}
 	}
@@ -886,8 +886,8 @@ func TestAPAdminAndStateGlyphs(t *testing.T) {
 			rows := apRows([]wnc.AP{{AdminState: tc.admin, OperState: tc.operState}}, target)
 			cells := prettyOf(cols, rows[0])
 
-			if cells[keyAdmin] != tc.wantAdmin {
-				t.Errorf("admin = %q, want %q", cells[keyAdmin], tc.wantAdmin)
+			if cells[keyAdminState] != tc.wantAdmin {
+				t.Errorf("admin_state = %q, want %q", cells[keyAdminState], tc.wantAdmin)
 			}
 
 			if cells[keyState] != tc.wantState {
@@ -943,7 +943,7 @@ func TestSortIgnoresThePrettyRendering(t *testing.T) {
 	}
 
 	if !declaresPretty {
-		t.Fatal("the oper column declares no Pretty rendering")
+		t.Fatal("the oper_state column declares no Pretty rendering")
 	}
 
 	if err := render.Sort(rows, cols, "oper_state", false); err != nil {
