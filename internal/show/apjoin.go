@@ -28,9 +28,9 @@ type APJoinRow struct {
 	LastFailurePhase  *string `json:"last_failure_phase,omitzero"`
 	LastJoinFailure   *string `json:"last_join_failure,omitzero"`
 	LastConfigFailure *string `json:"last_config_failure,omitzero"`
-	LastDiscFailure   *string `json:"last_disc_failure,omitzero"`
-	DisconnectReason  *string `json:"disconnect_reason,omitzero"`
-	RebootReason      *string `json:"reboot_reason,omitzero"`
+	LastDiscFailure   *string `json:"last_discovery_failure,omitzero"`
+	DisconnectReason  *string `json:"last_disconnect_reason,omitzero"`
+	RebootReason      *string `json:"last_reboot_reason,omitzero"`
 	LastJoin          *int64  `json:"last_join_seconds,omitzero"`
 	LastConfig        *int64  `json:"last_config_seconds,omitzero"`
 	LastDiscovery     *int64  `json:"last_discovery_seconds,omitzero"`
@@ -75,15 +75,15 @@ func APJoinColumns() []render.Column[APJoinRow] {
 			Cell: func(r APJoinRow) string { return render.StrPtr(r.LastConfigFailure) },
 		},
 		{
-			Key: "last_disc_failure", Header: "Last Discovery Failure", Hidden: true,
+			Key: "last_discovery_failure", Header: "Last Discovery Failure", Hidden: true,
 			Cell: func(r APJoinRow) string { return render.StrPtr(r.LastDiscFailure) },
 		},
 		{
-			Key: "disconnect_reason", Header: "Last Disconnect Reason",
+			Key: "last_disconnect_reason", Header: "Last Disconnect Reason",
 			Cell: func(r APJoinRow) string { return render.StrPtr(r.DisconnectReason) },
 		},
 		{
-			Key: "reboot_reason", Header: "Reboot Reason",
+			Key: "last_reboot_reason", Header: "Last Reboot Reason",
 			Cell: func(r APJoinRow) string { return render.StrPtr(r.RebootReason) },
 		},
 		{

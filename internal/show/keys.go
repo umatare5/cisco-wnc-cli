@@ -78,8 +78,8 @@ func APKeys() []string {
 func APJoinKeys() []string {
 	return []string{
 		keyAPName, keyRadioMAC, keyEthernetMAC, keyIPAddress, keyStatus,
-		"last_failure_phase", "last_join_failure", "last_config_failure", "last_disc_failure",
-		"disconnect_reason", "reboot_reason",
+		"last_failure_phase", "last_join_failure", "last_config_failure", "last_discovery_failure",
+		"last_disconnect_reason", "last_reboot_reason",
 		"last_join_seconds", "last_config_seconds", "last_discovery_seconds", "last_error_seconds",
 		keyController,
 	}

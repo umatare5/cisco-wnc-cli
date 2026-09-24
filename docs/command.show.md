@@ -117,7 +117,7 @@ wnc show ap-join
 ### Expected result
 
 ```text
-AP Name    Status  Last Failure Phase  Last Join Failure        Last Disconnect Reason      Reboot Reason                 Last Join  Last Error  Controller
+AP Name    Status  Last Failure Phase  Last Join Failure        Last Disconnect Reason      Last Reboot Reason            Last Join  Last Error  Controller
 TEST-AP01  Joined  Join                jf-dtls-alert-from-peer  DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h7m        WNC1
 TEST-AP02  Joined  Image-Download      None                     Image Download Success      ap-reboot-reason-img-upgrade  3h3m       3h9m        WNC1
 TEST-AP03  Joined  Join                jf-dtls-alert-from-peer  DTLS close alert from peer  ap-reboot-reason-img-upgrade  3h3m       3h7m        WNC1
@@ -128,7 +128,7 @@ TEST-AP03  Joined  Join                jf-dtls-alert-from-peer  DTLS close alert
 <details><summary>Case 1: List the access points the controller remembers but is not serving</summary><p>
 
 ```bash
-wnc show ap-join -f json | jq -r '.[] | select(.status != "Joined") | "\(.ap_name) \(.disconnect_reason)"'
+wnc show ap-join -f json | jq -r '.[] | select(.status != "Joined") | "\(.ap_name) \(.last_disconnect_reason)"'
 ```
 
 </p></details>

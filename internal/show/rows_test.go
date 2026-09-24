@@ -739,7 +739,7 @@ func TestAPJoinRows(t *testing.T) {
 
 	// The free text is the device's own and is never mapped.
 	if got := render.StrPtr(first.DisconnectReason); got != "DTLS close alert from peer" {
-		t.Errorf("disconnect_reason = %q, want the free text verbatim", got)
+		t.Errorf("last_disconnect_reason = %q, want the free text verbatim", got)
 	}
 
 	if got := render.Duration(first.LastJoin); got != "2h" {
