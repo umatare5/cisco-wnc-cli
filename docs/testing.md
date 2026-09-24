@@ -153,8 +153,8 @@ Add `--columns all` to compare the columns the default set leaves out as well.
 `show ap geolocation summary` covers the coordinates and the height among them.
 The floor has no `show` of its own, so compare it with the `ap name <name> floor` given.
 
-Some headings differ from the device's on purpose, because these views follow the YANG leaf and the write flag.
-[`measurements.md`](measurements.md#device-heading-map) maps them in full.
+Some headings differ from the device's on purpose, where one spelling serves every view or the view already says the rest.
+[`measurements.md`](measurements.md#device-heading-map) maps each one to the device command that prints it.
 
 ### Action commands
 
