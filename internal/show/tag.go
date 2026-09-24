@@ -68,7 +68,7 @@ func SiteTagColumns() []render.Column[SiteTagRow] {
 			Cell: func(r SiteTagRow) string { return render.StrPtr(r.Description) },
 		},
 		{
-			Key: "ap_join_profile", Header: "AP Join Profile",
+			Key: keyAPJoinProfile, Header: headAPJoinProfile,
 			Cell: func(r SiteTagRow) string { return render.StrPtr(r.APJoinProfile) },
 		},
 		{

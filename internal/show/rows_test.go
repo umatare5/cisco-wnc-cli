@@ -440,8 +440,8 @@ func TestAPTagRowsAbsenceRules(t *testing.T) {
 	}
 
 	for _, key := range []string{
-		"tag_source", "misconfig_reason", "filter_name",
-		"policy_tag", "site_tag", "rf_tag", "ap_profile", "flex_profile",
+		"tag_source", "misconfiguration_reason", "filter_name",
+		"policy_tag", "site_tag", "rf_tag", "ap_join_profile", "flex_profile",
 	} {
 		if second[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, second[key], render.Absent)
@@ -469,8 +469,8 @@ func TestAPTagMisconfigReasonKeepsItsNoneApartFromAbsence(t *testing.T) {
 	rows := apTagRows(tags, target)
 
 	for i, want := range []string{"None", "Country", future, render.Absent} {
-		if got := cellsOf(APTagColumns(), rows[i])["misconfig_reason"]; got != want {
-			t.Errorf("row %d misconfig_reason = %q, want %q", i, got, want)
+		if got := cellsOf(APTagColumns(), rows[i])["misconfiguration_reason"]; got != want {
+			t.Errorf("row %d misconfiguration_reason = %q, want %q", i, got, want)
 		}
 	}
 

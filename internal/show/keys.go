@@ -26,6 +26,7 @@ const (
 	keyRFTag         = "rf_tag"
 	keyFlexProfile   = "flex_profile"
 	keyPolicyProfile = "policy_profile"
+	keyAPJoinProfile = "ap_join_profile"
 )
 
 const (
@@ -40,6 +41,7 @@ const (
 	headRFTag         = "RF Tag"
 	headFlexProfile   = "Flex Profile"
 	headPolicyProfile = "Policy Profile"
+	headAPJoinProfile = "AP Join Profile"
 )
 
 // Default sort keys, one per command. The three tag views sort by their own key leaf, the one
@@ -87,8 +89,8 @@ func APJoinKeys() []string {
 // APTagKeys are the columns of show ap-tag, one row per access point.
 func APTagKeys() []string {
 	return []string{
-		keyAPName, keyRadioMAC, "misconfigured", "misconfig_reason", "tag_source", "filter_name",
-		keyPolicyTag, keySiteTag, keyRFTag, "ap_profile", keyFlexProfile, keyController,
+		keyAPName, keyRadioMAC, "misconfigured", "misconfiguration_reason", "tag_source", "filter_name",
+		keyPolicyTag, keySiteTag, keyRFTag, keyAPJoinProfile, keyFlexProfile, keyController,
 	}
 }
 
@@ -101,10 +103,10 @@ func PolicyTagKeys() []string {
 }
 
 // SiteTagKeys are the columns of show site-tag, one row per site tag. ap_join_profile is spelled as
-// the leaf and the --ap-join-profile flag spell it, where show ap-tag calls it ap_profile.
+// the leaf and the --ap-join-profile flag spell it.
 func SiteTagKeys() []string {
 	return []string{
-		DefaultSortSiteTag, keyDescription, "ap_join_profile", keyFlexProfile,
+		DefaultSortSiteTag, keyDescription, keyAPJoinProfile, keyFlexProfile,
 		"local_site", keyController,
 	}
 }

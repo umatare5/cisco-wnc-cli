@@ -171,10 +171,10 @@ wnc show ap-tag
 ### Expected result
 
 ```text
-AP Name    Misconfigured  Misconfig Reason  Tag Source  Filter Name  Policy Tag      Site Tag        RF Tag        AP Profile         Flex Profile         Controller
-TEST-AP01  No             -                 Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
-TEST-AP02  No             -                 Static      -            test-wlan-flex  test-site-flex  test-outside  test-ap-profile01  test-flex-profile01  WNC1
-TEST-AP03  No             -                 Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
+AP Name    Misconfigured  Misconfiguration Reason  Tag Source  Filter Name  Policy Tag      Site Tag        RF Tag        AP Join Profile    Flex Profile         Controller
+TEST-AP01  No             -                        Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
+TEST-AP02  No             -                        Static      -            test-wlan-flex  test-site-flex  test-outside  test-ap-profile01  test-flex-profile01  WNC1
+TEST-AP03  No             -                        Static      -            test-wlan-flex  test-site-flex  test-inside   test-ap-profile01  test-flex-profile01  WNC1
 ```
 
 ### Use cases

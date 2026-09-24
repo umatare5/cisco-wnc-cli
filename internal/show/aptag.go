@@ -13,19 +13,19 @@ type APTagRow struct {
 	APName          *string `json:"ap_name,omitzero"`
 	APMAC           *string `json:"radio_mac,omitzero"`
 	Misconfigured   *bool   `json:"misconfigured,omitzero"`
-	MisconfigReason *string `json:"misconfig_reason,omitzero"`
+	MisconfigReason *string `json:"misconfiguration_reason,omitzero"`
 	TagSource       *string `json:"tag_source,omitzero"`
 	FilterName      *string `json:"filter_name,omitzero"`
 	PolicyTag       *string `json:"policy_tag,omitzero"`
 	SiteTag         *string `json:"site_tag,omitzero"`
 	RFTag           *string `json:"rf_tag,omitzero"`
-	APProfile       *string `json:"ap_profile,omitzero"`
+	APProfile       *string `json:"ap_join_profile,omitzero"`
 	FlexProfile     *string `json:"flex_profile,omitzero"`
 	Controller      string  `json:"controller"`
 }
 
 // APTagColumns describes the tag view. Policy, Site and RF Tag are the resolved values in effect.
-// AP Profile and Flex Profile have no resolved counterpart in the schema, so they are the
+// AP Join Profile and Flex Profile have no resolved counterpart in the schema, so they are the
 // configured site tag's own and agree with Site Tag only while the two site tags do.
 func APTagColumns() []render.Column[APTagRow] {
 	return []render.Column[APTagRow]{
@@ -51,7 +51,7 @@ func APTagColumns() []render.Column[APTagRow] {
 			// The reason is the enum's own account of the flag beside it, and its
 			// "no misconfiguration" member is a value rather than an absence. A dash
 			// therefore means the release does not report the leaf at all.
-			Key: "misconfig_reason", Header: "Misconfig Reason",
+			Key: "misconfiguration_reason", Header: "Misconfiguration Reason",
 			Cell: func(r APTagRow) string { return render.StrPtr(r.MisconfigReason) },
 		},
 		{Key: "tag_source", Header: "Tag Source", Cell: func(r APTagRow) string { return render.StrPtr(r.TagSource) }},
@@ -65,7 +65,11 @@ func APTagColumns() []render.Column[APTagRow] {
 		{Key: keyPolicyTag, Header: headPolicyTag, Cell: func(r APTagRow) string { return render.StrPtr(r.PolicyTag) }},
 		{Key: keySiteTag, Header: headSiteTag, Cell: func(r APTagRow) string { return render.StrPtr(r.SiteTag) }},
 		{Key: keyRFTag, Header: headRFTag, Cell: func(r APTagRow) string { return render.StrPtr(r.RFTag) }},
-		{Key: "ap_profile", Header: "AP Profile", Cell: func(r APTagRow) string { return render.StrPtr(r.APProfile) }},
+		{
+			Key:    keyAPJoinProfile,
+			Header: headAPJoinProfile,
+			Cell:   func(r APTagRow) string { return render.StrPtr(r.APProfile) },
+		},
 		{
 			Key:    keyFlexProfile,
 			Header: headFlexProfile,
