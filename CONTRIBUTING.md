@@ -12,7 +12,6 @@ Install [`gotestsum`](https://github.com/gotestyourself/gotestsum), [`golangci-l
 - **Only `gitleaks` comes from `PATH`** – pre-commit builds the rest at the versions it pins.
 - **The markdown hook runs `--fix`** – it rewrites files, so reach it with `make pre-commit-test`.
 - **One install arms every worktree** – the hook path is shared, so it passes `--allow-missing-config`.
-- **`make build` skips a rebuild** – the file target does nothing while the binary exists.
 
 > [!WARNING]
 > `make clean` removes `./tmp` whole, and a worktree lives there too.
