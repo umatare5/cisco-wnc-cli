@@ -69,7 +69,7 @@ func OverviewColumns() []render.Column[OverviewRow] {
 			Sort: func(r OverviewRow) any { return render.SortValue(r.Width) },
 		},
 		{
-			Key: "txpower", Header: "TxPower",
+			Key: "txpower", Header: "Tx Power",
 			Cell: func(r OverviewRow) string { return render.UnitPtr(r.TxPower, "dBm") },
 			Sort: func(r OverviewRow) any { return render.SortValue(r.TxPower) },
 		},
