@@ -13,10 +13,6 @@ Install [`gotestsum`](https://github.com/gotestyourself/gotestsum), [`golangci-l
 - **The markdown hook runs `--fix`** – it rewrites files, so reach it with `make pre-commit-test`.
 - **One install arms every worktree** – the hook path is shared, so it passes `--allow-missing-config`.
 
-> [!WARNING]
-> `make clean` removes `./tmp` whole, and a worktree lives there too.
-> Check what is there before running it.
-
 ## Commands
 
 `make help` prints this list together with the tools each target needs.

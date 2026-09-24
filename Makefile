@@ -5,6 +5,7 @@ BUILD_DIR := ./tmp
 BINARY_PATH := $(BUILD_DIR)/$(BINARY_NAME)
 COVERAGE_DIR := ./coverage
 IMAGE_DIR := $(BUILD_DIR)/image
+DIST_DIR := $(BUILD_DIR)/dist
 GOARCH := $(shell go env GOARCH)
 
 LDFLAGS := -X github.com/umatare5/cisco-wnc-cli/internal/cli.version=$(shell cat VERSION)
@@ -60,10 +61,9 @@ test-unit-coverage: test-unit
 snapshot:
 	goreleaser release --snapshot --clean
 
-# BUILD_DIR is ./tmp, which is also the worktree root: this deletes any worktree there.
+# BUILD_DIR is also the worktree root, so only the artifacts inside it are removed.
 clean:
-	rm -rf $(BUILD_DIR) $(COVERAGE_DIR)
-	find . -name "*.bak*" -type f -delete 2>/dev/null || true
+	rm -rf $(BINARY_PATH) $(IMAGE_DIR) $(DIST_DIR) $(COVERAGE_DIR)
 
 # Assembles the same context goreleaser hands docker – see the Dockerfile header. The
 # linux/$(GOARCH) subdirectory is what makes the shared COPY line resolve in both.
