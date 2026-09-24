@@ -4,6 +4,13 @@ Each section covers one release and lists the pull requests it carries.
 
 ## [Unreleased]
 
+## [v0.4.0]
+
+This release renames 17 keys and 5 headings and changes the policy_status values (#107), so check a script that reads the JSON or names a key before upgrading.
+
+- [#106](https://github.com/umatare5/cisco-wnc-cli/pull/106) – Rebuild on every make build and keep worktrees on make clean
+- [#107](https://github.com/umatare5/cisco-wnc-cli/pull/107) – Rename the show keys and headings to the controller's vocabulary
+
 ## [v0.3.0]
 
 This release shrinks the default column set (#100), renames --sort-keys to --list-keys (#102) and renames six keys (#102, #103), so check a script that reads the JSON or names a key before upgrading.
@@ -36,6 +43,7 @@ This release shrinks the default column set (#100), renames --sort-keys to --lis
 - [#82](https://github.com/umatare5/cisco-wnc-cli/pull/82) – Pin the documentation skeletons and ship the license notices
 - [#83](https://github.com/umatare5/cisco-wnc-cli/pull/83) – Restructure the documentation set and pin its heading skeletons
 
+[v0.4.0]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.4.0
 [v0.3.0]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.3.0
 [v0.2.1]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.2.0
