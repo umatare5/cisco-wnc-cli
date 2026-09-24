@@ -9,21 +9,36 @@ This document records every reading taken on a live Catalyst 9800, each one only
 
 Columns whose device heading differs, with the command that prints them.
 
-| Column                           | Device heading                     | Device command                                               |
-| :------------------------------- | :--------------------------------- | :----------------------------------------------------------- |
-| `ap_join_profile`                | `AP Profile`                       | `show wireless tag site detailed`                            |
-| `assoc_uptime_seconds`           | `Association Up Time`              | `show ap uptime`                                             |
-| `band` and `protocol`            | `11n(2.4)`, the pair in one field  | `show wireless client summary`                               |
-| `channel`                        | `(64,60)`, a pair per radio        | `show ap dot11 5ghz summary`                                 |
-| `misconfiguration_reason`        | none at all on the device          | `show ap tag summary`                                        |
-| `mode`                           | `AP Mode : FlexConnect`            | `show ap ... config general`                                 |
-| `power_type`                     | `PoE`, both mechanisms collapsed   | `show ap config general`                                     |
-| `profile_24ghz`                  | `2.4ghz RF Policy`                 | `show wireless tag rf detailed`                              |
-| `profile_5ghz`                   | `5ghz RF Policy`                   | `show wireless tag rf detailed`                              |
-| `profile_6ghz`                   | `6ghz RF Policy`                   | `show wireless tag rf detailed`                              |
-| `radio_mac`                      | `Base MAC`, `AP Mac`               | `show wireless stats ap join summary`, `show ap tag summary` |
-| `uptime_seconds`                 | `AP Up Time`                       | `show ap uptime`                                             |
-| `wlan_profile`, `policy_profile` | `WLAN Profile Name`, `Policy Name` | `show wireless tag policy detailed`                          |
+| Column                           | Device heading                                       | Device command                                         |
+| :------------------------------- | :--------------------------------------------------- | :----------------------------------------------------- |
+| `admin_state`                    | `Administrative State`                               | `show ap config general`                               |
+| `ap_join_profile`                | `AP Profile`                                         | `show wireless tag site detailed`                      |
+| `assoc_uptime_seconds`           | `Association Up Time`                                | `show ap uptime`                                       |
+| `band` and `protocol`            | `11n(2.4)`, the pair in one field                    | `show wireless client summary`                         |
+| `channel`                        | `(64,60)`, a pair per radio                          | `show ap dot11 5ghz summary`                           |
+| `connected_seconds`              | `Connected For`, in seconds                          | `show wireless client mac-address ... detail`          |
+| `device`                         | `Device Name`                                        | `show wireless client mac-address ... detail`          |
+| `last_config_failure`            | `Reason for last unsuccessful configuration attempt` | `show wireless stats ap mac-address ... join detailed` |
+| `last_discovery_failure`         | `Reason for last unsuccessful discovery attempt`     | `show wireless stats ap mac-address ... join detailed` |
+| `last_join_failure`              | `Reason for last unsuccessful join attempt`          | `show wireless stats ap mac-address ... join detailed` |
+| `last_reboot_reason`             | `Reboot reason from AP`                              | `show wireless stats ap mac-address ... join detailed` |
+| `misconfiguration_reason`        | none at all on the device                            | `show ap tag summary`                                  |
+| `mode`                           | `AP Mode : FlexConnect`                              | `show ap ... config general`                           |
+| `p2p_blocking`                   | `Peer-to-Peer Blocking Action`                       | `show wlan id`                                         |
+| `power_type`                     | `PoE`, both mechanisms collapsed                     | `show ap config general`                               |
+| `profile_24ghz`                  | `2.4ghz RF Policy`                                   | `show wireless tag rf detailed`                        |
+| `profile_5ghz`                   | `5ghz RF Policy`                                     | `show wireless tag rf detailed`                        |
+| `profile_6ghz`                   | `6ghz RF Policy`                                     | `show wireless tag rf detailed`                        |
+| `radio_mac`                      | `Base MAC`                                           | `show wireless stats ap join summary`                  |
+| `radio_mac`                      | `AP Mac`                                             | `show ap tag summary`                                  |
+| `radio_mac`                      | `Mac Address`                                        | `show ap dot11 5ghz summary`                           |
+| `rate`                           | `Current Rate`, an MCS index and stream count        | `show wireless client mac-address ... detail`          |
+| `rx_bytes`                       | `Number of Bytes Received from Client`               | `show wireless client mac-address ... detail`          |
+| `tx_bytes`                       | `Number of Bytes Sent to Client`                     | `show wireless client mac-address ... detail`          |
+| `txpower`                        | `Txpwr`, level and dBm in one field                  | `show ap dot11 5ghz summary`                           |
+| `uptime_seconds`                 | `AP Up Time`                                         | `show ap uptime`                                       |
+| `version`                        | `Software Version`                                   | `show ap config general`                               |
+| `wlan_profile`, `policy_profile` | `WLAN Profile Name`, `Policy Name`                   | `show wireless tag policy detailed`                    |
 
 ## Access Point
 
