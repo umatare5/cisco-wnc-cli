@@ -64,10 +64,10 @@ wnc show ap
 ### Expected result
 
 ```text
-AP Name    Model             SW Version  Mode         Admin    State       Power Mode  Uptime  Assoc  Controller
-TEST-AP01  AIR-AP1815I-Q-K9  17.12.7.13  FlexConnect  Enabled  Registered  Full Power  1d14h   1d14h  WNC1
-TEST-AP02  AIR-AP2802I-Q-K9  17.12.7.13  FlexConnect  Enabled  Registered  Full Power  1d1h    1d1h   WNC1
-TEST-AP03  CW9166I-Q         17.12.7.13  FlexConnect  Enabled  Registered  Full Power  5d20h   5d20h  WNC1
+AP Name    Model             Version     Mode         Admin    State       Power Mode  Uptime  Assoc Uptime  Controller
+TEST-AP01  AIR-AP1815I-Q-K9  17.12.7.13  FlexConnect  Enabled  Registered  Full Power  1d14h   1d14h         WNC1
+TEST-AP02  AIR-AP2802I-Q-K9  17.12.7.13  FlexConnect  Enabled  Registered  Full Power  1d1h    1d1h          WNC1
+TEST-AP03  CW9166I-Q         17.12.7.13  FlexConnect  Enabled  Registered  Full Power  5d20h   5d20h         WNC1
 ```
 
 ### Use cases

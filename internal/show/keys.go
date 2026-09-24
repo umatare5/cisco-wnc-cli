@@ -65,7 +65,7 @@ func OverviewKeys() []string {
 func APKeys() []string {
 	return []string{
 		keyAPName, "model", "serial", keyEthernetMAC, keyRadioMAC, keyIPAddress,
-		"sw_version", "slots", "country", keyMode, keyAdmin, keyState,
+		"version", "slots", "country", keyMode, keyAdmin, keyState,
 		"lldp_neighbor", "longitude", "latitude", "height", "floor", "power_type", "power_mode",
 		"uptime_seconds", "assoc_uptime_seconds", keyController,
 	}

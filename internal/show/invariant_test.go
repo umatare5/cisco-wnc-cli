@@ -245,7 +245,7 @@ func TestAPDefaultSetIsTheDocumentedTable(t *testing.T) {
 	t.Parallel()
 
 	want := []string{
-		keyAPName, "model", "sw_version", keyMode, keyAdmin, keyState,
+		keyAPName, "model", "version", keyMode, keyAdmin, keyState,
 		"power_mode", "uptime_seconds", "assoc_uptime_seconds", keyController,
 	}
 
