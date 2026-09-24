@@ -125,7 +125,7 @@ func ClientKeys() []string {
 	return []string{
 		"mac", "ipv4", "ipv6", "device", "username", keySSID, keyAPName, keySlot,
 		keyBand, "protocol", keyChannel, keyState, "rssi", "snr",
-		"speed", "spatial_streams", "assoc_seconds", "rx_bytes", "tx_bytes", keyController,
+		"rate", "spatial_streams", "connected_seconds", "rx_bytes", "tx_bytes", keyController,
 	}
 }
 

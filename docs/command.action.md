@@ -320,7 +320,7 @@ Expected result:
 
 ```bash
 wnc deauth --mac 00:00:5e:00:53:a1 --yes
-watch -n 5 'wnc show client -f json --columns mac,state,assoc_seconds | jq -r ".[] | select(.mac==\"00:00:5e:00:53:a1\") | \"\(.state) assoc \(.assoc_seconds)s\""'
+watch -n 5 'wnc show client -f json --columns mac,state,connected_seconds | jq -r ".[] | select(.mac==\"00:00:5e:00:53:a1\") | \"\(.state) connected \(.connected_seconds)s\""'
 ```
 
 </p></details>

@@ -216,10 +216,10 @@ wnc show client
 ### Expected result
 
 ```text
-Device          SSID          AP Name    Band  Protocol  Channel  State           RSSI    SNR   Rate     Assoc  Rx        Tx       Controller
-Example Phone   test-essid02  TEST-AP01  5     11ac      64ch     Run             -43dBm  56dB  866Mbps  17m    107.9KiB  30.7KiB  WNC1
-Example Vendor  test-essid01  TEST-AP03  2.4   11ax      6ch      Run             -21dBm  78dB  143Mbps  2h15m  17.0MiB   19.6MiB  WNC1
-Example Sensor  test-essid03  TEST-AP03  6     11be      5ch      Authenticating  -55dBm  40dB  -        42s    -         -        WNC1
+Device          SSID          AP Name    Band  Protocol  Channel  State           RSSI    SNR   Rate     Connected  Rx Bytes  Tx Bytes  Controller
+Example Phone   test-essid02  TEST-AP01  5     11ac      64ch     Run             -43dBm  56dB  866Mbps  17m        107.9KiB  30.7KiB   WNC1
+Example Vendor  test-essid01  TEST-AP03  2.4   11ax      6ch      Run             -21dBm  78dB  143Mbps  2h15m      17.0MiB   19.6MiB   WNC1
+Example Sensor  test-essid03  TEST-AP03  6     11be      5ch      Authenticating  -55dBm  40dB  -        42s        -         -         WNC1
 ```
 
 ### Use cases
@@ -236,8 +236,8 @@ wnc show client -f json --columns mac,ap_name,rssi \
 <details><summary>Case 2: Find the clients stuck short of the run state</summary><p>
 
 ```bash
-wnc show client -f json --columns mac,state,assoc_seconds \
-  | jq -r '.[] | select(.state != "Run") | "\(.mac) \(.state) \(.assoc_seconds)s"'
+wnc show client -f json --columns mac,state,connected_seconds \
+  | jq -r '.[] | select(.state != "Run") | "\(.mac) \(.state) \(.connected_seconds)s"'
 ```
 
 </p></details>

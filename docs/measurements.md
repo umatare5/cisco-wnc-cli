@@ -83,26 +83,26 @@ The access-point collections and the RPCs that name one.
 
 The client collections and `apf-ms-delete-all`, whose scope no schema states.
 
-| Fact                                                                | Release           | Condition                                            |
-| :------------------------------------------------------------------ | :---------------- | :--------------------------------------------------- |
-| Every `client-mac` a controller serves is already lowercase         | 17.12.8, 17.15.6  | The form the SDK normalizes to, so none is folded    |
-| The client RPC module at `2023-03-01`: two `clear-sisf-binding`     | 17.12.8           | Read 2026-08-29, with no client delete there         |
-| The same module at `2024-03-01` adds `apf-ms-delete-all`            | 17.15.6, 17.18.4a | Read 2026-08-29, so `deauth` needs 17.15.6           |
-| Its description reads "... client MAC or IP address or username"    | Unrecorded        | The name reads as a purge its model contradicts      |
-| A post to the release without it `400`s `malformed-message`         | 17.12.8           | This CLI re-words that status rather than passing it |
-| `204` for a target with no session as for one it dropped            | 17.18.4a          | Both under 330ms, so neither confirms a client       |
-| `--mac` post: `assoc_seconds` 6102 to 13, `Run` to `IP Learning`    | 17.18.4a          | Recovery to `ipv4` by 210s, three clients untouched  |
-| Two `--mac` posts each dropped two of eighteen, not one             | 17.15.6           | A 25s no-post window moved none, so no accident      |
-| The extra station shared the AP, BSSID, radio and WLAN              | 17.15.6           | Another vendor, and thirteen on that BSS stayed      |
-| `--username` post: the row gone in 1.9s, deleted not reset in place | 17.15.6           | Target stable 82 minutes at `assoc_seconds` 4943     |
-| The station re-associated as a new record in 1.5s, `Run` inside 42s | 17.15.6           | So a later read sees a young association             |
-| That post moved none of the other 17 clients on the controller      | 17.15.6           | Two 35s control windows moved 1 and 0 of eighteen    |
-| Sixteen of eighteen clients carried an empty username               | 17.15.6           | So an empty `--username` selects nearly every one    |
-| The RPC's `ip-addr` arm answers `204` and is not refused            | 17.15.6           | Every SISF binding measured carries zone 0           |
-| The username key arrives with an empty value, not omitted           | Unrecorded        | So an empty username reads as unreported             |
-| Up to eight IPv6 addresses per client, some compressed              | Unrecorded        | A textual compare differs between two polls          |
-| Sibling instant leaves on the client read return the Unix epoch     | Unrecorded        | An age off one would read as fifty-six years         |
-| The list carrying a client hostname answers with no content         | Unrecorded        | So the device-classification label is all there is   |
+| Fact                                                                 | Release           | Condition                                            |
+| :------------------------------------------------------------------- | :---------------- | :--------------------------------------------------- |
+| Every `client-mac` a controller serves is already lowercase          | 17.12.8, 17.15.6  | The form the SDK normalizes to, so none is folded    |
+| The client RPC module at `2023-03-01`: two `clear-sisf-binding`      | 17.12.8           | Read 2026-08-29, with no client delete there         |
+| The same module at `2024-03-01` adds `apf-ms-delete-all`             | 17.15.6, 17.18.4a | Read 2026-08-29, so `deauth` needs 17.15.6           |
+| Its description reads "... client MAC or IP address or username"     | Unrecorded        | The name reads as a purge its model contradicts      |
+| A post to the release without it `400`s `malformed-message`          | 17.12.8           | This CLI re-words that status rather than passing it |
+| `204` for a target with no session as for one it dropped             | 17.18.4a          | Both under 330ms, so neither confirms a client       |
+| `--mac` post: `connected_seconds` 6102 to 13, `Run` to `IP Learning` | 17.18.4a          | Recovery to `ipv4` by 210s, three clients untouched  |
+| Two `--mac` posts each dropped two of eighteen, not one              | 17.15.6           | A 25s no-post window moved none, so no accident      |
+| The extra station shared the AP, BSSID, radio and WLAN               | 17.15.6           | Another vendor, and thirteen on that BSS stayed      |
+| `--username` post: the row gone in 1.9s, deleted not reset in place  | 17.15.6           | Target stable 82 minutes at `connected_seconds` 4943 |
+| The station re-associated as a new record in 1.5s, `Run` inside 42s  | 17.15.6           | So a later read sees a young association             |
+| That post moved none of the other 17 clients on the controller       | 17.15.6           | Two 35s control windows moved 1 and 0 of eighteen    |
+| Sixteen of eighteen clients carried an empty username                | 17.15.6           | So an empty `--username` selects nearly every one    |
+| The RPC's `ip-addr` arm answers `204` and is not refused             | 17.15.6           | Every SISF binding measured carries zone 0           |
+| The username key arrives with an empty value, not omitted            | Unrecorded        | So an empty username reads as unreported             |
+| Up to eight IPv6 addresses per client, some compressed               | Unrecorded        | A textual compare differs between two polls          |
+| Sibling instant leaves on the client read return the Unix epoch      | Unrecorded        | An age off one would read as fifty-six years         |
+| The list carrying a client hostname answers with no content          | Unrecorded        | So the device-classification label is all there is   |
 
 ## Tag
 

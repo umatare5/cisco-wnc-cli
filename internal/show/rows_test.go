@@ -53,7 +53,7 @@ func TestClientRowsAbsenceRules(t *testing.T) {
 
 	cells := cellsOf(ClientColumns(), rows[0])
 
-	for _, key := range []string{"username", "ipv4", "channel", "speed", "spatial_streams", "rssi"} {
+	for _, key := range []string{"username", "ipv4", "channel", "rate", "spatial_streams", "rssi"} {
 		if cells[key] != render.Absent {
 			t.Errorf("%s = %q, want %q", key, cells[key], render.Absent)
 		}
@@ -86,7 +86,7 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 	cells := cellsOf(cols, reported[0])
 	for key, want := range map[string]string{
 		"channel": "6ch", "rssi": "-21dBm", "snr": "78dB",
-		"speed": "143Mbps", "spatial_streams": "1ss",
+		"rate": "143Mbps", "spatial_streams": "1ss",
 	} {
 		if cells[key] != want {
 			t.Errorf("%s = %q, want %q", key, cells[key], want)
@@ -97,7 +97,7 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 	// snr is in this list because 0 dB is a real margin: it is the one cell here whose
 	// value cannot be told from its absence without the pointer the fetch layer sets.
 	absent := clientRows([]wnc.WirelessClient{{MAC: "00:00:5e:00:53:a2"}}, ClientFilter{}, target, &Reporter{})
-	for _, key := range []string{"channel", "rssi", "snr", "speed", "spatial_streams"} {
+	for _, key := range []string{"channel", "rssi", "snr", "rate", "spatial_streams"} {
 		if got := cellsOf(cols, absent[0])[key]; got != render.Absent {
 			t.Errorf("%s = %q, want %q", key, got, render.Absent)
 		}
@@ -115,7 +115,7 @@ func TestClientCellsCarryTheirUnitsAndNothingElseDoes(t *testing.T) {
 		}
 	}
 
-	for _, bare := range []string{`"channel":6`, `"rssi":-21`, `"snr":78`, `"speed":143`} {
+	for _, bare := range []string{`"channel":6`, `"rssi":-21`, `"snr":78`, `"rate":143`} {
 		if !strings.Contains(buf.String(), bare) {
 			t.Errorf("the JSON lost %s:\n%s", bare, buf.String())
 		}
