@@ -914,7 +914,7 @@ DESCRIPTION:
    One row per WLAN binding the tag carries, sorted by policy_tag, so a tag
    binding three WLANs appears three times and one binding none appears once.
    A cell reading "-" is a value the controller did not send.
-   WLAN is the WLAN profile name the binding keys on, not always the SSID.
+   WLAN Profile is the profile name the binding keys on, not always the SSID.
 
 OPTIONS:
    --sort-by key, -b key  sort key (see --list-keys) (default: "policy_tag")

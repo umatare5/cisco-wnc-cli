@@ -181,7 +181,7 @@ func policyTagCommand() *cli.Command {
 		Description: "One row per WLAN binding the tag carries, sorted by policy_tag, so a tag\n" +
 			"binding three WLANs appears three times and one binding none appears once.\n" +
 			absenceNote + "\n" +
-			"WLAN is the WLAN profile name the binding keys on, not always the SSID.",
+			"WLAN Profile is the profile name the binding keys on, not always the SSID.",
 		Flags: sortFlags(show.DefaultSortPolicyTag),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return runShow(ctx, cmd, show.PolicyTagKeys(), show.DefaultSortPolicyTag,

@@ -271,7 +271,7 @@ wnc show wlan
 ### Expected result
 
 ```text
-ID  Profile              SSID          Status   Security            Bands  Policy Status  Switching  Interface      Policy Profile         Controller
+ID  WLAN Profile         SSID          Status   Security            Bands  Policy Status  Switching  VLAN           Policy Profile         Controller
 5   test-wlan-profile01  test-essid01  Enabled  WPA2 PSK            2.4    Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
 6   test-wlan-profile02  test-essid02  Enabled  WPA2 PSK            5      Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
 7   test-wlan-profile03  test-essid03  Enabled  WPA3 802.1X-SHA256  5/6    Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
@@ -282,7 +282,7 @@ ID  Profile              SSID          Status   Security            Bands  Polic
 <details><summary>Case 1: Find the enabled WLANs whose policy profile is shut, so they are off air</summary><p>
 
 ```bash
-wnc show wlan -f json | jq -r '.[] | select(.status == "Enabled" and .policy_status == "Shutdown") | .profile'
+wnc show wlan -f json | jq -r '.[] | select(.status == "Enabled" and .policy_status == "Shutdown") | .wlan_profile'
 ```
 
 </p></details>
@@ -316,7 +316,7 @@ wnc show policy-tag
 ### Expected result
 
 ```text
-Policy Tag          Description                       WLAN                 Policy Profile         Controller
+Policy Tag          Description                       WLAN Profile         Policy Profile         Controller
 default-policy-tag  Preconfigured default policy-tag  -                    -                      WNC3
 test-wlan-flex      -                                 test-wlan-profile01  test-policy-profile01  WNC3
 test-wlan-flex      -                                 test-wlan-profile02  test-policy-profile01  WNC3
@@ -336,7 +336,7 @@ wnc show policy-tag --controller 192.168.0.1
 <details><summary>Case 2: Find the tags that bind nothing, the usual target of a delete</summary><p>
 
 ```bash
-wnc show policy-tag --format json | jq -r '.[] | select(.wlan == null) | .policy_tag'
+wnc show policy-tag --format json | jq -r '.[] | select(.wlan_profile == null) | .policy_tag'
 ```
 
 </p></details>
@@ -352,7 +352,7 @@ wnc show policy-tag --sort-by policy_profile
 <details><summary>Case 4: Find which tags bind one WLAN profile</summary><p>
 
 ```bash
-wnc show policy-tag --format json | jq -r '.[] | select(.wlan == "test-wlan-profile01") | .policy_tag'
+wnc show policy-tag --format json | jq -r '.[] | select(.wlan_profile == "test-wlan-profile01") | .policy_tag'
 ```
 
 </p></details>

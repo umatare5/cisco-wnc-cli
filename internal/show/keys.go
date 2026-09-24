@@ -27,6 +27,7 @@ const (
 	keyFlexProfile   = "flex_profile"
 	keyPolicyProfile = "policy_profile"
 	keyAPJoinProfile = "ap_join_profile"
+	keyWLANProfile   = "wlan_profile"
 )
 
 const (
@@ -42,6 +43,7 @@ const (
 	headFlexProfile   = "Flex Profile"
 	headPolicyProfile = "Policy Profile"
 	headAPJoinProfile = "AP Join Profile"
+	headWLANProfile   = "WLAN Profile"
 )
 
 // Default sort keys, one per command. The three tag views sort by their own key leaf, the one
@@ -98,7 +100,7 @@ func APTagKeys() []string {
 // one row for a tag that carries none.
 func PolicyTagKeys() []string {
 	return []string{
-		DefaultSortPolicyTag, keyDescription, "wlan", keyPolicyProfile, keyController,
+		DefaultSortPolicyTag, keyDescription, keyWLANProfile, keyPolicyProfile, keyController,
 	}
 }
 
@@ -129,12 +131,12 @@ func ClientKeys() []string {
 	}
 }
 
-// WLANKeys are the columns of show wlan, one row per WLAN and bound policy profile. interface is
-// the policy profile's interface name, which is not a VLAN id.
+// WLANKeys are the columns of show wlan, one row per WLAN and bound policy profile. vlan is the
+// policy profile's interface-name leaf, which holds a VLAN name or a VLAN id.
 func WLANKeys() []string {
 	return []string{
-		DefaultSortWLANID, "profile", keySSID, keyStatus, "security", "bands", "broadcast",
-		"p2p_block", "policy_status", "switching", "interface", "session_timeout_seconds",
-		"dhcp_required", "policy_profile", "tags", keyController,
+		DefaultSortWLANID, keyWLANProfile, keySSID, keyStatus, "security", "bands", "broadcast_ssid",
+		"p2p_blocking", "policy_status", "switching", "vlan", "session_timeout_seconds",
+		"dhcp_required", "policy_profile", "policy_tags", keyController,
 	}
 }
