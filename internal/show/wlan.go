@@ -18,12 +18,6 @@ const (
 	securityOSEN = "OSEN"
 )
 
-// Policy profile status display strings, named so the Pretty mapping and the cell cannot drift.
-const (
-	policyActive   = "Active"
-	policyShutdown = "Shutdown"
-)
-
 // WLANRow is one row of show wlan: one WLAN paired with one policy profile it is bound to, so the
 // same WLAN bound under two tags to two profiles is two rows.
 type WLANRow struct {
@@ -86,7 +80,7 @@ func WLANColumns() []render.Column[WLANRow] {
 			Header: "Policy Status",
 			Cell:   func(r WLANRow) string { return render.StrPtr(r.PolicyStatus) },
 			Pretty: func(r WLANRow) string {
-				return prettyState(r.PolicyStatus, policyActive, policyShutdown, glyphBad)
+				return prettyState(r.PolicyStatus, dispEnabled, dispDisabled, glyphBad)
 			},
 		},
 		{Key: "switching", Header: "Switching", Cell: func(r WLANRow) string { return render.StrPtr(r.Switching) }},
@@ -230,7 +224,7 @@ func wlanRow(
 	}
 
 	if known {
-		row.PolicyStatus = ptr(map[bool]string{true: policyShutdown, false: policyActive}[p.Shutdown])
+		row.PolicyStatus = enabledDisabled(ptr(!p.Shutdown))
 		row.Interface = optional(p.InterfaceName)
 		row.SessionTimeout = p.SessionTimeout
 		row.DHCPRequired = p.DHCPRequired

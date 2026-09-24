@@ -272,9 +272,9 @@ wnc show wlan
 
 ```text
 ID  WLAN Profile         SSID          Status   Security            Bands  Policy Status  Switching  VLAN           Policy Profile         Controller
-5   test-wlan-profile01  test-essid01  Enabled  WPA2 PSK            2.4    Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
-6   test-wlan-profile02  test-essid02  Enabled  WPA2 PSK            5      Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
-7   test-wlan-profile03  test-essid03  Enabled  WPA3 802.1X-SHA256  5/6    Active         Local      TEST-INTERNAL  test-policy-profile01  WNC1
+5   test-wlan-profile01  test-essid01  Enabled  WPA2 PSK            2.4    Enabled        Local      TEST-INTERNAL  test-policy-profile01  WNC1
+6   test-wlan-profile02  test-essid02  Enabled  WPA2 PSK            5      Enabled        Local      TEST-INTERNAL  test-policy-profile01  WNC1
+7   test-wlan-profile03  test-essid03  Enabled  WPA3 802.1X-SHA256  5/6    Enabled        Local      TEST-INTERNAL  test-policy-profile01  WNC1
 ```
 
 ### Use cases
@@ -282,7 +282,7 @@ ID  WLAN Profile         SSID          Status   Security            Bands  Polic
 <details><summary>Case 1: Find the enabled WLANs whose policy profile is shut, so they are off air</summary><p>
 
 ```bash
-wnc show wlan -f json | jq -r '.[] | select(.status == "Enabled" and .policy_status == "Shutdown") | .wlan_profile'
+wnc show wlan -f json | jq -r '.[] | select(.status == "Enabled" and .policy_status == "Disabled") | .wlan_profile'
 ```
 
 </p></details>

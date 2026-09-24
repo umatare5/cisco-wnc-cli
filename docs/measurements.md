@@ -24,6 +24,7 @@ Columns whose device heading differs, with the command that prints them.
 | `last_reboot_reason`             | `Reboot reason from AP`                              | `show wireless stats ap mac-address ... join detailed` |
 | `misconfiguration_reason`        | none at all on the device                            | `show ap tag summary`                                  |
 | `mode`                           | `AP Mode : FlexConnect`                              | `show ap ... config general`                           |
+| `policy_status`                  | `Status`, upper-case values                          | `show wireless profile policy detailed`                |
 | `p2p_blocking`                   | `Peer-to-Peer Blocking Action`                       | `show wlan id`                                         |
 | `power_type`                     | `PoE`, both mechanisms collapsed                     | `show ap config general`                               |
 | `profile_24ghz`                  | `2.4ghz RF Policy`                                   | `show wireless tag rf detailed`                        |
