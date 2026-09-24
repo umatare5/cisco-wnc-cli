@@ -8,12 +8,12 @@ import (
 	"github.com/umatare5/cisco-wnc-cli/internal/wnc"
 )
 
-// OverviewRow is one row of show overview: one access point radio. ap_mac is the access point's
-// base radio address and is the same on every radio of one access point. The row identity is
-// the (controller, ap_mac, slot) triple and the column is not called "radio mac".
+// OverviewRow is one row of show overview: one access point radio. radio_mac is the access
+// point's base radio address and is the same on every radio of one access point, so the row
+// identity is the (controller, radio_mac, slot) triple.
 type OverviewRow struct {
 	APName     *string `json:"ap_name,omitzero"`
-	APMAC      *string `json:"ap_mac,omitzero"`
+	APMAC      *string `json:"radio_mac,omitzero"`
 	Slot       *int    `json:"slot,omitzero"`
 	Mode       *string `json:"mode,omitzero"`
 	Band       *string `json:"band,omitzero"`
@@ -38,7 +38,7 @@ func OverviewColumns() []render.Column[OverviewRow] {
 	return []render.Column[OverviewRow]{
 		{Key: keyAPName, Header: headAPName, Cell: func(r OverviewRow) string { return render.StrPtr(r.APName) }},
 		{
-			Key: keyAPMAC, Header: "AP MAC", Hidden: true,
+			Key: keyRadioMAC, Header: headRadioMAC, Hidden: true,
 			Cell: func(r OverviewRow) string { return render.StrPtr(r.APMAC) },
 		},
 		{

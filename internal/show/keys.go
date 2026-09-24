@@ -8,7 +8,6 @@ package show
 // which must stay literal.
 const (
 	keyAPName        = "ap_name"
-	keyAPMAC         = "ap_mac"
 	keySlot          = "slot"
 	keyBand          = "band"
 	keyMode          = "mode"
@@ -56,7 +55,7 @@ const (
 // OverviewKeys are the columns of show overview, one row per access point radio.
 func OverviewKeys() []string {
 	return []string{
-		keyAPName, keyAPMAC, keySlot, keyMode, keyBand, keyAdmin, "oper",
+		keyAPName, keyRadioMAC, keySlot, keyMode, keyBand, keyAdmin, "oper",
 		keyChannel, "channel_width", "txpower", "clients",
 		"channel_utilization", "rf_profile", keyController,
 	}
@@ -85,11 +84,10 @@ func APJoinKeys() []string {
 	}
 }
 
-// APTagKeys are the columns of show ap-tag, one row per access point. The MAC is named as "show ap
-// tag summary" names it, where show ap keeps "radio_mac" beside the Ethernet MAC.
+// APTagKeys are the columns of show ap-tag, one row per access point.
 func APTagKeys() []string {
 	return []string{
-		keyAPName, keyAPMAC, "misconfigured", "misconfig_reason", "tag_source", "filter_name",
+		keyAPName, keyRadioMAC, "misconfigured", "misconfig_reason", "tag_source", "filter_name",
 		keyPolicyTag, keySiteTag, keyRFTag, "ap_profile", keyFlexProfile, keyController,
 	}
 }

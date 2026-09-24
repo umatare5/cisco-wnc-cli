@@ -260,7 +260,7 @@ func TestNoDefaultSetCarriesAnIdentifier(t *testing.T) {
 	t.Parallel()
 
 	identifiers := []string{
-		keyAPMAC, keyRadioMAC, keyEthernetMAC, keyIPAddress, "mac",
+		keyRadioMAC, keyEthernetMAC, keyIPAddress, "mac",
 		"ipv4", "ipv6", "username", "serial", "lldp_neighbor", "longitude", "latitude",
 	}
 

@@ -11,7 +11,7 @@ import (
 // APTagRow is one row of show ap-tag.
 type APTagRow struct {
 	APName          *string `json:"ap_name,omitzero"`
-	APMAC           *string `json:"ap_mac,omitzero"`
+	APMAC           *string `json:"radio_mac,omitzero"`
 	Misconfigured   *bool   `json:"misconfigured,omitzero"`
 	MisconfigReason *string `json:"misconfig_reason,omitzero"`
 	TagSource       *string `json:"tag_source,omitzero"`
@@ -31,7 +31,7 @@ func APTagColumns() []render.Column[APTagRow] {
 	return []render.Column[APTagRow]{
 		{Key: keyAPName, Header: headAPName, Cell: func(r APTagRow) string { return render.StrPtr(r.APName) }},
 		{
-			Key: keyAPMAC, Header: "AP MAC", Hidden: true,
+			Key: keyRadioMAC, Header: headRadioMAC, Hidden: true,
 			Cell: func(r APTagRow) string { return render.StrPtr(r.APMAC) },
 		},
 		{
