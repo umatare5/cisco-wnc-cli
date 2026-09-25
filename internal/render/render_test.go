@@ -505,6 +505,63 @@ func TestPrettyTableFallsBackToCell(t *testing.T) {
 	}
 }
 
+// A glyph column is centered under its heading, and a text column keeps its cells at the left rule.
+// The heading here is wider than every cell, so a left-aligned glyph would show as a lopsided cell.
+func TestPrettyTableCentersGlyphColumns(t *testing.T) {
+	t.Parallel()
+
+	type row struct {
+		Name  string
+		State *string
+	}
+
+	cols := []Column[row]{
+		{Key: "name", Header: "Access Point", Cell: func(r row) string { return Str(r.Name) }},
+		{
+			Key: "state", Header: "Admin State",
+			Cell:   func(r row) string { return StrPtr(r.State) },
+			Pretty: func(r row) string { return glyphFor(r.State) },
+		},
+	}
+
+	rows := []row{
+		{Name: "TEST-AP01", State: strPtr("Up")},
+		{Name: "TEST-AP02", State: strPtr("Down")},
+		{Name: "TEST-AP03", State: nil},
+	}
+
+	var buf bytes.Buffer
+	if err := PrettyTable(&buf, cols, rows); err != nil {
+		t.Fatalf("PrettyTable: %v", err)
+	}
+
+	lines := strings.Split(strings.TrimRight(buf.String(), "\n"), "\n")
+	if len(lines) != 7 {
+		t.Fatalf("got %d lines, want 7 (three rules, a heading and three rows)", len(lines))
+	}
+
+	// Between the heading rule and the bottom rule, each line splits on the column rule into
+	// an empty edge, the name cell, the state cell and an empty edge.
+	for _, l := range lines[3 : len(lines)-1] {
+		cells := strings.Split(l, "│")
+		if len(cells) != 4 {
+			t.Fatalf("row %q has %d cells, want 2", l, len(cells)-2)
+		}
+
+		if name := cells[1]; leadingBlanks(name) != 1 {
+			t.Errorf("name cell %q moved off the left rule", name)
+		}
+
+		state := cells[2]
+		if lead, trail := leadingBlanks(state), trailingBlanks(state); lead-trail > 1 || trail-lead > 1 {
+			t.Errorf("glyph cell %q is not centered: %d blanks before, %d after\n%s", state, lead, trail, buf.String())
+		}
+	}
+}
+
+func leadingBlanks(s string) int  { return len(s) - len(strings.TrimLeft(s, " ")) }
+func trailingBlanks(s string) int { return len(s) - len(strings.TrimRight(s, " ")) }
+
 // glyphFor deliberately mixes widths. show ap's Admin column holds a two-column check
 // mark and a one-column cross in different rows, so the padding has to be measured per
 // cell rather than assumed from the first one.

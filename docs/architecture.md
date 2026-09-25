@@ -10,7 +10,7 @@ Its [`Hidden`](../internal/render/column.go#L36) field decides whether the defau
 
 The table is borderless and space-aligned.
 It spends no column on rules and starts the first field at column zero, so `awk` and `cut` can read it.
-The [`--pretty`](../internal/render/table.go#L24) form borders it and glyphs the state columns instead, for a terminal rather than for a pipe.
+The [`--pretty`](../internal/render/table.go#L24) form borders it and centers a glyph in each state column instead, for a terminal rather than for a pipe.
 
 The [JSON form](../internal/render/json.go#L14) is a flat array whose field names come from the keys `--list-keys` prints.
 A number stays a number, an empty result is `[]`, and a unit belongs to the table alone.
