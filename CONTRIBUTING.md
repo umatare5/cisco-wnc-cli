@@ -76,17 +76,10 @@ A release is prepared in one pull request, and merging it publishes everything.
 1. Rename `## [Unreleased]` in [`CHANGELOG.md`](CHANGELOG.md) to `## [vX.Y.Z]`.
 2. List the pull requests it carries, and add that version's link at the foot.
 3. Update the version in the [`VERSION`](VERSION) file.
-4. Refresh the coverage badge.
-
-```bash
-make test-unit
-octocov badge coverage --config .octocov.yml > docs/assets/coverage.svg
-```
 
 A push to `main` touching `VERSION` runs the [release workflow](https://github.com/umatare5/cisco-wnc-cli/actions/workflows/go-release.yml), which tags the commit and publishes the release in the same run.
 
 - **There is no manual trigger** – the push runs it, and the weekly snapshot build tags nothing.
-- **Nothing automates the badge** – the coverage workflow enforces the floor but writes none.
 - **The release links 404 until the merge** – [`lychee.toml`](lychee.toml) excludes the release-tag pattern.
 
 ## Pull Requests
