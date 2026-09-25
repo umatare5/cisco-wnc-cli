@@ -15,14 +15,14 @@ import (
 // the heading line, which separates a controller holding nothing from a read that failed.
 func Table[T any](w io.Writer, cols []Column[T], rows []T) error {
 	return write(w, cols, rows, plainCell[T], borderless(),
-		tw.Padding{Left: "", Right: "  ", Overwrite: true}, tw.AlignLeft)
+		tw.Padding{Left: "", Right: "  ", Overwrite: true}, tw.AlignLeft, nil)
 }
 
 // PrettyTable writes the rows as a light-ruled, bordered table with a glyph in the columns that
 // declare one. --pretty selects it, for reading on a terminal rather than for piping: the rules
 // cost three columns per field, and some glyphs are two columns wide.
 func PrettyTable[T any](w io.Writer, cols []Column[T], rows []T) error {
-	return write(w, cols, rows, prettyCell[T], bordered(), tw.PaddingDefault, tw.AlignCenter)
+	return write(w, cols, rows, prettyCell[T], bordered(), tw.PaddingDefault, tw.AlignCenter, glyphAligns(cols))
 }
 
 func plainCell[T any](c Column[T]) func(T) string { return c.Cell }
@@ -35,9 +35,23 @@ func prettyCell[T any](c Column[T]) func(T) string {
 	return c.Cell
 }
 
+// glyphAligns centers each column that declares a glyph, so a glyph one or two columns wide sits
+// under its centered heading instead of against the left rule.
+func glyphAligns[T any](cols []Column[T]) []tw.Align {
+	out := make([]tw.Align, len(cols))
+	for i, c := range cols {
+		out[i] = tw.AlignLeft
+		if c.Pretty != nil {
+			out[i] = tw.AlignCenter
+		}
+	}
+
+	return out
+}
+
 func write[T any](
 	w io.Writer, cols []Column[T], rows []T, cell func(Column[T]) func(T) string,
-	rendition tw.Rendition, padding tw.Padding, header tw.Align,
+	rendition tw.Rendition, padding tw.Padding, header tw.Align, rowAligns []tw.Align,
 ) error {
 	// The table is built into a buffer so each line can be stripped of the padding
 	// tablewriter leaves past the last column. Trailing blanks are invisible on a
@@ -47,7 +61,7 @@ func write[T any](
 	t := tablewriter.NewTable(&buf,
 		tablewriter.WithRenderer(renderer.NewBlueprint(rendition)),
 		tablewriter.WithHeaderAlignment(header),
-		tablewriter.WithRowAlignment(tw.AlignLeft),
+		tablewriter.WithRowAlignmentConfig(tw.CellAlignment{Global: tw.AlignLeft, PerColumn: rowAligns}),
 		tablewriter.WithHeaderAutoFormat(tw.Off),
 		tablewriter.WithTrimSpace(tw.On),
 		tablewriter.WithPadding(padding),

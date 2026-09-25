@@ -51,7 +51,7 @@ func OverviewColumns() []render.Column[OverviewRow] {
 		{
 			Key: keyAdminState, Header: headAdminState,
 			Cell:   func(r OverviewRow) string { return render.StrPtr(r.Admin) },
-			Pretty: func(r OverviewRow) string { return prettyState(r.Admin, dispEnabled, dispDisabled, glyphNo) },
+			Pretty: func(r OverviewRow) string { return prettyState(r.Admin, dispEnabled, dispDisabled, glyphOff) },
 		},
 		{
 			Key: "oper_state", Header: "Oper State",

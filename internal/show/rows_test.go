@@ -294,7 +294,7 @@ func TestOverviewAdminGlyphs(t *testing.T) {
 
 	tests := []struct{ admin, want string }{
 		{"enabled", glyphOK},
-		{"disabled", glyphNo},
+		{"disabled", glyphOff},
 		{"quiescing", "quiescing"},
 		{"", render.Absent},
 	}
@@ -864,7 +864,7 @@ func TestAPAdminAndStateGlyphs(t *testing.T) {
 		wantState string
 	}{
 		{"a serving access point", "adminstate-enabled", "registered", glyphOK, glyphOK},
-		{"administratively disabled", "adminstate-disabled", "registered", glyphNo, glyphOK},
+		{"administratively disabled", "adminstate-disabled", "registered", glyphOff, glyphOK},
 		{"joined but not registered", "adminstate-enabled", "ap-up", glyphOK, glyphWarn},
 		{"down", "adminstate-enabled", "ap-down", glyphOK, glyphWarn},
 		// Downloading is expected during an image upgrade and Unregistered is not, but
@@ -907,7 +907,7 @@ func TestAPAdminAndStateGlyphs(t *testing.T) {
 func TestGlyphsMeasureTheSameWidthEverywhere(t *testing.T) {
 	t.Parallel()
 
-	for _, g := range []string{glyphOK, glyphBad, glyphOff, glyphNo, glyphWarn} {
+	for _, g := range []string{glyphOK, glyphBad, glyphOff, glyphWarn} {
 		if n := utf8.RuneCountInString(g); n != 1 {
 			t.Errorf("glyph %q is %d code points, want 1", g, n)
 		}

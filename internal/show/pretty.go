@@ -2,14 +2,15 @@ package show
 
 import "github.com/umatare5/cisco-wnc-cli/internal/render"
 
-// Glyphs for the bordered table. Each must be one code point whose width does not move with the
-// reader's locale. A U+FE0F selector or an East Asian ambiguous character asks for a two-column
-// rendering tablewriter's measurement does not see, and every bordered row past that cell drifts.
+// Glyphs for the bordered table. The cross marks a fault and the square a feature configured off,
+// so a radio or WLAN an operator disabled never reads as one that failed. Each must be one code
+// point whose width does not move with the reader's locale. A U+FE0F selector or an East Asian
+// ambiguous character asks for a two-column rendering tablewriter's measurement does not see, and
+// every bordered row past that cell drifts.
 const (
 	glyphOK   = "✅"
 	glyphBad  = "❌"
 	glyphOff  = "⬜"
-	glyphNo   = "✕"
 	glyphWarn = "⚠"
 )
 
