@@ -137,7 +137,7 @@ func overviewRows(radios []wnc.Radio, band string, t config.Target, rep *Reporte
 			APName: optional(r.APName),
 			APMAC:  optional(r.APMAC),
 			// Zero is a slot number the controller reports, not an omitted leaf, so the
-			// slot is not zero-sentinelled.
+			// slot is not zero-sentineled.
 			Slot:       ptr(r.Slot),
 			Mode:       optional(showRadioMode(r.Mode)),
 			Band:       optional(display),

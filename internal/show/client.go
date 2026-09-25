@@ -178,7 +178,7 @@ func clientRows(
 			SSID:     optional(cl.SSID),
 			APName:   optional(cl.APName),
 			// A client is on a real radio slot and zero is one of them, so zero is a
-			// reading here and the slot is not zero-sentinelled.
+			// reading here and the slot is not zero-sentineled.
 			Slot:     ptr(cl.Slot),
 			Band:     optional(band),
 			Protocol: optional(showClientPHY(cl.PHY)),
@@ -186,7 +186,7 @@ func clientRows(
 			Channel: zeroAbsent(cl.Channel),
 			State:   optional(showClientState(cl.State)),
 			// An RSSI of exactly 0 dBm is not a reading a controller reports. An SNR of
-			// 0 dB is, so the first is zero-sentinelled and the second arrives already
+			// 0 dB is, so the first is zero-sentineled and the second arrives already
 			// nil where the traffic counters carried no row for this client.
 			RSSI:       zeroAbsent(cl.RSSI),
 			SNR:        cl.SNR,
