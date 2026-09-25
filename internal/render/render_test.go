@@ -474,7 +474,7 @@ func TestPrettyTable(t *testing.T) {
 		t.Error("the bordered table carries no glyph")
 	}
 
-	if strings.ContainsAny(plain.String(), "✅✕│") {
+	if strings.ContainsAny(plain.String(), "✅⚠│") {
 		t.Errorf("the plain table gained a glyph or a rule:\n%s", plain.String())
 	}
 
@@ -562,9 +562,9 @@ func TestPrettyTableCentersGlyphColumns(t *testing.T) {
 func leadingBlanks(s string) int  { return len(s) - len(strings.TrimLeft(s, " ")) }
 func trailingBlanks(s string) int { return len(s) - len(strings.TrimRight(s, " ")) }
 
-// glyphFor deliberately mixes widths. show ap's Admin column holds a two-column check
-// mark and a one-column cross in different rows, so the padding has to be measured per
-// cell rather than assumed from the first one.
+// glyphFor deliberately mixes widths. show ap's State column holds a two-column check
+// mark and a one-column warning sign in different rows, so the padding has to be measured
+// per cell rather than assumed from the first one.
 func glyphFor(p *string) string {
 	switch {
 	case p == nil:
@@ -572,7 +572,7 @@ func glyphFor(p *string) string {
 	case *p == "Up":
 		return "✅"
 	default:
-		return "✕"
+		return "⚠"
 	}
 }
 

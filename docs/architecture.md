@@ -10,7 +10,10 @@ Its [`Hidden`](../internal/render/column.go#L36) field decides whether the defau
 
 The table is borderless and space-aligned.
 It spends no column on rules and starts the first field at column zero, so `awk` and `cut` can read it.
-The [`--pretty`](../internal/render/table.go#L24) form borders it and centers a glyph in each state column instead, for a terminal rather than for a pipe.
+
+The [`--pretty`](../internal/render/table.go#L24) form borders it and centers a glyph in each state or Boolean column instead, for a terminal rather than for a pipe.
+A check marks a feature that is on or a state that is healthy, and a square marks a feature configured off.
+A cross marks a fault, and a warning sign marks an access point in any state short of serving.
 
 The [JSON form](../internal/render/json.go#L14) is a flat array whose field names come from the keys `--list-keys` prints.
 A number stays a number, an empty result is `[]`, and a unit belongs to the table alone.

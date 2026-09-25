@@ -58,8 +58,7 @@ type SiteTagRow struct {
 	Controller    string  `json:"controller"`
 }
 
-// SiteTagColumns describes the site tag view. Local Site takes no glyph: neither reading is a
-// fault or a feature switched off.
+// SiteTagColumns describes the site tag view.
 func SiteTagColumns() []render.Column[SiteTagRow] {
 	return []render.Column[SiteTagRow]{
 		{
@@ -80,7 +79,8 @@ func SiteTagColumns() []render.Column[SiteTagRow] {
 		},
 		{
 			Key: "local_site", Header: "Local Site",
-			Cell: func(r SiteTagRow) string { return render.Bool(r.LocalSite) },
+			Cell:   func(r SiteTagRow) string { return render.Bool(r.LocalSite) },
+			Pretty: func(r SiteTagRow) string { return prettyBool(r.LocalSite, glyphOK, glyphOff) },
 			Sort: func(r SiteTagRow) any {
 				if r.LocalSite == nil {
 					return nil

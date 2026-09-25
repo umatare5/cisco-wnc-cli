@@ -58,7 +58,7 @@ func WLANColumns() []render.Column[WLANRow] {
 			Key: keyStatus, Header: "Status",
 			Cell: func(r WLANRow) string { return render.StrPtr(r.Status) },
 			Pretty: func(r WLANRow) string {
-				return prettyState(r.Status, dispEnabled, dispDisabled, glyphBad)
+				return prettyState(r.Status, dispEnabled, dispDisabled, glyphOff)
 			},
 		},
 		{Key: "security", Header: "Security", Cell: func(r WLANRow) string { return render.StrPtr(r.Security) }},
@@ -66,7 +66,6 @@ func WLANColumns() []render.Column[WLANRow] {
 		{
 			Key: "broadcast_ssid", Header: "Broadcast SSID", Hidden: true,
 			Cell: func(r WLANRow) string { return render.StrPtr(r.Broadcast) },
-			// A hidden SSID is a design choice rather than a fault, so it takes the square.
 			Pretty: func(r WLANRow) string {
 				return prettyState(r.Broadcast, dispEnabled, dispDisabled, glyphOff)
 			},
@@ -80,7 +79,7 @@ func WLANColumns() []render.Column[WLANRow] {
 			Header: "Policy Status",
 			Cell:   func(r WLANRow) string { return render.StrPtr(r.PolicyStatus) },
 			Pretty: func(r WLANRow) string {
-				return prettyState(r.PolicyStatus, dispEnabled, dispDisabled, glyphBad)
+				return prettyState(r.PolicyStatus, dispEnabled, dispDisabled, glyphOff)
 			},
 		},
 		{Key: "switching", Header: "Switching", Cell: func(r WLANRow) string { return render.StrPtr(r.Switching) }},

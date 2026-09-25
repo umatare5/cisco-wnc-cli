@@ -244,6 +244,26 @@ func TestSwitchingAndEnabledDisabled(t *testing.T) {
 	}
 }
 
+// Every on-off column of show wlan is a setting, so off takes the square rather than the cross. A
+// shut WLAN or policy profile, a hidden SSID and optional DHCP are configuration, not faults.
+func TestWLANSettingGlyphs(t *testing.T) {
+	t.Parallel()
+
+	row := func(word string, b bool) WLANRow {
+		return WLANRow{Status: &word, Broadcast: &word, PolicyStatus: &word, DHCPRequired: &b}
+	}
+
+	for _, key := range []string{keyStatus, "broadcast_ssid", "policy_status", "dhcp_required"} {
+		if got := prettyOf(WLANColumns(), row(dispEnabled, true))[key]; got != glyphOK {
+			t.Errorf("%s on rendered %q, want %q", key, got, glyphOK)
+		}
+
+		if got := prettyOf(WLANColumns(), row(dispDisabled, false))[key]; got != glyphOff {
+			t.Errorf("%s off rendered %q, want %q", key, got, glyphOff)
+		}
+	}
+}
+
 func TestBandList(t *testing.T) {
 	t.Parallel()
 

@@ -119,16 +119,22 @@ func TestSiteTagRowsKeepTheThreeLocalSiteReadings(t *testing.T) {
 	}
 }
 
-// Local Site declares no glyph on purpose: neither reading is a fault or a feature
-// switched off, so the bordered table shows the same Yes or No the plain one does.
-func TestSiteTagLocalSiteTakesNoGlyph(t *testing.T) {
+// Local Site is a setting: the bordered table shows the check for Yes and the square for No, never
+// the cross of a fault. A reading the controller omitted stays absent instead of taking a glyph.
+func TestSiteTagLocalSiteGlyphs(t *testing.T) {
 	t.Parallel()
 
-	yes := true
-	rows := siteTagRows([]wnc.SiteTag{{Name: "test-site", LocalSite: &yes}}, target)
+	yes, no := true, false
+	rows := siteTagRows([]wnc.SiteTag{
+		{Name: "test-site", LocalSite: &yes},
+		{Name: "test-site-flex", LocalSite: &no},
+		{Name: "test-bare"},
+	}, target)
 
-	if got := prettyOf(SiteTagColumns(), rows[0])["local_site"]; got != "Yes" {
-		t.Errorf("bordered local_site = %q, want the plain cell", got)
+	for i, want := range []string{glyphOK, glyphOff, render.Absent} {
+		if got := prettyOf(SiteTagColumns(), rows[i])["local_site"]; got != want {
+			t.Errorf("row %d bordered local_site = %q, want %q", i, got, want)
+		}
 	}
 }
 
