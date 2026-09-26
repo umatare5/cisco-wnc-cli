@@ -143,9 +143,9 @@ This CLI reads its settings from flags, environment variables and a config file.
 
 Both pages below are written for a contributor rather than an operator.
 
-- **[Troubleshooting](docs/troubleshooting.md)** – every error message this CLI prints, and what each one means
 - **[Architecture](docs/architecture.md)** – the output contract, the absence rule, the exit codes, and the write order
 - **[Measurements](docs/measurements.md)** – every reading taken on a live controller, and the gaps
+- **[Troubleshooting](docs/troubleshooting.md)** – every error message this CLI prints, and what each one means
 
 ## Contributing
 
