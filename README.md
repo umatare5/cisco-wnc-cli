@@ -1,9 +1,9 @@
 <div align="center">
 
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/umatare5/cisco-wnc-cli/main/docs/assets/logo_dark.png" width="115px" />
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/umatare5/cisco-wnc-cli/main/docs/assets/logo.png" width="115px" />
-    <img alt="wnc" src="https://raw.githubusercontent.com/umatare5/cisco-wnc-cli/main/docs/assets/logo.png" width="115px" />
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/assets/logo_dark.png" width="115px" />
+    <source media="(prefers-color-scheme: light)" srcset="./docs/assets/logo.png" width="115px" />
+    <img alt="wnc" src="./docs/assets/logo.png" width="115px" />
   </picture>
 
   <h1>cisco-wnc-cli</h1>
@@ -32,7 +32,7 @@ This CLI manages wireless LANs across multiple [Cisco Catalyst 9800 Wireless Net
 - 🎨 **Flexible Output**: Supports `--pretty` for humans, and `--format json` for machines and AIs
 
 <div align="center">
-  <img alt="wnc show overview" src="https://raw.githubusercontent.com/umatare5/cisco-wnc-cli/main/docs/demo/wnc_show_overview_demo.gif"  width="800px" />
+  <img alt="wnc show overview" src="./docs/demo/wnc_show_overview_demo.gif"  width="800px" />
 </div>
 
 ## Supported Environment
