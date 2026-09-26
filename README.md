@@ -32,7 +32,7 @@ This CLI manages wireless LANs across multiple [Cisco Catalyst 9800 Wireless Net
 - 🎨 **Flexible Output**: Supports `--pretty` for humans, and `--format json` for machines and AIs
 
 <div align="center">
-  <img alt="wnc show overview" src="./docs/demo/wnc_show_overview_demo.gif"  width="800px" />
+  <img alt="wnc show overview" src="https://raw.githubusercontent.com/umatare5/cisco-wnc-cli/main/docs/demo/wnc_show_overview_demo.gif"  width="800px" />
 </div>
 
 ## Supported Environment
