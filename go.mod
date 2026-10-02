@@ -6,7 +6,7 @@ require (
 	github.com/olekukonko/tablewriter v1.1.5
 	github.com/sirupsen/logrus v1.10.2
 	github.com/umatare5/cisco-ios-xe-wireless-go v0.11.1
-	github.com/urfave/cli/v3 v3.11.0
+	github.com/urfave/cli/v3 v3.13.0
 )
 
 require (
