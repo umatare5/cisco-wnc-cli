@@ -4,6 +4,11 @@ Each section covers one release and lists the pull requests it carries.
 
 ## [Unreleased]
 
+## [v0.4.3]
+
+- [#119](https://github.com/umatare5/cisco-wnc-cli/pull/119) – Update module github.com/umatare5/cisco-ios-xe-wireless-go to v0.11.3
+- [#123](https://github.com/umatare5/cisco-wnc-cli/pull/123) – Update cisco-ios-xe-wireless-go to v0.11.3 and release v0.4.3
+
 ## [v0.4.2]
 
 - [#113](https://github.com/umatare5/cisco-wnc-cli/pull/113) – Re-record the demo with centered pretty glyphs
@@ -60,6 +65,7 @@ This release shrinks the default column set (#100), renames --sort-keys to --lis
 - [#82](https://github.com/umatare5/cisco-wnc-cli/pull/82) – Pin the documentation skeletons and ship the license notices
 - [#83](https://github.com/umatare5/cisco-wnc-cli/pull/83) – Restructure the documentation set and pin its heading skeletons
 
+[v0.4.3]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.4.3
 [v0.4.2]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.4.2
 [v0.4.1]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.4.1
 [v0.4.0]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.4.0
