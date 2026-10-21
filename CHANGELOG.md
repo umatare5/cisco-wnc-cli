@@ -4,6 +4,17 @@ Each section covers one release and lists the pull requests it carries.
 
 ## [Unreleased]
 
+## [v0.4.2]
+
+- [#113](https://github.com/umatare5/cisco-wnc-cli/pull/113) – Re-record the demo with centered pretty glyphs
+- [#114](https://github.com/umatare5/cisco-wnc-cli/pull/114) – Replace relative paths with absolute paths in README
+- [#116](https://github.com/umatare5/cisco-wnc-cli/pull/116) – Replace absolute paths with relative paths in README
+- [#117](https://github.com/umatare5/cisco-wnc-cli/pull/117) – Update all patch dependencies
+- [#118](https://github.com/umatare5/cisco-wnc-cli/pull/118) – Update all minor dependencies
+- [#120](https://github.com/umatare5/cisco-wnc-cli/pull/120) – Update module github.com/urfave/cli/v3 to v3.14.0
+- [#121](https://github.com/umatare5/cisco-wnc-cli/pull/121) – Update all patch dependencies
+- [#122](https://github.com/umatare5/cisco-wnc-cli/pull/122) – Raise the toolchain to Go 1.27.3 and release v0.4.2
+
 ## [v0.4.1]
 
 - [#109](https://github.com/umatare5/cisco-wnc-cli/pull/109) – Write American English in the comments and the build config
@@ -49,6 +60,7 @@ This release shrinks the default column set (#100), renames --sort-keys to --lis
 - [#82](https://github.com/umatare5/cisco-wnc-cli/pull/82) – Pin the documentation skeletons and ship the license notices
 - [#83](https://github.com/umatare5/cisco-wnc-cli/pull/83) – Restructure the documentation set and pin its heading skeletons
 
+[v0.4.2]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.4.2
 [v0.4.1]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.4.1
 [v0.4.0]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.4.0
 [v0.3.0]: https://github.com/umatare5/cisco-wnc-cli/releases/tag/v0.3.0

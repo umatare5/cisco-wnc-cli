@@ -12,7 +12,7 @@ USAGE:
    wnc [global options] [command [command options]]
 
 VERSION:
-   dev
+   0.4.2
 
 COMMANDS:
    deauth             Deauthenticate a client on a controller
